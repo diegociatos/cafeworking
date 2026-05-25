@@ -1,0 +1,35 @@
+name: Expand site upload
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - cafeworking_netlify_deploy_otimizado.zip
+
+permissions:
+  contents: write
+
+jobs:
+  expand-site:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Expand optimized site package
+        run: |
+          unzip -o cafeworking_netlify_deploy_otimizado.zip
+          rm cafeworking_netlify_deploy_otimizado.zip
+
+      - name: Commit expanded site
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No site changes to commit"
+          else
+            git commit -m "Publica site CafeWorking com melhorias"
+            git push
+          fi

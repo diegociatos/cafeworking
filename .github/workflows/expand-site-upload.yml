@@ -1,11 +1,13 @@
 name: Expand site upload
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
     paths:
       - cafeworking_netlify_deploy_otimizado.zip
+      - .github/workflows/expand-site-upload.yml
 
 permissions:
   contents: write
@@ -16,6 +18,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Expand optimized site package
         run: |

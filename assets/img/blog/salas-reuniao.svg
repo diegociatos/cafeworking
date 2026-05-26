@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="#f7f0e7"/>
+<stop offset="100%" stop-color="#ffffff"/>
+</linearGradient>
+<filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+<feDropShadow dx="0" dy="24" stdDeviation="30" flood-color="#1f1f1c" flood-opacity="0.12"/>
+</filter>
+</defs>
+<rect width="1200" height="760" fill="url(#bg)"/>
+<circle cx="1020" cy="100" r="230" fill="#0e4b4f" opacity="0.10"/>
+<circle cx="120" cy="670" r="190" fill="#b08b67" opacity="0.10"/>
+<rect x="90" y="90" width="1020" height="580" rx="54" fill="#fff" filter="url(#shadow)" stroke="#ded4c6"/>
+<rect x="150" y="150" width="150" height="150" rx="42" fill="#0e4b4f"/>
+<text x="225" y="250" text-anchor="middle" font-family="Arial" font-size="78" fill="#fff">▦</text>
+<text x="350" y="190" font-family="Arial" font-size="20" font-weight="700" letter-spacing="4" fill="#8a6949">SALAS DE REUNIÃO</text>
+<foreignObject x="350" y="230" width="660" height="250">
+<div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Georgia,serif;font-size:58px;line-height:1.05;font-weight:700;color:#1f1f1c">Como escolher uma sala de reunião profissional</div>
+</foreignObject>
+<line x1="350" y1="530" x2="900" y2="530" stroke="#b08b67" stroke-width="3"/>
+<rect x="350" y="575" width="260" height="24" rx="12" fill="#0e4b4f" opacity=".16"/>
+<rect x="350" y="620" width="420" height="24" rx="12" fill="#0e4b4f" opacity=".12"/>
+</svg>

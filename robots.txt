@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://cafeworking.com.br/sitemap.xml

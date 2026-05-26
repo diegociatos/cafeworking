@@ -1,0 +1,14 @@
+{
+  "name": "cafeworking-site",
+  "version": "0.34.0",
+  "private": true,
+  "description": "Site e plataforma inicial do CafeWorking",
+  "scripts": {
+    "dev": "netlify dev",
+    "serve": "python -m http.server 8888",
+    "check": "node scripts/check-links.js"
+  },
+  "devDependencies": {
+    "netlify-cli": "latest"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "CafeWorking - Hub Empresarial Premium",
+  "short_name": "CafeWorking",
+  "description": "Coworking premium, salas, endereço fiscal, abertura de empresa e contabilidade.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F7F4EE",
+  "theme_color": "#0E4B4F",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/img/logo-cafeworking.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/img/logo-cafeworking.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

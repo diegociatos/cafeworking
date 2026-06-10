@@ -1,3 +1,5 @@
+/area-do-cliente https://app.cafeworking.com.br 301!
+/area-do-cliente.html https://app.cafeworking.com.br 301!
 /ambientes/salas-privativas /salas-privativas.html 200
 /ambientes/atendimento-privativo /atendimento-privativo.html 200
 /ambientes/sala-compartilhada /coworking.html 200

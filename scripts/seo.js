@@ -36,10 +36,13 @@ const NEGOCIO = {
     'https://www.instagram.com/cafeworkingoficial/',
     'https://www.facebook.com/CafeWorkingoficial',
   ],
-  // ATENCAO: preencha com o horario real e igual ao do Google Business Profile.
-  // Formato schema.org, ex: ['Mo-Fr 08:00-18:00', 'Sa 09:00-13:00'].
-  // Deixe null enquanto nao tiver certeza - horario errado e pior que nenhum.
-  horario: null,
+  // Horario de funcionamento. Precisa ser IDENTICO ao do Google Business
+  // Profile - divergencia entre site e GBP enfraquece o sinal local.
+  // Para adicionar sabado, basta acrescentar outro bloco:
+  //   { dias: ['Saturday'], abre: '09:00', fecha: '13:00' }
+  horario: [
+    { dias: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], abre: '08:00', fecha: '18:00' },
+  ],
 };
 
 const UNIDADES = {
@@ -485,7 +488,14 @@ function localBusiness(chave) {
     parentOrganization: { '@id': `${SITE}/#organizacao` },
     sameAs: NEGOCIO.sameAs,
   };
-  if (NEGOCIO.horario) o.openingHours = NEGOCIO.horario;
+  if (NEGOCIO.horario && NEGOCIO.horario.length) {
+    o.openingHoursSpecification = NEGOCIO.horario.map((h) => ({
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: h.dias,
+      opens: h.abre,
+      closes: h.fecha,
+    }));
+  }
   return o;
 }
 
@@ -809,8 +819,8 @@ if (relatorio.semMeta.length) {
   console.log(`\n  sem metadados definidos em scripts/seo.js (usando o title atual):`);
   relatorio.semMeta.forEach((f) => console.log(`    - ${f}`));
 }
-if (!NEGOCIO.horario) {
-  console.log(`\n  ! NEGOCIO.horario esta null - preencha o horario de funcionamento`);
+if (!NEGOCIO.horario || !NEGOCIO.horario.length) {
+  console.log(`\n  ! NEGOCIO.horario esta vazio - preencha o horario de funcionamento`);
   console.log(`    em scripts/seo.js para o Google exibir "aberto agora" nos resultados.`);
 }
 console.log('');

@@ -140,10 +140,12 @@ código. Nenhum deles pode ser feito pelo repositório.
 2. **Avaliações no Google** — é o fator mais forte do ranking local e o mais
    ignorado. Peça avaliação a cada membro satisfeito, de forma sistemática.
 
-3. **Horário de funcionamento no schema** — em `scripts/seo.js`, a constante
-   `NEGOCIO.horario` está `null` de propósito, porque horário errado é pior que
-   nenhum. Preencha no formato `['Mo-Fr 08:00-18:00']` e rode `node scripts/seo.js`.
-   O horário aqui precisa ser idêntico ao do GBP.
+3. **Horário de funcionamento no schema** — já preenchido: segunda a sexta, das
+   8h às 18h, publicado como `openingHoursSpecification` no `LocalBusiness` das
+   duas unidades. **Confirme que o Google Business Profile mostra exatamente o
+   mesmo horário** — divergência entre site e GBP enfraquece o sinal local. Se
+   mudar (abrir aos sábados, por exemplo), edite `NEGOCIO.horario` em
+   `scripts/seo.js` e rode `node scripts/seo.js`.
 
 4. **Google Search Console** — a propriedade `https://cafeworking.com.br/` já está
    com o arquivo de verificação no repositório

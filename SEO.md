@@ -24,7 +24,21 @@ divergir entre as 90+ páginas:
 node scripts/gerar-paginas.js && node scripts/seo.js
 ```
 
-Depois é só commitar — a Netlify publica sozinha.
+Depois é só commitar e dar push — a Netlify publica sozinha (projeto
+`cafeworking`, conectado ao repositório pelo GitHub App, branch `main`).
+
+⚠️ **A publicação automática não é imediata.** Em 17/08/2026, um push levou
+cerca de 13 minutos até a Netlify iniciar o deploy — o projeto está no plano
+`nf_team_dev`, cuja fila de build é mais lenta que a do `appcafeworking`
+(`nf_team_pro`). Se precisar do site atualizado na hora, publique pela CLI:
+
+```bash
+netlify deploy --prod --site 811a2f31-00ce-452a-acb5-2d5682ee715e --dir . --functions netlify/functions
+```
+
+Sempre passe `--functions`: sem essa flag, um deploy por `--dir` derruba as
+Netlify Functions `lead-webhook` e `reserva-webhook`, que recebem os leads.
+Vale rodar antes sem `--prod` para conferir o resultado numa URL de rascunho.
 
 ---
 

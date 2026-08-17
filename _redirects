@@ -1,9 +1,28 @@
-/area-do-cliente https://app.cafeworking.com.br 301!
-/area-do-cliente.html https://app.cafeworking.com.br 301!
-/ambientes/salas-privativas /salas-privativas.html 200
-/ambientes/atendimento-privativo /atendimento-privativo.html 200
-/ambientes/sala-compartilhada /coworking.html 200
-/ambientes/salas-de-reuniao /salas-de-reuniao.html 200
-/unidades/luxemburgo /unidade-luxemburgo.html 200
-/unidades/estoril /unidade-estoril.html 200
-/* /index.html 200
+# Redirecionamentos do site CafeWorking (Netlify)
+#
+# Regras de SEO seguidas aqui:
+#  - conteudo duplicado em duas URLs = 301 para a URL canonica (nunca 200)
+#  - URL inexistente = 404 de verdade (nunca a home com status 200)
+
+# Area do cliente mora no aplicativo
+/area-do-cliente        https://app.cafeworking.com.br  301!
+/area-do-cliente.html   https://app.cafeworking.com.br  301!
+/area-do-membro         https://app.cafeworking.com.br  301!
+/area-do-membro.html    https://app.cafeworking.com.br  301!
+
+# Caminhos antigos por pasta -> pagina canonica
+/ambientes/salas-privativas       /salas-privativas.html      301!
+/ambientes/atendimento-privativo  /atendimento-privativo.html 301!
+/ambientes/sala-compartilhada     /coworking.html             301!
+/ambientes/salas-de-reuniao       /salas-de-reuniao.html      301!
+/unidades/luxemburgo              /unidade-luxemburgo.html    301!
+/unidades/estoril                 /unidade-estoril.html       301!
+
+# Links antigos do menu que apontavam para paginas inexistentes
+/sala-compartilhada       /coworking.html             301!
+/sala-compartilhada.html  /coworking.html             301!
+/juridico                 /juridico-empresarial.html  301!
+/juridico.html            /juridico-empresarial.html  301!
+
+# Qualquer outra URL inexistente devolve 404 (e nao a home)
+/*  /404.html  404

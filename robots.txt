@@ -1,3 +1,14 @@
+# robots.txt - cafeworking.com.br
+#
+# O rastreamento fica liberado de proposito.
+# As paginas que nao devem aparecer na busca (area logada, telas de admin,
+# materiais internos e landing pages de anuncio) carregam a tag
+# <meta name="robots" content="noindex,follow"> no proprio HTML.
+#
+# Bloquear essas paginas aqui seria contraproducente: o Google precisa
+# conseguir ler a pagina para enxergar o noindex e remove-la do indice.
+
 User-agent: *
 Allow: /
+
 Sitemap: https://cafeworking.com.br/sitemap.xml

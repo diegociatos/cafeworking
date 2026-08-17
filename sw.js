@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cafeworking-v33';
+const CACHE_NAME = 'cafeworking-v34';
 const CORE_ASSETS = ['/', '/index.html', '/offline.html', '/assets/css/style.css', '/assets/js/main.js'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(CORE_ASSETS)).then(() => self.skipWaiting()));

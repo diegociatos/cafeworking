@@ -30,3 +30,12 @@
 # do site fica presa na versao antiga do proprio SW.
 /sw.js
   Cache-Control: public, max-age=0, must-revalidate
+
+# A pasta scripts/ vai junto no deploy (o publish dir e a raiz do repositorio),
+# entao os fragmentos de scripts/conteudo/ ficam acessiveis pela web com o mesmo
+# texto das paginas publicadas, sem <head>, sem canonical e sem noindex - ou
+# seja, conteudo duplicado esperando ser indexado. Nada aponta para eles, mas o
+# X-Robots-Tag fecha a porta sem precisar bloquear o rastreamento (mesma logica
+# do robots.txt: o Google precisa ler a pagina para enxergar o noindex).
+/scripts/*
+  X-Robots-Tag: noindex

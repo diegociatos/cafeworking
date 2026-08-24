@@ -1,0 +1,33 @@
+# Regras fixas de redirecionamento (Netlify).
+# ATENCAO: este arquivo e a FONTE. O _redirects da raiz e gerado por
+# scripts/seo.js = este conteudo + os 301 de /pagina.html -> /pagina.
+# Nao edite o _redirects direto; edite aqui e rode "node scripts/seo.js".
+#
+# Regras de SEO seguidas:
+#  - conteudo duplicado em duas URLs = 301 para a URL canonica (nunca 200)
+#  - URL inexistente = 404 de verdade (nunca a home com status 200)
+#  - a barra final (/cafeteria/ -> /cafeteria) a Netlify ja resolve sozinha
+
+# Area do cliente mora no aplicativo
+/area-do-cliente        https://app.cafeworking.com.br  301!
+/area-do-cliente.html   https://app.cafeworking.com.br  301!
+/area-do-membro         https://app.cafeworking.com.br  301!
+/area-do-membro.html    https://app.cafeworking.com.br  301!
+
+# Caminhos antigos por pasta -> pagina canonica
+/ambientes/salas-privativas       /salas-privativas       301!
+/ambientes/atendimento-privativo  /atendimento-privativo  301!
+/ambientes/sala-compartilhada     /coworking              301!
+/ambientes/salas-de-reuniao       /salas-de-reuniao       301!
+/unidades/luxemburgo              /unidade-luxemburgo     301!
+/unidades/estoril                 /unidade-estoril        301!
+
+# Links antigos do menu que apontavam para paginas inexistentes
+/sala-compartilhada       /coworking             301!
+/sala-compartilhada.html  /coworking             301!
+/juridico                 /juridico-empresarial  301!
+/juridico.html            /juridico-empresarial  301!
+
+# Atalhos em ingles para a pagina em ingles
+/en       /coworking-in-belo-horizonte  301!
+/english  /coworking-in-belo-horizonte  301!

@@ -11,4 +11,13 @@
 User-agent: *
 Allow: /
 
+# Parametro ?_g=<numero>: e o padrao de URL lixo que contaminou o
+# ciatoscontabilidade.com.br (255 mil URLs) e o ciatosjuridico.com.br (37 mil).
+# Nenhuma URL legitima deste site usa esse parametro, entao bloquear aqui e
+# preventivo: evita gastar rastreamento com variacao infinita da mesma pagina.
+# A CONFIRMAR no Search Console (Indexacao > Paginas > Nao encontrado 404) se as
+# 1.082 URLs em 404 seguem mesmo esse padrao.
+Disallow: /*?_g=
+Disallow: /*&_g=
+
 Sitemap: https://cafeworking.com.br/sitemap.xml

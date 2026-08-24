@@ -2581,3 +2581,100 @@ header.nav{
 .artigo-sumario ol{margin:0;padding-left:20px;font-size:16px;line-height:1.6}
 .artigo-sumario a{text-decoration:none;font-weight:600}
 @media(max-width:900px){.post h2{font-size:28px}.post h3{font-size:20px}}
+/* V38 - cabecalho em notebook */
+/* V38 - cabecalho em notebook.
+
+   Dois defeitos corrigidos aqui:
+
+   1. Scroll horizontal entre 1081px e ~1400px: logo + menu + dois botoes
+      somavam mais que a largura util e empurravam a pagina inteira para o lado.
+
+   2. Faixa morta entre 981px e 1080px: o bloco antigo @media(max-width:1080px)
+      escondia o menu e mostrava o hamburguer, mas a gaveta do menu mobile so
+      existe em @media(max-width:980px). Nessa faixa o botao abria nada.
+      Aqui o menu de desktop volta a aparecer ate 981px, que e exatamente onde
+      a gaveta comeca a funcionar. */
+
+@media(min-width:981px) and (max-width:1400px){
+  .nav-inner{gap:14px!important}
+  .cw-menu{gap:0!important}
+  .cw-menu-link{padding:0 6px!important;font-size:13.5px!important;white-space:nowrap}
+  .nav-actions{gap:8px!important}
+  .nav-actions .btn,.header-actions .btn{padding:0 14px!important;font-size:13.5px!important;white-space:nowrap}
+  .logo img{height:46px!important}
+}
+
+/* Abaixo de 1240px so cabe um botao no cabecalho: fica o CTA principal.
+   "Area do Cliente" continua no menu e no rodape. */
+@media(min-width:981px) and (max-width:1240px){
+  .nav-actions .btn-outline{display:none!important}
+}
+
+@media(min-width:981px) and (max-width:1080px){
+  .menu,.nav-actions{display:flex!important}
+  .mobile-toggle{display:none!important}
+  .cw-menu-link{padding:0 4px!important;font-size:13px!important}
+  .nav-actions .btn{padding:0 12px!important;font-size:13px!important}
+  .logo img{height:42px!important}
+}
+
+/* V39 - paragrafo de abertura e headline longa */
+/* Bloco de abertura: o paragrafo que responde a busca, logo abaixo do hero.
+   Fica fora do hero de proposito - com 90 palavras la dentro, os botoes de
+   acao caiam abaixo da dobra em tela de notebook. */
+.abertura{padding:52px 0 4px}
+.abertura-texto{
+  font-family:var(--serif);
+  font-size:clamp(19px,1.7vw,23px);
+  line-height:1.62;
+  color:var(--v37-ink,var(--ink));
+  max-width:860px;
+  margin:0;
+}
+@media(max-width:760px){
+  .abertura{padding:36px 0 0}
+  .abertura-texto{font-size:18px;line-height:1.6}
+}
+
+/* Headline de 12 palavras a 82px vira portico, nao titulo: ocupava 5 linhas e
+   empurrava o CTA para fora da tela. So nas paginas marcadas com h1-longo. */
+.h1-longo{
+  font-size:clamp(34px,3.5vw,52px)!important;
+  line-height:1.06!important;
+  letter-spacing:-.03em!important;
+}
+
+/* Chamada em ingles na pagina da cafeteria. O Search Console mostra 93
+   impressoes/mes de busca em ingles, varias em posicao 1 com CTR zero: o Google
+   entrega o site e o visitante nao reconhece o conteudo. Este bloco responde na
+   propria pagina e leva para a versao completa em /coworking-in-belo-horizonte. */
+.bloco-en{padding:44px 0}
+.bloco-en-card{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-left:4px solid var(--green);
+  border-radius:var(--radius,22px);
+  padding:26px 30px;
+  max-width:860px;
+}
+.bloco-en-card p{margin:0 0 18px;font-size:17px;line-height:1.65;color:var(--muted)}
+.bloco-en-card .eyebrow{margin-bottom:12px}
+@media(max-width:760px){.bloco-en-card{padding:22px}}
+
+/* Segundo paragrafo da abertura: e onde ficam os links contextuais para as
+   outras paginas. Fica um degrau abaixo do primeiro, para ler como continuacao
+   e nao como novo bloco. */
+.abertura-continua{
+  margin-top:18px;
+  font-size:clamp(17px,1.45vw,20px);
+  color:var(--muted);
+}
+.abertura a{
+  color:var(--green);
+  font-weight:600;
+  text-decoration:underline;
+  text-underline-offset:3px;
+  text-decoration-thickness:1px;
+  text-decoration-color:rgba(14,75,79,.35);
+}
+.abertura a:hover{text-decoration-color:var(--green)}

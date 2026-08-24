@@ -43,6 +43,18 @@ const NEGOCIO = {
   horario: [
     { dias: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], abre: '08:00', fecha: '18:00' },
   ],
+  // Comodidades declaradas no schema. So entra aqui o que a unidade REALMENTE
+  // oferece - o Google cruza isso com o Google Empresas e com as avaliacoes.
+  // A CONFIRMAR com o CafeWorking antes de incluir: pet friendly,
+  // estacionamento proprio e acessibilidade para cadeirante. Essas consultas
+  // aparecem no Search Console, mas so valem se a resposta for sim.
+  comodidades: [
+    'Wi-Fi de alta velocidade',
+    'Tomada em todas as mesas',
+    'Sala de reunião',
+    'Recepção',
+    'Ambiente climatizado',
+  ],
 };
 
 const UNIDADES = {
@@ -56,6 +68,19 @@ const UNIDADES = {
     lon: -43.9544083,
     pagina: 'unidade-luxemburgo.html',
     imagem: '/assets/img/og/og-luxemburgo.jpg',
+    cafeteria: true,
+    descricao:
+      'Cafeteria e coworking na Rua Guaicuí, 715, no Luxemburgo, em Belo Horizonte: café especial, wi-fi de alta velocidade, tomada em todas as mesas, salas de reuniao, salas privativas e endereco fiscal.',
+    comodidades: [
+      'Wi-Fi de alta velocidade',
+      'Tomada em todas as mesas',
+      'Cafeteria no local',
+      'Sala de reunião',
+      'Recepção',
+      'Área externa e jardim',
+      'Ambiente climatizado',
+    ],
+    // perfilGoogle: 'https://maps.app.goo.gl/...',  <- colar o link do Google Empresas
   },
   estoril: {
     id: `${SITE}/#estoril`,
@@ -67,6 +92,10 @@ const UNIDADES = {
     lon: -43.9603394,
     pagina: 'unidade-estoril.html',
     imagem: '/assets/img/og/og-estoril.jpg',
+    cafeteria: false,
+    descricao:
+      'Coworking corporativo na Av. Raja Gabaglia, 2000, no Estoril, em Belo Horizonte: salas em vidro, estacoes de trabalho, salas de reuniao e vista privilegiada.',
+    // perfilGoogle: 'https://maps.app.goo.gl/...',  <- colar o link do Google Empresas
   },
 };
 
@@ -123,9 +152,11 @@ const PAGINAS = {
     d: 'Conheça os ambientes do CafeWorking em Belo Horizonte: salas privativas, sala compartilhada, salas de reunião, atendimento privativo, auditório e cafeteria.',
     img: 'og-salas-privativas.jpg', tipo: 'pagina', bc: [AMB],
   },
+  /* cluster "cafe para trabalhar em bh": 7 variacoes da mesma intencao, todas
+   * entre a posicao 8 e a 13 e todas caindo na home. */
   'coworking.html': {
-    t: 'Coworking e Sala Compartilhada em BH | CafeWorking',
-    d: 'Estação de trabalho em coworking premium em Belo Horizonte: internet dedicada, café, recepção, salas de reunião e planos flexíveis. Agende uma visita.',
+    t: 'Café para trabalhar em BH: coworking por dia ou mês',
+    d: 'Lugar para trabalhar em BH com tomada em toda mesa e wi-fi que aguenta chamada de vídeo. Diária ou plano mensal, café incluso, no Luxemburgo.',
     img: 'og-coworking.jpg', tipo: 'servico', bc: [AMB, ['Sala Compartilhada', 'coworking.html']],
   },
   'salas-privativas.html': {
@@ -158,16 +189,30 @@ const PAGINAS = {
     d: 'Eventos de networking, encontros e ações empresariais em Belo Horizonte. Um ambiente feito para gerar conexões entre empresários e profissionais.',
     img: 'og-networking.jpg', tipo: 'servico', bc: [AMB, ['Networking & Eventos', 'networking-eventos.html']],
   },
+  /* "cafeteria coworking" = a consulta de maior volume do site (343 impressoes
+   * no trimestre, posicao 41,9) e nenhuma URL respondia por ela. */
   'cafeteria.html': {
-    t: 'Cafeteria em Belo Horizonte | CafeWorking Luxemburgo',
-    d: 'Cafeteria do CafeWorking no Luxemburgo, em Belo Horizonte: café especial, ambiente tranquilo para trabalhar, reuniões informais e wi-fi.',
+    t: 'Cafeteria coworking em BH: café, wi-fi e sala privativa',
+    d: 'Cafeteria com coworking no Luxemburgo e no Estoril: wi-fi rápido, tomada em toda mesa, sala de reunião e café de verdade. Aberto todo dia útil em BH.',
     img: 'og-cafeteria.jpg', tipo: 'servico', bc: [['Cafeteria', 'cafeteria.html']],
+    hreflang: { 'pt-BR': 'cafeteria.html', en: 'coworking-in-belo-horizonte.html' },
   },
   'cardapio.html': {
     t: 'Cardápio da Cafeteria | CafeWorking BH',
     d: 'Confira o cardápio da cafeteria do CafeWorking em Belo Horizonte: cafés especiais, bebidas, salgados e opções para o dia de trabalho.',
     img: 'og-cafeteria.jpg', tipo: 'pagina', bc: [['Cafeteria', 'cafeteria.html'], ['Cardápio', 'cardapio.html']],
   },
+  /* Ingles: 93 impressoes/mes vinham de buscas em ingles, varias em posicao 1
+   * com CTR zero - o Google mostrava o site e o visitante nao reconhecia o
+   * conteudo, porque nao havia uma linha em ingles. */
+  'coworking-in-belo-horizonte.html': {
+    t: 'Coworking in Belo Horizonte | Coffee Shop with Wi-Fi',
+    d: 'A coffee shop built for laptops in Belo Horizonte: fast wi-fi, a power outlet at every table, meeting rooms by the hour and day passes. Two locations.',
+    img: 'og-coworking.jpg', tipo: 'servico', lang: 'en',
+    bc: [['Coworking in Belo Horizonte', 'coworking-in-belo-horizonte.html']],
+    hreflang: { 'pt-BR': 'cafeteria.html', en: 'coworking-in-belo-horizonte.html' },
+  },
+
   'galeria.html': {
     t: 'Fotos do CafeWorking | Ambientes Reais em BH',
     d: 'Galeria de fotos reais do CafeWorking em Belo Horizonte: fachada, recepção, cafeteria, jardim, salas privativas, reuniões e auditório.',
@@ -181,8 +226,8 @@ const PAGINAS = {
     img: 'og-contabilidade.jpg', tipo: 'pagina', bc: [SERV],
   },
   'endereco-fiscal.html': {
-    t: 'Endereço Fiscal em Belo Horizonte para CNPJ | CafeWorking',
-    d: 'Endereço fiscal e comercial em Belo Horizonte para abrir ou transferir seu CNPJ, com recebimento de correspondências, recepção e sala de reunião.',
+    t: 'Endereço fiscal em Belo Horizonte com contabilidade',
+    d: 'Endereço comercial e fiscal em BH para abrir ou transferir seu CNPJ, com recebimento de correspondência, sala para reunião e contabilidade opcional.',
     img: 'og-endereco-fiscal.jpg', tipo: 'servico', bc: [SERV, ['Endereço Fiscal', 'endereco-fiscal.html']],
   },
   'abertura-de-empresa.html': {
@@ -459,17 +504,36 @@ function desescapar(s) {
 
 const texto = (s) => esc(desescapar(s));
 
-const urlDe = (arq) => (arq === 'index.html' ? `${SITE}/` : `${SITE}/${arq}`);
+/* URL canonica do site: SEM extensao .html.
+ *
+ * A Netlify serve /cafeteria e /cafeteria.html com 200 nos dois casos, e o
+ * Google indexou a versao sem extensao. Canonical apontando para .html
+ * competiria com a URL que o proprio Google escolheu. Entao: canonical, og:url,
+ * sitemap e links internos usam a forma sem extensao, e o _redirects manda
+ * .html -> sem extensao com 301. */
+const caminhoDe = (arq) => (arq === 'index.html' ? '/' : '/' + arq.replace(/\.html$/, ''));
+const urlDe = (arq) => SITE + caminhoDe(arq);
+
+function comodidades(lista) {
+  return lista.map((nome) => ({
+    '@type': 'LocationFeatureSpecification',
+    name: nome,
+    value: true,
+  }));
+}
 
 function localBusiness(chave) {
   const u = UNIDADES[chave];
   const o = {
-    '@type': 'LocalBusiness',
+    // CafeOrCoffeeShop so onde existe cafeteria de verdade. As buscas de
+    // proximidade ("cafeteria perto de mim") se decidem no mapa, e tipo errado
+    // em unidade sem cafeteria e informacao falsa.
+    '@type': u.cafeteria ? ['LocalBusiness', 'CafeOrCoffeeShop'] : 'LocalBusiness',
     '@id': u.id,
     name: u.nome,
     alternateName: 'CafeWorking',
-    description: NEGOCIO.descricao,
-    url: `${SITE}/${u.pagina}`,
+    description: u.descricao || NEGOCIO.descricao,
+    url: urlDe(u.pagina),
     telephone: NEGOCIO.telefone,
     image: SITE + u.imagem,
     logo: `${SITE}/assets/img/logo-cafeworking.png`,
@@ -484,10 +548,15 @@ function localBusiness(chave) {
       addressCountry: 'BR',
     },
     geo: { '@type': 'GeoCoordinates', latitude: u.lat, longitude: u.lon },
+    hasMap: `https://www.google.com/maps/search/?api=1&query=${u.lat},${u.lon}`,
     areaServed: { '@type': 'City', name: 'Belo Horizonte' },
+    amenityFeature: comodidades(u.comodidades || NEGOCIO.comodidades),
+    publicAccess: true,
+    isAccessibleForFree: false,
     parentOrganization: { '@id': `${SITE}/#organizacao` },
-    sameAs: NEGOCIO.sameAs,
+    sameAs: [...NEGOCIO.sameAs, ...(u.perfilGoogle ? [u.perfilGoogle] : [])],
   };
+  if (u.cafeteria) o.servesCuisine = 'Café';
   if (NEGOCIO.horario && NEGOCIO.horario.length) {
     o.openingHoursSpecification = NEGOCIO.horario.map((h) => ({
       '@type': 'OpeningHoursSpecification',
@@ -531,7 +600,7 @@ function website() {
 
 function breadcrumb(bc, arq) {
   const itens = [{ nome: 'Início', url: `${SITE}/` }];
-  (bc || []).forEach(([nome, u]) => itens.push({ nome, url: `${SITE}/${u}` }));
+  (bc || []).forEach(([nome, u]) => itens.push({ nome, url: urlDe(u) }));
   if (!bc || bc.length === 0) return null;
   return {
     '@type': 'BreadcrumbList',
@@ -622,6 +691,11 @@ function jsonLdDaPagina(arq, meta, html) {
 function limparHead(head) {
   return head
     .replace(/<link[^>]+rel=["']canonical["'][^>]*>/gi, '')
+    // hreflang: sem esta linha cada execucao do script acrescentava mais um par
+    // pt-BR/en no head. A cafeteria.html chegou a ter quatro copias do mesmo
+    // alternate - o Google trata declaracao repetida e conflitante como sinal
+    // quebrado e simplesmente ignora o par de idiomas.
+    .replace(/<link[^>]+rel=["']alternate["'][^>]*>/gi, '')
     .replace(/<meta[^>]+property=["'](?:og|article|profile|fb):[^"']*["'][^>]*>/gi, '')
     .replace(/<meta[^>]+name=["']twitter:[^"']*["'][^>]*>/gi, '')
     .replace(/<meta[^>]+name=["']robots["'][^>]*>/gi, '')
@@ -642,6 +716,14 @@ function blocoSeo(arq, meta, html, indexar) {
   const linhas = [];
 
   linhas.push(`<link rel="canonical" href="${url}">`);
+
+  /* hreflang: so quando existe par PT/EN de verdade. Declarar alternate para
+   * pagina que nao e equivalente e pior que nao declarar nada. */
+  if (meta.hreflang) {
+    Object.entries(meta.hreflang).forEach(([idioma, arquivo]) => {
+      linhas.push(`<link rel="alternate" hreflang="${idioma}" href="${urlDe(arquivo)}">`);
+    });
+  }
   linhas.push(
     indexar
       ? '<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">'
@@ -650,7 +732,7 @@ function blocoSeo(arq, meta, html, indexar) {
 
   linhas.push(`<meta property="og:type" content="${tipoOg}">`);
   linhas.push(`<meta property="og:site_name" content="CafeWorking">`);
-  linhas.push(`<meta property="og:locale" content="pt_BR">`);
+  linhas.push(`<meta property="og:locale" content="${meta.lang === 'en' ? 'en_US' : 'pt_BR'}">`);
   linhas.push(`<meta property="og:title" content="${texto(meta.t)}">`);
   linhas.push(`<meta property="og:description" content="${texto(meta.d)}">`);
   linhas.push(`<meta property="og:url" content="${url}">`);
@@ -692,7 +774,7 @@ function blocoSeo(arq, meta, html, indexar) {
  * ------------------------------------------------------------------ */
 
 const arquivos = fs.readdirSync(RAIZ).filter((f) => f.endsWith('.html'));
-const relatorio = { semMeta: [], alterados: 0, indexaveis: [], links: 0, intocaveis: [] };
+const relatorio = { semMeta: [], alterados: 0, indexaveis: [], links: 0, linksCanonicos: 0, intocaveis: [] };
 
 for (const arq of arquivos) {
   if (ehIntocavel(arq)) {
@@ -722,6 +804,18 @@ for (const arq of arquivos) {
     }
   }
 
+  /* 1b. links internos na forma canonica (sem .html, raiz-relativos).
+   * Link interno tem que apontar para a mesma URL do canonical - senao cada
+   * clique e cada rastreamento do Google passa por um 301 desnecessario. */
+  html = html.replace(
+    /href="(?!https?:|\/\/|#|mailto:|tel:|assets\/)([A-Za-z0-9._-]+)\.html(#[^"]*)?"/g,
+    (m, nome, frag) => {
+      if (ehIntocavel(`${nome}.html`)) return m;
+      relatorio.linksCanonicos++;
+      return `href="${nome === 'index' ? '/' : '/' + nome}${frag || ''}"`;
+    }
+  );
+
   /* 2. head */
   const mHead = html.match(/<head>([\s\S]*?)<\/head>/i);
   if (!mHead) { console.log(`sem <head>: ${arq}`); continue; }
@@ -745,29 +839,18 @@ for (const arq of arquivos) {
   head += blocoSeo(arq, meta, html, !naoIndexar);
   html = html.replace(/<head>[\s\S]*?<\/head>/i, () => `<head>${head}</head>`);
 
-  /* 3. LCP: a primeira imagem do hero nao pode ser lazy.
+  /* idioma da pagina (o bloco em ingles precisa de lang="en") */
+  const lang = meta.lang === 'en' ? 'en' : 'pt-BR';
+  html = html.replace(/<html[^>]*>/i, () => `<html lang="${lang}">`);
+
+  /* 3. Atributos de <img> (loading, fetchpriority, decoding, width/height, alt e
+   * o preload do hero) sao responsabilidade do scripts/imagens.js, que le a
+   * dimensao real de cada arquivo. Antes esse trecho vivia aqui e os dois
+   * scripts se atropelavam - o seo.js rebaixava para lazy o que o imagens.js
+   * tinha marcado como eager e duplicava decoding="async". Rode:
    *
-   * Antes de decidir, desfaz o que uma execucao anterior marcou como eager.
-   * Sem isso, cada rodada promoveria mais uma imagem e a pagina inteira
-   * acabaria carregando tudo de uma vez - o oposto do que se quer. */
-  html = html.replace(
-    /loading="eager" fetchpriority="high" decoding="async"/g,
-    'loading="lazy" decoding="async"'
-  );
-
-  const iLazy = html.indexOf('loading="lazy"');
-  if (iLazy > -1) {
-    const contexto = html.slice(Math.max(0, iLazy - 900), iLazy);
-    if (/hero|featured-post/i.test(contexto)) {
-      const tam = html.startsWith('loading="lazy" decoding="async"', iLazy)
-        ? 'loading="lazy" decoding="async"'.length
-        : 'loading="lazy"'.length;
-      html = html.slice(0, iLazy) + 'loading="eager" fetchpriority="high" decoding="async"' + html.slice(iLazy + tam);
-    }
-  }
-
-  /* 4. demais imagens ganham decoding assincrono */
-  html = html.replace(/loading="lazy"(?! decoding)/g, 'loading="lazy" decoding="async"');
+   *     node scripts/seo.js && node scripts/imagens.js
+   */
 
   if (html !== original) {
     relatorio.alterados++;
@@ -800,6 +883,47 @@ const urls = relatorio.indexaveis
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
 if (!SOMENTE_CHECAR) fs.writeFileSync(path.join(RAIZ, 'sitemap.xml'), sitemap, 'utf8');
+
+/* ------------------------------------------------------------------ *
+ * _redirects = regras fixas + 301 de /pagina.html para /pagina
+ *
+ * A Netlify serve os dois com 200 por padrao. Sem o 301, cada pagina do site
+ * existe em duas URLs - foi o que aconteceu com /cafeteria.
+ * ------------------------------------------------------------------ */
+
+const base = fs.readFileSync(path.join(__dirname, 'redirects-base.txt'), 'utf8').trimEnd();
+const jaNaBase = new Set(
+  base
+    .split('\n')
+    .filter((l) => l.trim() && !l.trim().startsWith('#'))
+    .map((l) => l.trim().split(/\s+/)[0])
+);
+
+/* 404.html e offline.html ficam de fora: o service worker faz cache.addAll
+ * dessas URLs, e a Cache API recusa resposta redirecionada - um 301 aqui
+ * quebraria a instalacao do service worker. */
+const SEM_REDIRECT = new Set(['index.html', '404.html', 'offline.html']);
+
+const trezentosUm = arquivos
+  .filter((arq) => !ehIntocavel(arq) && !SEM_REDIRECT.has(arq))
+  .map((arq) => `/${arq}`)
+  .filter((origem) => !jaNaBase.has(origem))
+  .sort()
+  .map((origem) => `${origem.padEnd(38)} ${origem.replace(/\.html$/, '').padEnd(36)} 301!`);
+
+const redirects = [
+  base,
+  '',
+  '# --- gerado por scripts/seo.js: .html -> URL canonica sem extensao ---',
+  `/index.html${' '.repeat(27)} /${' '.repeat(35)} 301!`,
+  ...trezentosUm,
+  '',
+  '# Qualquer outra URL inexistente devolve 404 (e nao a home)',
+  '/*  /404.html  404',
+  '',
+].join('\n');
+
+if (!SOMENTE_CHECAR) fs.writeFileSync(path.join(RAIZ, '_redirects'), redirects, 'utf8');
 
 /* ------------------------------------------------------------------ *
  * Relatorio

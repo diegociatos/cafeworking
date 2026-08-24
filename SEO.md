@@ -17,12 +17,20 @@ divergir entre as 90+ páginas:
 | `node scripts/gerar-paginas.js` | Monta páginas novas a partir dos fragmentos em `scripts/conteudo/`, reaproveitando o header e o footer do `index.html`. |
 | `powershell -File scripts/gerar-og.ps1` | Gera as imagens Open Graph 1200×630 em `assets/img/og/` a partir das fotos reais. Só precisa rodar se trocar as fotos de origem. |
 | `powershell -File scripts/gerar-icones.ps1` | Gera os favicons e ícones do PWA em `assets/img/icons/`. |
+| `node scripts/imagens.js` | Dono dos atributos das tags `<img>`: `width`/`height` lidos do arquivo (zera o CLS), `loading`/`fetchpriority` conforme o papel da imagem na página, `decoding`, `alt` do logo e o `<link rel="preload">` da imagem do hero. **Idempotente e autoritativo** — reescreve o que estiver errado, inclusive depois de trocar uma foto. |
+| `node scripts/formularios.js` | Padroniza os formulários `lead-form`: `action="obrigado.html"`, campo-isca anti-robô e `type`/`inputmode`/`autocomplete` nos campos (teclado numérico no WhatsApp e preenchimento automático no celular). Idempotente. |
+| `python scripts/otimizar-imagens.py --aplicar` | Converte fotos PNG/JPEG de `assets/img/real/` para WebP e reduz o logo ao tamanho em que ele realmente aparece. Precisa de `pip install pillow`. Roda só quando entram imagens novas. |
 
 **Fluxo para publicar qualquer alteração de conteúdo:**
 
 ```bash
-node scripts/gerar-paginas.js && node scripts/seo.js
+node scripts/gerar-paginas.js && node scripts/seo.js && node scripts/imagens.js
 ```
+
+⚠️ **A ordem importa.** O `imagens.js` roda por último: o `seo.js` reescreve o
+`<head>` inteiro e reposiciona o `preload` do hero, então quem passa depois é
+quem deixa o resultado estável. O `formularios.js` só precisa rodar quando entra
+um formulário novo.
 
 Depois é só commitar e dar push — a Netlify publica sozinha (projeto
 `cafeworking`, conectado ao repositório pelo GitHub App, branch `main`).
@@ -174,15 +182,33 @@ código. Nenhum deles pode ser feito pelo repositório.
 8. **`app.cafeworking.com.br`** — verificar se o app tem `noindex`. Ele não deve
    competir com o site institucional na busca.
 
+### Melhoria técnica — resolvido em 24/08/2026
+
+9. ~~**Overflow horizontal no header**~~ — **corrigido** no bloco `V38` do
+   `style.css`. Eram dois defeitos no mesmo lugar: (a) de 1081px a 1400px, logo +
+   menu + dois botões somavam mais que a largura útil e empurravam a página
+   inteira para o lado; (b) de 981px a 1080px o CSS já escondia o menu e mostrava
+   o hambúrguer, mas a gaveta do menu mobile só existe em `max-width:980px` — o
+   botão não abria nada nessa faixa de 100px. Agora o menu de desktop vai até
+   981px, encolhendo tipografia e botões, e a gaveta assume exatamente em 980px.
+   Conferido em 375, 980, 990, 1100, 1280 e 1366px.
+
+10. ~~**`width`/`height` nas imagens**~~ — **corrigido** pelo `scripts/imagens.js`
+    nas 392 tags `<img>` das 95 páginas, com a dimensão lida do próprio arquivo.
+    Junto foram embora 21 imagens sem `alt`, 246 sem `loading` e 20 tags com
+    `decoding="async"` duplicado (o `seo.js` e o `imagens.js` se atropelavam;
+    o trecho de imagens saiu do `seo.js`).
+
 ### Melhoria técnica pendente
 
-9. **Overflow horizontal no header** — em telas de cerca de 1265px, o bloco
-   `.nav-actions` ultrapassa a largura da tela e cria barra de rolagem lateral.
-   É anterior a este trabalho e afeta todas as páginas. Fica registrado porque
-   experiência ruim de layout entra na avaliação de página do Google.
+11. **Imagens originais órfãs** — `assets/img/real/auditorio/auditorio.png`,
+    `escolar.png` e `estoril/estoril-05.jpg` foram convertidos para WebP e não
+    são mais referenciados por nenhuma página. Continuam no repositório (e vão
+    para a Netlify) até alguém confirmar que podem ser apagados.
 
-10. **`width`/`height` nas imagens** — só as imagens novas receberam. Declarar em
-    todas reduz o CLS (deslocamento de layout).
+12. **Imagens Open Graph** — `assets/img/og/` tem 1,4 MB em JPEG. Não afeta
+    visitante (só robô de rede social lê), mas dá para reduzir com o
+    `otimizar-imagens.py` se um dia incomodar.
 
 ---
 

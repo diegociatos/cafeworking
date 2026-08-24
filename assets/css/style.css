@@ -2617,3 +2617,64 @@ header.nav{
   .nav-actions .btn{padding:0 12px!important;font-size:13px!important}
   .logo img{height:42px!important}
 }
+
+/* V39 - paragrafo de abertura e headline longa */
+/* Bloco de abertura: o paragrafo que responde a busca, logo abaixo do hero.
+   Fica fora do hero de proposito - com 90 palavras la dentro, os botoes de
+   acao caiam abaixo da dobra em tela de notebook. */
+.abertura{padding:52px 0 4px}
+.abertura-texto{
+  font-family:var(--serif);
+  font-size:clamp(19px,1.7vw,23px);
+  line-height:1.62;
+  color:var(--v37-ink,var(--ink));
+  max-width:860px;
+  margin:0;
+}
+@media(max-width:760px){
+  .abertura{padding:36px 0 0}
+  .abertura-texto{font-size:18px;line-height:1.6}
+}
+
+/* Headline de 12 palavras a 82px vira portico, nao titulo: ocupava 5 linhas e
+   empurrava o CTA para fora da tela. So nas paginas marcadas com h1-longo. */
+.h1-longo{
+  font-size:clamp(34px,3.5vw,52px)!important;
+  line-height:1.06!important;
+  letter-spacing:-.03em!important;
+}
+
+/* Chamada em ingles na pagina da cafeteria. O Search Console mostra 93
+   impressoes/mes de busca em ingles, varias em posicao 1 com CTR zero: o Google
+   entrega o site e o visitante nao reconhece o conteudo. Este bloco responde na
+   propria pagina e leva para a versao completa em /coworking-in-belo-horizonte. */
+.bloco-en{padding:44px 0}
+.bloco-en-card{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-left:4px solid var(--green);
+  border-radius:var(--radius,22px);
+  padding:26px 30px;
+  max-width:860px;
+}
+.bloco-en-card p{margin:0 0 18px;font-size:17px;line-height:1.65;color:var(--muted)}
+.bloco-en-card .eyebrow{margin-bottom:12px}
+@media(max-width:760px){.bloco-en-card{padding:22px}}
+
+/* Segundo paragrafo da abertura: e onde ficam os links contextuais para as
+   outras paginas. Fica um degrau abaixo do primeiro, para ler como continuacao
+   e nao como novo bloco. */
+.abertura-continua{
+  margin-top:18px;
+  font-size:clamp(17px,1.45vw,20px);
+  color:var(--muted);
+}
+.abertura a{
+  color:var(--green);
+  font-weight:600;
+  text-decoration:underline;
+  text-underline-offset:3px;
+  text-decoration-thickness:1px;
+  text-decoration-color:rgba(14,75,79,.35);
+}
+.abertura a:hover{text-decoration-color:var(--green)}

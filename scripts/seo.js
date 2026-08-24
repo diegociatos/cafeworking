@@ -691,6 +691,11 @@ function jsonLdDaPagina(arq, meta, html) {
 function limparHead(head) {
   return head
     .replace(/<link[^>]+rel=["']canonical["'][^>]*>/gi, '')
+    // hreflang: sem esta linha cada execucao do script acrescentava mais um par
+    // pt-BR/en no head. A cafeteria.html chegou a ter quatro copias do mesmo
+    // alternate - o Google trata declaracao repetida e conflitante como sinal
+    // quebrado e simplesmente ignora o par de idiomas.
+    .replace(/<link[^>]+rel=["']alternate["'][^>]*>/gi, '')
     .replace(/<meta[^>]+property=["'](?:og|article|profile|fb):[^"']*["'][^>]*>/gi, '')
     .replace(/<meta[^>]+name=["']twitter:[^"']*["'][^>]*>/gi, '')
     .replace(/<meta[^>]+name=["']robots["'][^>]*>/gi, '')

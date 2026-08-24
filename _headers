@@ -1,0 +1,32 @@
+# Cabecalhos HTTP do site CafeWorking (Netlify).
+#
+# Sem este arquivo a Netlify serve tudo com revalidacao a cada visita: o
+# navegador refaz a requisicao de cada imagem mesmo ja tendo o arquivo. Como as
+# imagens do site nao mudam de conteudo (quando muda a foto, muda o arquivo),
+# elas podem ficar em cache longo. CSS e JS ficam com cache curto + revalidacao
+# porque o nome do arquivo nao tem hash - trocar o estilo precisa chegar rapido.
+
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
+
+# HTML: sempre revalida, para publicacao de conteudo aparecer na hora.
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# CSS e JS: 1 hora de cache + revalidacao (nao tem hash no nome).
+/assets/css/*
+  Cache-Control: public, max-age=3600, must-revalidate
+/assets/js/*
+  Cache-Control: public, max-age=3600, must-revalidate
+
+# Imagens e icones: 30 dias, sao imutaveis na pratica.
+/assets/img/*
+  Cache-Control: public, max-age=2592000
+
+# O service worker precisa ser sempre buscado da rede, senao a atualizacao
+# do site fica presa na versao antiga do proprio SW.
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate

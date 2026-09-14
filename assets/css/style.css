@@ -2678,3 +2678,52 @@ header.nav{
   text-decoration-color:rgba(14,75,79,.35);
 }
 .abertura a:hover{text-decoration-color:var(--green)}
+
+/* ---------- Loja: vitrine de planos, contratação e pagamento ---------- */
+/* .form, .fiscal-pricing etc. definem display e venceriam o atributo hidden */
+.loja [hidden],.vitrine [hidden]{display:none!important}
+.fiscal-anual{margin:-12px 0 20px;color:var(--muted);font-size:14px;font-weight:600}
+.fiscal-price-consulta{font-size:40px}
+.vitrine-abas{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 22px}
+.vitrine-abas button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:10px 18px;font-weight:700;cursor:pointer;color:var(--ink)}
+.vitrine-abas button[aria-selected="true"]{background:var(--green);border-color:var(--green);color:#fff}
+.loja{padding-top:56px}
+.loja-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:40px;align-items:start}
+.loja-resumo{position:sticky;top:110px;background:#fff;border:1px solid var(--line);border-radius:28px;padding:30px;box-shadow:0 18px 50px rgba(31,31,28,.06)}
+.loja-resumo .h2{margin:6px 0 4px}
+.loja-unidade{color:var(--muted);margin:0 0 16px}
+.loja-beneficios{list-style:none;margin:0 0 20px;padding:0;color:var(--muted)}
+.loja-beneficios li{padding:8px 0;border-bottom:1px solid rgba(216,209,199,.55)}
+.loja-beneficios li:before{content:"✓";color:var(--green);font-weight:900;margin-right:10px}
+.loja-total{display:grid;gap:2px;background:var(--bg);border-radius:18px;padding:16px 18px}
+.loja-total span{font-size:13px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.loja-total strong{font-family:var(--serif);font-size:40px;line-height:1.1;color:var(--green)}
+.loja-total small{color:var(--muted)}
+.loja-form{gap:16px}
+.loja-opcoes{border:0;margin:0;padding:0;display:grid;gap:10px}
+.loja-opcoes legend{font-weight:800;font-size:14px;margin-bottom:8px}
+.loja-opcoes>div{display:grid;gap:10px}
+.loja-opcao{display:flex!important;align-items:flex-start;gap:12px;border:1px solid var(--line);border-radius:16px;padding:14px 16px;cursor:pointer;font-weight:400!important}
+.loja-opcao input{width:auto!important;margin-top:4px;accent-color:var(--green)}
+.loja-opcao span{display:grid;gap:2px}
+.loja-opcao small{color:var(--muted)}
+.loja-opcao:has(input:checked){border-color:var(--green);box-shadow:0 0 0 3px rgba(14,75,79,.08)}
+.loja-contrato{border:1px solid var(--line);border-radius:16px;padding:12px 16px;background:var(--bg)}
+.loja-contrato summary{cursor:pointer;font-weight:700;color:var(--green)}
+.loja-contrato-texto{white-space:pre-wrap;max-height:320px;overflow:auto;margin-top:12px;font-size:14px;line-height:1.7;color:var(--ink)}
+.loja-aceite{display:flex!important;align-items:flex-start;gap:10px;font-weight:600!important}
+.loja-aceite input{width:auto!important;margin-top:4px;accent-color:var(--green)}
+.loja-turnstile{min-height:65px}
+.loja-erro{margin:0;background:#fbeaea;color:#8a2323;border-radius:14px;padding:12px 14px;font-weight:600}
+.loja-form .btn[disabled]{opacity:.7;cursor:progress}
+.loja-seguro{color:var(--muted);font-size:13px;margin:0}
+.loja-seguro a{color:var(--green);text-decoration:underline}
+.loja-aviso{background:#fff;border:1px solid var(--line);border-radius:28px;padding:30px;display:grid;gap:14px;justify-items:start}
+.loja-aviso p{margin:0;color:var(--muted)}
+.loja-pagamento{max-width:560px}
+.loja-card{background:#fff;border:1px solid var(--line);border-radius:28px;padding:32px;box-shadow:0 18px 50px rgba(31,31,28,.06);display:grid;gap:14px;justify-items:start}
+.loja-card p{margin:0}
+.pg-qrcode{border:1px solid var(--line);border-radius:18px;padding:10px;background:#fff}
+.pg-pix{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;font-family:ui-monospace,Consolas,monospace;font-size:12px;resize:none;background:var(--bg)}
+.pg-status{color:var(--green);font-weight:700}
+@media(max-width:900px){.loja-grid{grid-template-columns:1fr}.loja-resumo{position:static}.loja-total strong{font-size:32px}}

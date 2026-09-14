@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "netlify dev",
     "serve": "python -m http.server 8888",
-    "check": "node scripts/check-links.js"
+    "check": "node scripts/check-links.js",
+    "test": "node --test scripts/cards-plano.test.js scripts/vitrine.test.js",
+    "vitrine": "node scripts/vitrine.js"
   },
   "devDependencies": {
     "netlify-cli": "latest"

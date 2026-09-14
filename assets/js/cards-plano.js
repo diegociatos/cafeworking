@@ -43,13 +43,7 @@
     return '/contratar?plano=' + encodeURIComponent(p.id) + '&unidade=' + encodeURIComponent(p.unidade_id);
   }
 
-  function linkProposta(p, whatsapp) {
-    var texto = 'Olá! Quero uma proposta do plano ' + p.nome + ' do CafeWorking.';
-    return 'https://wa.me/' + (whatsapp || '5531997129789') + '?text=' + encodeURIComponent(texto);
-  }
-
-  function cardPlano(p, opts) {
-    opts = opts || {};
+  function cardPlano(p) {
     var h = '<article class="fiscal-card' + (p.destaque ? ' featured' : '') + '">';
     if (p.destaque) h += '<span>' + escapar(p.destaque) + '</span>';
     h += '<h3>' + escapar(p.nome) + '</h3>';
@@ -66,16 +60,15 @@
     var itens = beneficiosDoPlano(p);
     h += '<ul>' + itens.map(function (b) { return '<li>' + escapar(b) + '</li>'; }).join('') + '</ul>';
 
-    if (p.sobConsulta) {
-      h += '<a class="btn btn-outline" href="' + escapar(linkProposta(p, opts.whatsapp)) + '" target="_blank" rel="noopener">Pedir proposta</a>';
-    } else {
-      h += '<a class="btn btn-primary" href="' + escapar(urlContratar(p)) + '">Quero este plano</a>';
-    }
+    // sob consulta abre o formulário de proposta na mesma página de contratação
+    h += p.sobConsulta
+      ? '<a class="btn btn-outline" href="' + escapar(urlContratar(p)) + '">Pedir proposta</a>'
+      : '<a class="btn btn-primary" href="' + escapar(urlContratar(p)) + '">Quero este plano</a>';
     return h + '</article>';
   }
 
   /** HTML da vitrine de uma categoria. Vazio quando não há plano: a página mantém o que já tem. */
-  function renderVitrine(dados, categoria, opts) {
+  function renderVitrine(dados, categoria) {
     if (!dados || !Array.isArray(dados.planos)) return '';
     var planos = dados.planos.filter(function (p) { return p.categoria === categoria; });
     if (!planos.length) return '';
@@ -87,7 +80,7 @@
 
     var grade = function (u, oculta) {
       var cards = planos.filter(function (p) { return p.unidade_id === u.id; })
-        .map(function (p) { return cardPlano(p, opts); }).join('');
+        .map(function (p) { return cardPlano(p); }).join('');
       return '<div class="fiscal-pricing" data-vitrine-unidade="' + escapar(u.id) + '"' + (oculta ? ' hidden' : '') + '>' + cards + '</div>';
     };
 
@@ -102,6 +95,6 @@
 
   return {
     escapar: escapar, precoBRL: precoBRL, beneficiosDoPlano: beneficiosDoPlano,
-    urlContratar: urlContratar, linkProposta: linkProposta, cardPlano: cardPlano, renderVitrine: renderVitrine,
+    urlContratar: urlContratar, cardPlano: cardPlano, renderVitrine: renderVitrine,
   };
 });

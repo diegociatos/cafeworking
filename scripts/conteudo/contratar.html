@@ -57,6 +57,31 @@
         <button class="btn btn-primary" type="submit" id="loja-pagar">Ir para o pagamento</button>
         <p class="loja-seguro">Pagamento processado pelo Asaas. Seus dados são usados para emitir a cobrança e a nota fiscal.</p>
       </form>
+
+      <form class="form loja-form" id="loja-proposta" hidden novalidate>
+        <p class="loja-seguro">Este plano é montado sob medida. Conte o que você precisa e a equipe envia a proposta.</p>
+        <label>Seu nome
+          <input name="nome" autocomplete="name" required maxlength="120">
+        </label>
+        <div class="form-row">
+          <label>Empresa (opcional)
+            <input name="empresa" autocomplete="organization" maxlength="120">
+          </label>
+          <label>Celular (WhatsApp)
+            <input name="telefone" type="tel" autocomplete="tel" required maxlength="20" placeholder="(31) 90000-0000">
+          </label>
+        </div>
+        <label>E-mail
+          <input name="email" type="email" autocomplete="email" required maxlength="120">
+        </label>
+        <label>O que você precisa (opcional)
+          <textarea name="mensagem" rows="4" maxlength="1500" placeholder="Ex.: sala para 6 pessoas a partir de outubro"></textarea>
+        </label>
+        <div id="cw-turnstile-proposta" class="loja-turnstile"></div>
+        <p class="loja-erro" id="loja-proposta-erro" role="alert" hidden></p>
+        <button class="btn btn-primary" type="submit" id="loja-proposta-enviar">Pedir proposta</button>
+        <p class="loja-seguro">Usamos seus dados só para responder o pedido.</p>
+      </form>
     </div>
   </div>
 </section>

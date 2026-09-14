@@ -35,7 +35,7 @@
     .then(function (dados) {
       if (!dados) return;
       blocos.forEach(function (bloco) {
-        var html = Cards.renderVitrine(dados, bloco.getAttribute('data-vitrine'), { whatsapp: loja.whatsapp });
+        var html = Cards.renderVitrine(dados, bloco.getAttribute('data-vitrine'));
         if (!html) return;
         var atual = bloco.querySelector('.fiscal-pricing:not([hidden])');
         var abaAtual = atual && atual.getAttribute('data-vitrine-unidade');

@@ -115,7 +115,7 @@ const NAO_INDEXAR = new Set([
   'lp-abertura-empresa.html', 'lp-endereco-fiscal.html',
   'lp-salas-privativas.html', 'lp-salas-reuniao.html',
   // loja: telas de contratação e pagamento (dependem do plano escolhido)
-  'contratar.html', 'pagamento.html',
+  'contratar.html', 'pagamento.html', 'reservar-sala.html',
 ]);
 
 const ehAdmin = (arq) => arq.startsWith('admin');
@@ -157,6 +157,11 @@ const PAGINAS = {
   'pagamento.html': {
     t: 'Pagamento | CafeWorking',
     d: 'Acompanhe a confirmação do pagamento do seu plano CafeWorking.',
+    tipo: 'pagina',
+  },
+  'reservar-sala.html': {
+    t: 'Reservar sala de reunião | CafeWorking',
+    d: 'Veja os horários livres das salas de reunião do CafeWorking em Belo Horizonte e reserve por hora, com pagamento por PIX ou cartão.',
     tipo: 'pagina',
   },
 

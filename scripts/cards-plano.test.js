@@ -37,12 +37,13 @@ test('card do plano mensal leva para a contratação com plano e unidade', () =>
   assert.doesNotMatch(html, /wa\.me/);
 });
 
-test('card sob consulta pede proposta e não mostra preço', () => {
-  const html = cardPlano({ ...pro, sobConsulta: true, preco: null, precoAnual: null, destaque: null }, { whatsapp: '5531997129789' });
+test('card sob consulta pede proposta pelo formulário e não mostra preço', () => {
+  const html = cardPlano({ ...pro, sobConsulta: true, preco: null, precoAnual: null, destaque: null });
   assert.match(html, /Sob consulta/);
-  assert.match(html, /Pedir proposta/);
-  assert.match(html, /https:\/\/wa\.me\/5531997129789\?text=/);
-  assert.doesNotMatch(html, /contratar\?/);
+  assert.match(html, />Pedir proposta</);
+  assert.match(html, /href="\/contratar\?plano=pl_pro&amp;unidade=un_lux"/);
+  assert.doesNotMatch(html, /wa\.me/);
+  assert.doesNotMatch(html, /Quero este plano/);
   assert.doesNotMatch(html, /class="fiscal-card featured"/);
 });
 

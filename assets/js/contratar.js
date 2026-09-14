@@ -95,18 +95,22 @@
 
   function desenharPlano() {
     var p = estado.plano;
-    document.title = 'Contratar ' + p.nome + ' · CafeWorking';
+    document.title = (p.sobConsulta ? 'Proposta: ' : 'Contratar ') + p.nome + ' · CafeWorking';
     $('loja-titulo').textContent = p.nome;
     $('loja-unidade').textContent = estado.unidade ? 'Unidade ' + estado.unidade.nome : '';
     $('loja-beneficios').innerHTML = Cards.beneficiosDoPlano(p).map(function (b) {
       return '<li>' + Cards.escapar(b) + '</li>';
     }).join('');
-    desenharPagamento();
+    if (!p.sobConsulta) desenharPagamento();
   }
 
+  var formProposta = $('loja-proposta');
+
+  // O widget vai no formulário visível: compra ou pedido de proposta.
   function renderTurnstile() {
-    if (!window.turnstile || estado.widget !== null || form.hidden) return;
-    estado.widget = window.turnstile.render('#cw-turnstile', {
+    var alvo = !form.hidden ? '#cw-turnstile' : !formProposta.hidden ? '#cw-turnstile-proposta' : null;
+    if (!window.turnstile || estado.widget !== null || !alvo) return;
+    estado.widget = window.turnstile.render(alvo, {
       sitekey: loja.turnstileSiteKey,
       language: 'pt-br',
       callback: function (t) { estado.turnstile = t; },
@@ -125,7 +129,7 @@
     var planoId = params.get('plano');
     var unidadeId = params.get('unidade');
     if (!planoId || !unidadeId) {
-      aviso('<h2 class="h2">Escolha um plano</h2><p>Veja os planos e clique em <b>Quero este plano</b>.</p><a class="btn btn-primary" href="/endereco-fiscal#planos">Ver planos de endereço fiscal</a>');
+      aviso('<h2 class="h2">Escolha um plano</h2><p>Veja os planos e clique em <b>Quero este plano</b>.</p><a class="btn btn-primary" href="/planos">Ver planos</a>');
       return;
     }
 
@@ -135,10 +139,16 @@
         estado.plano = planos.filter(function (p) { return p.id === planoId && p.unidade_id === unidadeId; })[0] || null;
         estado.unidade = ((r.dados && r.dados.unidades) || []).filter(function (u) { return u.id === unidadeId; })[0] || null;
         if (r.status !== 200) throw new Error('catalogo');
-        if (!estado.plano || estado.plano.sobConsulta) {
+        if (estado.plano && estado.plano.sobConsulta) {
+          desenharPlano();
+          formProposta.hidden = false;
+          renderTurnstile();
+          return null;
+        }
+        if (!estado.plano) {
           $('loja-titulo').textContent = 'Plano indisponível';
           aviso('<p>Este plano não está disponível para contratação online agora.</p>' +
-            '<a class="btn btn-primary" href="/endereco-fiscal#planos">Ver planos</a> ' +
+            '<a class="btn btn-primary" href="/planos">Ver planos</a> ' +
             '<a class="btn btn-outline" href="' + whatsapp('Olá! Quero contratar um plano do CafeWorking.') + '" target="_blank" rel="noopener">Falar no WhatsApp</a>');
           return null;
         }
@@ -163,6 +173,53 @@
           '<a class="btn btn-outline" href="' + whatsapp('Olá! Quero contratar um plano do CafeWorking.') + '" target="_blank" rel="noopener">Falar no WhatsApp</a>');
       });
   }
+
+  formProposta.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (estado.enviando || !estado.plano) return;
+    var campoErro = $('loja-proposta-erro');
+    var falha = function (msg, campo) {
+      campoErro.textContent = msg;
+      campoErro.hidden = !msg;
+      if (campo) campo.focus();
+    };
+    var d = {
+      nome: formProposta.nome.value.trim(), empresa: formProposta.empresa.value.trim(),
+      telefone: formProposta.telefone.value.trim(), email: formProposta.email.value.trim(),
+      mensagem: formProposta.mensagem.value.trim(),
+    };
+    if (d.nome.length < 3) return falha('Informe seu nome.', formProposta.nome);
+    if (d.telefone.replace(/\D/g, '').length < 10) return falha('Informe um celular com DDD.', formProposta.telefone);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return falha('Informe um e-mail válido.', formProposta.email);
+    if (!estado.turnstile) return falha('Aguarde a verificação de segurança terminar e tente de novo.');
+    falha('');
+
+    estado.enviando = true;
+    var botao = $('loja-proposta-enviar');
+    botao.disabled = true;
+    botao.textContent = 'Enviando…';
+    fetch(FN + 'lead-site', {
+      method: 'POST',
+      headers: Object.assign({ 'content-type': 'application/json' }, HEADERS),
+      body: JSON.stringify(Object.assign(d, {
+        unidade_id: estado.plano.unidade_id, plano_id: estado.plano.id, pagina: location.pathname, turnstile: estado.turnstile,
+      })),
+    })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (x) { return { ok: r.ok, x: x }; }); })
+      .then(function (r) {
+        if (!r.ok) throw new Error(r.x.error || 'Não foi possível enviar o pedido.');
+        formProposta.hidden = true;
+        aviso('<h2 class="h2">Pedido recebido</h2><p>A equipe do CafeWorking vai entrar em contato em até 1 dia útil, pelo WhatsApp ou pelo e-mail informado.</p>' +
+          '<a class="btn btn-outline" href="/">Voltar ao site</a>');
+      })
+      .catch(function (err) {
+        falha(err && err.message && err.message !== 'Failed to fetch' ? err.message : 'Sem conexão. Confira a internet e tente de novo.');
+        resetTurnstile();
+        estado.enviando = false;
+        botao.disabled = false;
+        botao.textContent = 'Pedir proposta';
+      });
+  });
 
   form.addEventListener('change', function (e) {
     if (!estado.plano) return;

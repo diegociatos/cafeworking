@@ -25,6 +25,26 @@
     try { localStorage.setItem(CHAVE, id); } catch (_) { /* navegador sem storage */ }
   };
 
+  /* ---- medição (analytics.js): lista vista e card clicado, sem dado pessoal ---- */
+  function itensDoBloco(bloco) {
+    var vistos = {};
+    return Array.prototype.map.call(bloco.querySelectorAll('[data-vitrine-unidade]:not([hidden]) a[href*="/contratar?plano="]:not(.fiscal-card-visita)'), function (a, i) {
+      var q = new URLSearchParams(a.getAttribute('href').split('?')[1] || '');
+      var card = a.closest('article');
+      var preco = card && card.querySelector('.fiscal-price');
+      var valor = preco ? Number((preco.firstChild && preco.firstChild.textContent || '').replace(/[^0-9,]/g, '').replace(',', '.')) : undefined;
+      var chave = q.get('plano') + (q.get('sala') || '');
+      if (vistos[chave]) return null;
+      vistos[chave] = 1;
+      return { item_id: q.get('plano'), item_name: card && card.querySelector('h3') ? card.querySelector('h3').textContent.trim() : '', price: valor || undefined, index: i };
+    }).filter(Boolean);
+  }
+  function medirLista(bloco) {
+    if (!window.cwTrack) return;
+    var categoria = bloco.getAttribute('data-vitrine');
+    window.cwTrack('view_item_list', { item_list_id: categoria, item_list_name: categoria, items: itensDoBloco(bloco) });
+  }
+
   function mostrarUnidade(bloco, id) {
     var aba = bloco.querySelector('[data-vitrine-aba="' + id + '"]');
     if (!aba) return false;
@@ -35,6 +55,16 @@
 
   blocos.forEach(function (bloco) {
     bloco.addEventListener('click', function (e) {
+      var card = e.target.closest('a[href*="/contratar?plano="]');
+      if (card && window.cwTrack) {
+        var q = new URLSearchParams(card.getAttribute('href').split('?')[1] || '');
+        var art = card.closest('article');
+        window.cwTrack('select_item', {
+          item_list_id: bloco.getAttribute('data-vitrine'),
+          items: [{ item_id: q.get('plano'), item_name: art && art.querySelector('h3') ? art.querySelector('h3').textContent.trim() : '' }],
+          visita: q.get('visita') === '1',
+        });
+      }
       var aba = e.target.closest('[data-vitrine-aba]');
       if (!aba) return;
       var id = aba.getAttribute('data-vitrine-aba');
@@ -51,12 +81,16 @@
   })
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (dados) {
-      if (!dados) return;
+      if (!dados) { blocos.forEach(medirLista); return; }
       var opts = { principal: loja.unidadePrincipal, escolhida: lerEscolha() };
       blocos.forEach(function (bloco) {
         var html = Cards.renderVitrine(dados, bloco.getAttribute('data-vitrine'), opts);
         if (html) bloco.innerHTML = html;
+        medirLista(bloco);
       });
     })
-    .catch(function () { /* sem conexão com o app: fica o conteúdo publicado */ });
+    .catch(function () {
+      /* sem conexão com o app: fica o conteúdo publicado */
+      blocos.forEach(medirLista);
+    });
 })();

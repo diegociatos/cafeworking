@@ -17,7 +17,8 @@ const RAIZ = path.join(__dirname, '..');
 const SCRIPTS = ['loja-config', 'cards-plano', 'vitrine', 'contratar', 'pagamento', 'agenda-sala', 'reservar-sala'];
 
 const hash = crypto.createHash('sha256');
-for (const nome of SCRIPTS) hash.update(fs.readFileSync(path.join(RAIZ, 'assets/js', `${nome}.js`)));
+// quebras de linha normalizadas: Windows (CRLF) e a Netlify (LF) geram a mesma versão
+for (const nome of SCRIPTS) hash.update(fs.readFileSync(path.join(RAIZ, 'assets/js', `${nome}.js`), 'utf8').replace(/\r\n/g, '\n'));
 const versao = hash.digest('hex').slice(0, 10);
 
 const padrao = new RegExp(`(src="assets/js/(?:${SCRIPTS.join('|')})\\.js)(?:\\?v=[0-9a-f]+)?"`, 'g');

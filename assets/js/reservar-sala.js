@@ -155,15 +155,20 @@
   function trocarUnidade(id) {
     estado.unidadeId = id;
     estado.salaId = '';
+    try { localStorage.setItem('cw_unidade', id); } catch (_) { /* navegador sem storage */ }
+    $('rs-aviso').hidden = true;
+    $('rs-app').hidden = false;
+    $('rs-final').hidden = true;
     return carregarContrato().then(function (ok) {
       if (!ok) {
-        $('rs-app').hidden = true;
-        aviso('<p>A reserva online de salas abre em breve. Enquanto isso, reserve com a gente pelo WhatsApp.</p>' +
-          '<a class="btn btn-primary" href="' + whatsapp('Olá! Quero reservar uma sala de reunião no CafeWorking.') + '" target="_blank" rel="noopener">Reservar pelo WhatsApp</a>');
+        // o seletor continua visível para o visitante trocar de unidade
+        estado.disp = null;
+        $('rs-janela').textContent = '';
+        $('rs-salas').innerHTML = '<div class="loja-aviso"><p>Esta unidade ainda não tem reserva online de salas.' +
+          ($('rs-unidade').options.length > 1 ? ' Escolha outra unidade acima ou' : '') + ' fale com a gente pelo WhatsApp.</p>' +
+          '<a class="btn btn-primary" href="' + whatsapp('Olá! Quero reservar uma sala de reunião no CafeWorking.') + '" target="_blank" rel="noopener">Reservar pelo WhatsApp</a></div>';
         return;
       }
-      $('rs-aviso').hidden = true;
-      $('rs-app').hidden = false;
       return carregarDisponibilidade();
     });
   }
@@ -172,9 +177,16 @@
     getJSON(FN + 'unidades-publicas').then(function (r) {
       var unidades = (r.dados && r.dados.unidades) || [];
       if (!unidades.length) throw new Error('sem unidades');
+      // principal primeiro; as demais por nome
+      unidades = unidades.slice().sort(function (a, b) {
+        return (a.id === loja.unidadePrincipal ? 0 : 1) - (b.id === loja.unidadePrincipal ? 0 : 1) ||
+          Cards.nomeUnidade(a.nome).localeCompare(Cards.nomeUnidade(b.nome), 'pt-BR');
+      });
       var sel = $('rs-unidade');
       sel.innerHTML = unidades.map(function (u) { return '<option value="' + Cards.escapar(u.id) + '">' + Cards.escapar(Cards.nomeUnidade(u.nome)) + '</option>'; }).join('');
-      var pedida = params.get('unidade');
+      var guardada = '';
+      try { guardada = localStorage.getItem('cw_unidade') || ''; } catch (_) { /* navegador sem storage */ }
+      var pedida = params.get('unidade') || guardada;
       if (pedida && unidades.some(function (u) { return u.id === pedida; })) sel.value = pedida;
       $('rs-unidade-rotulo').hidden = unidades.length === 1;
       sel.addEventListener('change', function () { trocarUnidade(sel.value); });

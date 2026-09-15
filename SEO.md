@@ -24,7 +24,7 @@ divergir entre as 90+ páginas:
 **Fluxo para publicar qualquer alteração de conteúdo:**
 
 ```bash
-node scripts/gerar-paginas.js && node scripts/seo.js && node scripts/imagens.js
+node scripts/gerar-paginas.js && node scripts/layout.js && node scripts/seo.js && node scripts/imagens.js && node scripts/versionar-loja.js
 ```
 
 ⚠️ **A ordem importa.** O `imagens.js` roda por último: o `seo.js` reescreve o

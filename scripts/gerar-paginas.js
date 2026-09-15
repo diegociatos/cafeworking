@@ -6,7 +6,8 @@
  * miolo, o que vai dentro de <main>). Este script monta o HTML completo com
  * o mesmo header/footer das demais paginas e grava na raiz.
  *
- * Depois de rodar, rode tambem "node scripts/seo.js" para aplicar
+ * Depois de rodar, rode tambem "node scripts/layout.js" (barra do celular e
+ * scripts comuns por pagina) e "node scripts/seo.js" para aplicar
  * title/description/canonical/JSON-LD nas paginas novas.
  *
  *   node scripts/gerar-paginas.js
@@ -54,4 +55,4 @@ for (const arq of arquivos) {
   n++;
 }
 
-console.log(`\n${n} pagina(s) gerada(s). Rode agora: node scripts/seo.js`);
+console.log(`\n${n} pagina(s) gerada(s). Rode agora: node scripts/layout.js && node scripts/seo.js && node scripts/imagens.js && node scripts/versionar-loja.js`);

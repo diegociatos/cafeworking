@@ -1,132 +1,54 @@
-# Regras fixas de redirecionamento (Netlify).
+# Regras fixas de redirecionamento (Cloudflare Pages).
 # ATENCAO: este arquivo e a FONTE. O _redirects da raiz e gerado por
-# scripts/seo.js = este conteudo + os 301 de /pagina.html -> /pagina.
-# Nao edite o _redirects direto; edite aqui e rode "node scripts/seo.js".
+# scripts/seo.js a partir deste conteudo. Nao edite o _redirects direto;
+# edite aqui e rode "node scripts/seo.js".
 #
-# Regras de SEO seguidas:
-#  - conteudo duplicado em duas URLs = 301 para a URL canonica (nunca 200)
-#  - URL inexistente = 404 de verdade (nunca a home com status 200)
-#  - a barra final (/cafeteria/ -> /cafeteria) a Netlify ja resolve sozinha
+# Formato do Cloudflare Pages: "/origem /destino codigo", so com 301/302.
+# Sem "!" (sintaxe da Netlify) e sem regra de status 404: o Pages ja serve o
+# 404.html para URL inexistente e redireciona /pagina.html para /pagina.
+#
+# Paginas internas (admin, roteiros, checklists, documentacao) nao sao
+# bloqueadas aqui: elas simplesmente nao vao para o ar. A lista fica em
+# scripts/internos.json e e usada pelo passo de build que monta o dist/.
 
-# Area do cliente mora no aplicativo
-/area-do-cliente        https://app.cafeworking.com.br  301!
-/area-do-cliente.html   https://app.cafeworking.com.br  301!
-/area-do-membro         https://app.cafeworking.com.br  301!
-/area-do-membro.html    https://app.cafeworking.com.br  301!
+# Area do cliente, login e cadastro moram no aplicativo
+/area-do-cliente        https://app.cafeworking.com.br  301
+/area-do-cliente.html   https://app.cafeworking.com.br  301
+/area-do-membro         https://app.cafeworking.com.br  301
+/area-do-membro.html    https://app.cafeworking.com.br  301
+/login                  https://app.cafeworking.com.br  301
+/login.html             https://app.cafeworking.com.br  301
+/cadastro               https://app.cafeworking.com.br  301
+/cadastro.html          https://app.cafeworking.com.br  301
+/perfil                 https://app.cafeworking.com.br  301
+/perfil.html            https://app.cafeworking.com.br  301
+/documentos             https://app.cafeworking.com.br  301
+/documentos.html        https://app.cafeworking.com.br  301
+/reservas               https://app.cafeworking.com.br  301
+/reservas.html          https://app.cafeworking.com.br  301
+/solicitacoes           https://app.cafeworking.com.br  301
+/solicitacoes.html      https://app.cafeworking.com.br  301
+/financeiro             https://app.cafeworking.com.br  301
+/financeiro.html        https://app.cafeworking.com.br  301
+
+# Estoril hoje so vende endereco fiscal: a pagina de coworking saiu do site
+/coworking-estoril-bh       /unidade-estoril  301
+/coworking-estoril-bh.html  /unidade-estoril  301
 
 # Caminhos antigos por pasta -> pagina canonica
-/ambientes/salas-privativas       /salas-privativas       301!
-/ambientes/atendimento-privativo  /atendimento-privativo  301!
-/ambientes/sala-compartilhada     /coworking              301!
-/ambientes/salas-de-reuniao       /salas-de-reuniao       301!
-/unidades/luxemburgo              /unidade-luxemburgo     301!
-/unidades/estoril                 /unidade-estoril        301!
+/ambientes/salas-privativas       /salas-privativas       301
+/ambientes/atendimento-privativo  /atendimento-privativo  301
+/ambientes/sala-compartilhada     /coworking              301
+/ambientes/salas-de-reuniao       /salas-de-reuniao       301
+/unidades/luxemburgo              /unidade-luxemburgo     301
+/unidades/estoril                 /unidade-estoril        301
 
 # Links antigos do menu que apontavam para paginas inexistentes
-/sala-compartilhada       /coworking             301!
-/sala-compartilhada.html  /coworking             301!
-/juridico                 /juridico-empresarial  301!
-/juridico.html            /juridico-empresarial  301!
+/sala-compartilhada       /coworking             301
+/sala-compartilhada.html  /coworking             301
+/juridico                 /juridico-empresarial  301
+/juridico.html            /juridico-empresarial  301
 
 # Atalhos em ingles para a pagina em ingles
-/en       /coworking-in-belo-horizonte  301!
-/english  /coworking-in-belo-horizonte  301!
-
-# --- gerado por scripts/seo.js: .html -> URL canonica sem extensao ---
-/index.html                            /                                    301!
-/abertura-de-empresa.html              /abertura-de-empresa                 301!
-/abertura-empresa-online.html          /abertura-empresa-online             301!
-/abrir-cnpj-online.html                /abrir-cnpj-online                   301!
-/abrir-empresa-belo-horizonte.html     /abrir-empresa-belo-horizonte        301!
-/admin-abertura-empresa.html           /admin-abertura-empresa              301!
-/admin-blog.html                       /admin-blog                          301!
-/admin-cardapio.html                   /admin-cardapio                      301!
-/admin-cms.html                        /admin-cms                           301!
-/admin-comunicacao.html                /admin-comunicacao                   301!
-/admin-financeiro.html                 /admin-financeiro                    301!
-/admin-integracoes.html                /admin-integracoes                   301!
-/admin-leads.html                      /admin-leads                         301!
-/admin-reservas.html                   /admin-reservas                      301!
-/admin-solicitacoes.html               /admin-solicitacoes                  301!
-/admin-unidades.html                   /admin-unidades                      301!
-/admin-usuarios.html                   /admin-usuarios                      301!
-/admin.html                            /admin                               301!
-/agendar-visita.html                   /agendar-visita                      301!
-/alugar-sala-reuniao-bh.html           /alugar-sala-reuniao-bh              301!
-/ambientes.html                        /ambientes                           301!
-/analytics-tags.html                   /analytics-tags                      301!
-/artigo-abertura-empresa.html          /artigo-abertura-empresa             301!
-/artigo-contabilidade-consultiva.html  /artigo-contabilidade-consultiva     301!
-/artigo-contratos-seguranca.html       /artigo-contratos-seguranca          301!
-/artigo-coworking-premium-bh.html      /artigo-coworking-premium-bh         301!
-/artigo-endereco-fiscal.html           /artigo-endereco-fiscal              301!
-/artigo-home-office-coworking.html     /artigo-home-office-coworking        301!
-/artigo-networking-empresarial.html    /artigo-networking-empresarial       301!
-/artigo-salas-reuniao.html             /artigo-salas-reuniao                301!
-/atendimento-privativo.html            /atendimento-privativo               301!
-/auditorio.html                        /auditorio                           301!
-/blog.html                             /blog                                301!
-/cadastro.html                         /cadastro                            301!
-/cafeteria.html                        /cafeteria                           301!
-/cardapio.html                         /cardapio                            301!
-/checklist-publicacao.html             /checklist-publicacao                301!
-/contabilidade-digital.html            /contabilidade-digital               301!
-/contabilidade.html                    /contabilidade                       301!
-/contato.html                          /contato                             301!
-/contratar.html                        /contratar                           301!
-/coworking-estoril-bh.html             /coworking-estoril-bh                301!
-/coworking-in-belo-horizonte.html      /coworking-in-belo-horizonte         301!
-/coworking-luxemburgo-bh.html          /coworking-luxemburgo-bh             301!
-/coworking-ou-escritorio.html          /coworking-ou-escritorio             301!
-/coworking-zona-sul-bh.html            /coworking-zona-sul-bh               301!
-/coworking.html                        /coworking                           301!
-/diagnostico.html                      /diagnostico                         301!
-/documentos.html                       /documentos                          301!
-/empresa-endereco-residencial.html     /empresa-endereco-residencial        301!
-/endereco-fiscal-luxemburgo-bh.html    /endereco-fiscal-luxemburgo-bh       301!
-/endereco-fiscal-ou-comercial.html     /endereco-fiscal-ou-comercial        301!
-/endereco-fiscal.html                  /endereco-fiscal                     301!
-/escritorio-virtual-brasil.html        /escritorio-virtual-brasil           301!
-/espaco-eventos-corporativos-bh.html   /espaco-eventos-corporativos-bh      301!
-/faq.html                              /faq                                 301!
-/financeiro.html                       /financeiro                          301!
-/franquias.html                        /franquias                           301!
-/galeria.html                          /galeria                             301!
-/google-business-profile.html          /google-business-profile             301!
-/guia-abrir-empresa-online.html        /guia-abrir-empresa-online           301!
-/guia-fotos-site.html                  /guia-fotos-site                     301!
-/juridico-empresarial.html             /juridico-empresarial                301!
-/login.html                            /login                               301!
-/lp-abertura-empresa.html              /lp-abertura-empresa                 301!
-/lp-endereco-fiscal.html               /lp-endereco-fiscal                  301!
-/lp-salas-privativas.html              /lp-salas-privativas                 301!
-/lp-salas-reuniao.html                 /lp-salas-reuniao                    301!
-/melhores-bairros-escritorio-bh.html   /melhores-bairros-escritorio-bh      301!
-/modelos-mensagens.html                /modelos-mensagens                   301!
-/networking-eventos.html               /networking-eventos                  301!
-/obrigado.html                         /obrigado                            301!
-/pagamento.html                        /pagamento                           301!
-/perfil.html                           /perfil                              301!
-/planos.html                           /planos                              301!
-/privacidade.html                      /privacidade                         301!
-/quanto-custa-coworking-bh.html        /quanto-custa-coworking-bh           301!
-/reservar-sala.html                    /reservar-sala                       301!
-/reservas.html                         /reservas                            301!
-/sala-reuniao-luxemburgo-bh.html       /sala-reuniao-luxemburgo-bh          301!
-/sala-reuniao-profissional.html        /sala-reuniao-profissional           301!
-/salas-de-reuniao.html                 /salas-de-reuniao                    301!
-/salas-privativas.html                 /salas-privativas                    301!
-/servicos.html                         /servicos                            301!
-/sitemap.html                          /sitemap                             301!
-/sobre.html                            /sobre                               301!
-/solicitacoes.html                     /solicitacoes                        301!
-/termos.html                           /termos                              301!
-/trocar-contador-guia.html             /trocar-contador-guia                301!
-/trocar-contador.html                  /trocar-contador                     301!
-/unidade-estoril.html                  /unidade-estoril                     301!
-/unidade-luxemburgo.html               /unidade-luxemburgo                  301!
-/unidades.html                         /unidades                            301!
-/workshops.html                        /workshops                           301!
-
-# Qualquer outra URL inexistente devolve 404 (e nao a home)
-/*  /404.html  404
+/en       /coworking-in-belo-horizonte  301
+/english  /coworking-in-belo-horizonte  301

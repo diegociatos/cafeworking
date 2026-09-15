@@ -14,7 +14,7 @@ const path = require('path');
 const crypto = require('crypto');
 
 const RAIZ = path.join(__dirname, '..');
-const SCRIPTS = ['loja-config', 'cards-plano', 'vitrine', 'contratar', 'pagamento', 'agenda-sala', 'reservar-sala', 'galeria-sala'];
+const SCRIPTS = ['loja-config', 'cards-plano', 'vitrine', 'contratar', 'pagamento', 'agenda-sala', 'reservar-sala', 'galeria-sala', 'analytics', 'lead-form', 'validacao-documento'];
 
 const hash = crypto.createHash('sha256');
 // quebras de linha normalizadas: Windows (CRLF) e a Netlify (LF) geram a mesma versão

@@ -347,10 +347,13 @@ color:#8a6949;
 margin-bottom:20px
 }
 .modelo-card h3{
-font-size:48px;
-line-height:1.05;
+/* 4 colunas estreitas: 48px cortava "Formalização" e "Microempresa" */
+font-size:clamp(26px,2.3vw,40px);
+line-height:1.08;
 margin:0 0 18px;
-max-width:280px
+max-width:280px;
+overflow-wrap:break-word;
+hyphens:auto
 }
 .modelo-card p{
 font-size:18px;
@@ -392,6 +395,7 @@ background:linear-gradient(180deg,#ffffff,#f8f4ed)
 }
 @media(max-width:1200px){
 .empresa-modelos{grid-template-columns:repeat(2,1fr)}
+.modelo-card h3{font-size:clamp(30px,4vw,44px)}
 }
 @media(max-width:700px){
 .empresa-modelos{grid-template-columns:1fr}

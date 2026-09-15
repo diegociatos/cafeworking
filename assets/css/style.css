@@ -2685,6 +2685,8 @@ header.nav{
 .fiscal-anual{margin:-12px 0 20px;color:var(--muted);font-size:14px;font-weight:600}
 .fiscal-price-consulta{font-size:40px}
 .fiscal-card .fiscal-card-visita{margin-top:10px}
+.fiscal-disponiveis{margin:-8px 0 16px;color:var(--muted);font-size:13px;font-weight:700}
+.fiscal-card-ocupada{opacity:.72}.fiscal-card-ocupada .fiscal-price{text-decoration:line-through;text-decoration-thickness:1px}
 .vitrine-abas{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 22px}
 .vitrine-abas button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:10px 18px;font-weight:700;cursor:pointer;color:var(--ink)}
 .vitrine-abas button[aria-selected="true"]{background:var(--green);border-color:var(--green);color:#fff}

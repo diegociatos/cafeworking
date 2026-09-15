@@ -49,8 +49,11 @@
   }
 
   function cardPlano(p) {
-    var h = '<article class="fiscal-card' + (p.destaque ? ' featured' : '') + '">';
-    if (p.destaque) h += '<span>' + escapar(p.destaque) + '</span>';
+    // sala privativa sem sala livre do tamanho: aparece, mas não vende
+    var ocupada = p.categoria === 'sala_privativa' && p.disponiveis === 0;
+    var h = '<article class="fiscal-card' + (p.destaque && !ocupada ? ' featured' : '') + (ocupada ? ' fiscal-card-ocupada' : '') + '">';
+    if (ocupada) h += '<span>Ocupada</span>';
+    else if (p.destaque) h += '<span>' + escapar(p.destaque) + '</span>';
     h += '<h3>' + escapar(p.nome) + '</h3>';
 
     if (p.sobConsulta) {
@@ -64,6 +67,14 @@
 
     var itens = beneficiosDoPlano(p);
     h += '<ul>' + itens.map(function (b) { return '<li>' + escapar(b) + '</li>'; }).join('') + '</ul>';
+
+    if (ocupada) {
+      return h + '<p class="fiscal-disponiveis">Todas alugadas no momento</p>' +
+        '<a class="btn btn-outline" href="' + escapar(urlContratar(p) + '&visita=1') + '">Entrar na fila (agendar visita)</a></article>';
+    }
+    if (p.categoria === 'sala_privativa' && p.disponiveis > 0) {
+      h += '<p class="fiscal-disponiveis">' + (p.disponiveis === 1 ? 'Última sala disponível' : p.disponiveis + ' salas disponíveis') + '</p>';
+    }
 
     // sob consulta abre o formulário de proposta na mesma página de contratação
     h += p.sobConsulta

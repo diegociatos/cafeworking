@@ -95,3 +95,17 @@ test('vitrine com mais de uma unidade mostra abas e só a primeira aberta', () =
   assert.match(html, /data-vitrine-unidade="un_lux" hidden/);
   assert.doesNotMatch(html, /data-vitrine-unidade="un_est" hidden/);
 });
+
+test('sala privativa ocupada não vende: só fila de visita', () => {
+  const sala = { ...pro, id: 'pl_sala4', nome: 'Sala privativa 4 pessoas', categoria: 'sala_privativa', capacidade: 4, precoAnual: null };
+  const ocupada = cardPlano({ ...sala, disponiveis: 0 });
+  assert.match(ocupada, /Ocupada/);
+  assert.doesNotMatch(ocupada, /Quero este plano/);
+  assert.match(ocupada, /visita=1/);
+
+  const livres = cardPlano({ ...sala, disponiveis: 3 });
+  assert.match(livres, /3 salas disponíveis/);
+  assert.match(livres, /Quero este plano/);
+  assert.match(cardPlano({ ...sala, disponiveis: 1 }), /Última sala disponível/);
+  assert.doesNotMatch(cardPlano({ ...sala, disponiveis: null }), /disponíve|Ocupada/);
+});

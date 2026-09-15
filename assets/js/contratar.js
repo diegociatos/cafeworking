@@ -15,7 +15,7 @@
   var estado = {
     plano: null, unidade: null, contrato: null,
     periodicidade: params.get('periodo') === 'anual' ? 'anual' : 'mensal',
-    forma: 'PIX', turnstile: '', widget: null, enviando: false,
+    forma: 'PIX', turno: '', turnstile: '', widget: null, enviando: false,
   };
 
   var form = $('loja-form');
@@ -50,6 +50,18 @@
   }
 
   function recorrente() { return estado.plano.recorrencia === 'mensal'; }
+
+  var TURNOS = { manha: ['Manhã', 'Das 8h ao meio-dia'], tarde: ['Tarde', 'Do meio-dia às 18h'] };
+
+  // Turno e Flex: o cliente escolhe o período fixo na contratação
+  function desenharTurno() {
+    var p = estado.plano;
+    $('loja-turno').hidden = !p.escolhaTurno;
+    if (!p.escolhaTurno) { estado.turno = ''; return; }
+    $('loja-turno-opcoes').innerHTML = Object.keys(TURNOS).map(function (t) {
+      return opcao('turno', t, estado.turno === t, TURNOS[t][0], TURNOS[t][1]);
+    }).join('');
+  }
 
   function desenharPagamento() {
     var p = estado.plano;
@@ -101,7 +113,7 @@
     $('loja-beneficios').innerHTML = Cards.beneficiosDoPlano(p).map(function (b) {
       return '<li>' + Cards.escapar(b) + '</li>';
     }).join('');
-    if (!p.sobConsulta) desenharPagamento();
+    if (!p.sobConsulta) { desenharTurno(); desenharPagamento(); }
   }
 
   var formProposta = $('loja-proposta');
@@ -150,6 +162,13 @@
           }
           formProposta.hidden = false;
           renderTurnstile();
+          return null;
+        }
+        if (estado.plano && estado.plano.disponiveis === 0) {
+          $('loja-titulo').textContent = estado.plano.nome + ': ocupada';
+          aviso('<p>Todas as salas deste tamanho estão alugadas no momento. Agende uma visita e avisamos assim que uma vagar.</p>' +
+            '<a class="btn btn-primary" href="' + Cards.escapar(Cards.urlContratar(estado.plano) + '&visita=1') + '">Agendar visita</a> ' +
+            '<a class="btn btn-outline" href="/planos">Ver outros planos</a>');
           return null;
         }
         if (!estado.plano) {
@@ -231,6 +250,7 @@
 
   form.addEventListener('change', function (e) {
     if (!estado.plano) return;
+    if (e.target.name === 'turno') { estado.turno = e.target.value; }
     if (e.target.name === 'periodicidade') { estado.periodicidade = e.target.value; desenharPagamento(); }
     if (e.target.name === 'forma') { estado.forma = e.target.value; desenharPagamento(); }
   });
@@ -249,6 +269,7 @@
     if (d.nome.length < 3) return erro('Informe o nome completo ou a razão social.'), form.nome.focus();
     if ([11, 14].indexOf(d.documento.length) < 0) return erro('Informe um CPF (11 dígitos) ou CNPJ (14 caracteres).'), form.documento.focus();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return erro('Informe um e-mail válido. É por ele que você recebe o acesso.'), form.email.focus();
+    if (estado.plano.escolhaTurno && !estado.turno) return erro('Escolha o turno: manhã ou tarde.'), $('loja-turno').scrollIntoView({ block: 'center' });
     if (!form.aceite.checked) return erro('Para continuar, aceite o contrato.'), form.aceite.focus();
     if (!estado.turnstile) return erro('Aguarde a verificação de segurança terminar e tente de novo.');
 
@@ -264,6 +285,7 @@
       body: JSON.stringify({
         nome: d.nome, documento: d.documento, email: d.email, telefone: d.telefone,
         unidade_id: estado.plano.unidade_id, plano_id: estado.plano.id,
+        turno: estado.turno || undefined,
         periodicidade: estado.periodicidade === 'avulso' ? undefined : estado.periodicidade,
         forma: estado.periodicidade === 'mensal' ? 'CREDIT_CARD' : estado.forma,
         aceite: { modelo_id: estado.contrato.id, hash: estado.contrato.hash },
@@ -293,6 +315,9 @@
         }
         if (x.codigo === 'EMAIL_EXISTENTE') {
           throw new Error('Este e-mail já tem conta no CafeWorking. Entre em ' + loja.appUrl.replace('https://', '') + ' para contratar pela área do cliente, ou use outro e-mail.');
+        }
+        if (x.codigo === 'SEM_DISPONIBILIDADE') {
+          throw new Error('Esta sala acabou de ser alugada. Agende uma visita e avisamos quando vagar outra.');
         }
         if (x.codigo === 'SEM_CONTRATO') {
           throw new Error('A contratação online deste plano está pausada. Fale com a gente pelo WhatsApp.');

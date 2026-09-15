@@ -114,6 +114,8 @@ const NAO_INDEXAR = new Set([
   'checklist-publicacao.html', 'guia-fotos-site.html', 'modelos-mensagens.html',
   'lp-abertura-empresa.html', 'lp-endereco-fiscal.html',
   'lp-salas-privativas.html', 'lp-salas-reuniao.html',
+  // loja: telas de contratação e pagamento (dependem do plano escolhido)
+  'contratar.html', 'pagamento.html', 'reservar-sala.html',
 ]);
 
 const ehAdmin = (arq) => arq.startsWith('admin');
@@ -144,6 +146,23 @@ const PAGINAS = {
     t: 'Coworking em Belo Horizonte | Salas e Cafeteria | CafeWorking',
     d: 'Coworking premium em Belo Horizonte com salas privativas, salas de reunião, cafeteria, endereço fiscal e contabilidade. Unidades Luxemburgo e Estoril.',
     img: 'og-default.jpg', tipo: 'home',
+  },
+
+  /* ---- loja (fora do índice, ver NAO_INDEXAR) ---- */
+  'contratar.html': {
+    t: 'Contratar plano | CafeWorking',
+    d: 'Contrate seu plano do CafeWorking online: escolha mensal ou anual, aceite o contrato e pague por cartão, PIX ou boleto.',
+    tipo: 'pagina',
+  },
+  'pagamento.html': {
+    t: 'Pagamento | CafeWorking',
+    d: 'Acompanhe a confirmação do pagamento do seu plano CafeWorking.',
+    tipo: 'pagina',
+  },
+  'reservar-sala.html': {
+    t: 'Reservar sala de reunião | CafeWorking',
+    d: 'Veja os horários livres das salas de reunião do CafeWorking em Belo Horizonte e reserve por hora, com pagamento por PIX ou cartão.',
+    tipo: 'pagina',
   },
 
   /* ---- ambientes ---- */

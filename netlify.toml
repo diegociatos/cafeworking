@@ -1,0 +1,12 @@
+# Publicação do site CafeWorking na Netlify.
+#
+# O site é HTML estático servido da raiz. O único passo de build grava nos
+# cards de planos o que está cadastrado no app (scripts/vitrine.js). Se o app
+# não responder, o script não mexe em nada e a publicação segue.
+
+[build]
+  publish = "."
+  command = "node scripts/vitrine.js"
+
+[build.environment]
+  NODE_VERSION = "22"

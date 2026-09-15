@@ -1,0 +1,92 @@
+<section class="section loja">
+  <div class="wrap loja-grid">
+    <aside class="loja-resumo" aria-live="polite">
+      <div class="eyebrow">Contratação online</div>
+      <h1 class="h2" id="loja-titulo">Carregando o plano…</h1>
+      <p class="loja-unidade" id="loja-unidade"></p>
+      <ul class="loja-beneficios" id="loja-beneficios"></ul>
+      <div class="loja-total" id="loja-total" hidden>
+        <span id="loja-total-rotulo">Total</span>
+        <strong id="loja-total-valor"></strong>
+        <small id="loja-total-detalhe"></small>
+      </div>
+    </aside>
+
+    <div>
+      <div class="loja-aviso" id="loja-aviso" role="status" hidden></div>
+
+      <form class="form loja-form" id="loja-form" hidden novalidate>
+        <fieldset class="loja-opcoes" id="loja-periodo" hidden>
+          <legend>Como você quer pagar</legend>
+          <div id="loja-periodo-opcoes"></div>
+        </fieldset>
+
+        <fieldset class="loja-opcoes" id="loja-formas" hidden>
+          <legend>Forma de pagamento</legend>
+          <div id="loja-formas-opcoes"></div>
+        </fieldset>
+
+        <label>Nome completo ou razão social
+          <input name="nome" autocomplete="name" required maxlength="120">
+        </label>
+        <div class="form-row">
+          <label>CPF ou CNPJ
+            <input name="documento" inputmode="text" autocomplete="off" required maxlength="18" placeholder="Só números">
+          </label>
+          <label>Celular (WhatsApp)
+            <input name="telefone" type="tel" autocomplete="tel" maxlength="20" placeholder="(31) 90000-0000">
+          </label>
+        </div>
+        <label>E-mail
+          <input name="email" type="email" autocomplete="email" required maxlength="120" placeholder="Enviamos o acesso para este e-mail">
+        </label>
+
+        <details class="loja-contrato" id="loja-contrato">
+          <summary id="loja-contrato-titulo">Ler o contrato</summary>
+          <div class="loja-contrato-texto" id="loja-contrato-texto" tabindex="0"></div>
+        </details>
+        <label class="loja-aceite">
+          <input type="checkbox" name="aceite" required>
+          <span id="loja-aceite-texto">Li e aceito o contrato.</span>
+        </label>
+
+        <div id="cw-turnstile" class="loja-turnstile"></div>
+
+        <p class="loja-erro" id="loja-erro" role="alert" hidden></p>
+
+        <button class="btn btn-primary" type="submit" id="loja-pagar">Ir para o pagamento</button>
+        <p class="loja-seguro">Pagamento processado pelo Asaas. Seus dados são usados para emitir a cobrança e a nota fiscal.</p>
+      </form>
+
+      <form class="form loja-form" id="loja-proposta" hidden novalidate>
+        <p class="loja-seguro">Este plano é montado sob medida. Conte o que você precisa e a equipe envia a proposta.</p>
+        <label>Seu nome
+          <input name="nome" autocomplete="name" required maxlength="120">
+        </label>
+        <div class="form-row">
+          <label>Empresa (opcional)
+            <input name="empresa" autocomplete="organization" maxlength="120">
+          </label>
+          <label>Celular (WhatsApp)
+            <input name="telefone" type="tel" autocomplete="tel" required maxlength="20" placeholder="(31) 90000-0000">
+          </label>
+        </div>
+        <label>E-mail
+          <input name="email" type="email" autocomplete="email" required maxlength="120">
+        </label>
+        <label>O que você precisa (opcional)
+          <textarea name="mensagem" rows="4" maxlength="1500" placeholder="Ex.: sala para 6 pessoas a partir de outubro"></textarea>
+        </label>
+        <div id="cw-turnstile-proposta" class="loja-turnstile"></div>
+        <p class="loja-erro" id="loja-proposta-erro" role="alert" hidden></p>
+        <button class="btn btn-primary" type="submit" id="loja-proposta-enviar">Pedir proposta</button>
+        <p class="loja-seguro">Usamos seus dados só para responder o pedido.</p>
+      </form>
+    </div>
+  </div>
+</section>
+<noscript><section class="section"><div class="wrap"><p>Para contratar online, ative o JavaScript do navegador ou <a href="https://wa.me/5531997129789">fale com a gente pelo WhatsApp</a>.</p></div></section></noscript>
+<script defer src="assets/js/loja-config.js"></script>
+<script defer src="assets/js/cards-plano.js"></script>
+<script defer src="assets/js/contratar.js"></script>
+<script async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=cwTurnstilePronto"></script>

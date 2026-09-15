@@ -39,6 +39,11 @@
     return lista;
   }
 
+  /** "CafeWorkingLuxemburgo" → "Luxemburgo" (o nome no app repete a marca). */
+  function nomeUnidade(nome) {
+    return String(nome || '').replace(/^\s*cafe\s*working\s*/i, '').trim() || String(nome || '');
+  }
+
   function urlContratar(p) {
     return '/contratar?plano=' + encodeURIComponent(p.id) + '&unidade=' + encodeURIComponent(p.unidade_id);
   }
@@ -88,13 +93,13 @@
 
     var abas = '<div class="vitrine-abas" role="tablist" aria-label="Escolha a unidade">' +
       unidades.map(function (u, i) {
-        return '<button type="button" role="tab" data-vitrine-aba="' + escapar(u.id) + '" aria-selected="' + (i === 0) + '">' + escapar(u.nome) + '</button>';
+        return '<button type="button" role="tab" data-vitrine-aba="' + escapar(u.id) + '" aria-selected="' + (i === 0) + '">' + escapar(nomeUnidade(u.nome)) + '</button>';
       }).join('') + '</div>';
     return abas + unidades.map(function (u, i) { return grade(u, i > 0); }).join('');
   }
 
   return {
-    escapar: escapar, precoBRL: precoBRL, beneficiosDoPlano: beneficiosDoPlano,
+    escapar: escapar, precoBRL: precoBRL, beneficiosDoPlano: beneficiosDoPlano, nomeUnidade: nomeUnidade,
     urlContratar: urlContratar, cardPlano: cardPlano, renderVitrine: renderVitrine,
   };
 });

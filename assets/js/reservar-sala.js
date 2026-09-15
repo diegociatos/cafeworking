@@ -173,7 +173,7 @@
       var unidades = (r.dados && r.dados.unidades) || [];
       if (!unidades.length) throw new Error('sem unidades');
       var sel = $('rs-unidade');
-      sel.innerHTML = unidades.map(function (u) { return '<option value="' + Cards.escapar(u.id) + '">' + Cards.escapar(u.nome) + '</option>'; }).join('');
+      sel.innerHTML = unidades.map(function (u) { return '<option value="' + Cards.escapar(u.id) + '">' + Cards.escapar(Cards.nomeUnidade(u.nome)) + '</option>'; }).join('');
       var pedida = params.get('unidade');
       if (pedida && unidades.some(function (u) { return u.id === pedida; })) sel.value = pedida;
       $('rs-unidade-rotulo').hidden = unidades.length === 1;

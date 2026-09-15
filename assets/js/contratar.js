@@ -97,7 +97,7 @@
     var p = estado.plano;
     document.title = (p.sobConsulta ? 'Proposta: ' : 'Contratar ') + p.nome + ' · CafeWorking';
     $('loja-titulo').textContent = p.nome;
-    $('loja-unidade').textContent = estado.unidade ? 'Unidade ' + estado.unidade.nome : '';
+    $('loja-unidade').textContent = estado.unidade ? 'Unidade ' + Cards.nomeUnidade(estado.unidade.nome) : '';
     $('loja-beneficios').innerHTML = Cards.beneficiosDoPlano(p).map(function (b) {
       return '<li>' + Cards.escapar(b) + '</li>';
     }).join('');

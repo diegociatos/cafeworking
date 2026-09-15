@@ -14,6 +14,14 @@ test('escapar não deixa texto do app virar HTML', () => {
   assert.equal(escapar(null), '');
 });
 
+test('nome da unidade sem a marca repetida', () => {
+  const { nomeUnidade } = require('../assets/js/cards-plano.js');
+  assert.equal(nomeUnidade('CafeWorkingLuxemburgo'), 'Luxemburgo');
+  assert.equal(nomeUnidade('CafeWorking Estoril'), 'Estoril');
+  assert.equal(nomeUnidade('Estoril'), 'Estoril');
+  assert.equal(nomeUnidade('CafeWorking'), 'CafeWorking');
+});
+
 test('preço em reais sem centavos quando inteiro', () => {
   assert.equal(precoBRL(149), 'R$ 149');
   assert.equal(precoBRL(1609.2), 'R$ 1.609,20');

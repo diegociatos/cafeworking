@@ -6,7 +6,7 @@
 
 [build]
   publish = "."
-  command = "node scripts/vitrine.js"
+  command = "node scripts/versionar-loja.js && node scripts/vitrine.js"
 
 [build.environment]
   NODE_VERSION = "22"

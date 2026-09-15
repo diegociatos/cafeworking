@@ -25,7 +25,7 @@ const MARCADOR = /(<!-- vitrine:([a-z_]+) -->)([\s\S]*?)(<!-- \/vitrine -->)/g;
 function aplicarVitrine(html, catalogo) {
   let trocados = 0;
   const novo = html.replace(MARCADOR, (bloco, abre, categoria, miolo, fecha) => {
-    const cards = renderVitrine(catalogo, categoria);
+    const cards = renderVitrine(catalogo, categoria, { principal: loja.unidadePrincipal });
     if (!cards) return bloco;
     trocados++;
     return `${abre}\n${cards}\n${fecha}`;

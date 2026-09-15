@@ -17,6 +17,8 @@
       ? '1x00000000000000000000AA'
       : '0x4AAAAAAE0Ouo1U5AMh92-D',
     appUrl: 'https://app.cafeworking.com.br',
+    // unidade que abre primeiro nas vitrines quando o visitante ainda não escolheu
+    unidadePrincipal: 'un_cafeworkingluxembu_e78be3',
     whatsapp: '5531997129789',
   };
   if (typeof module === 'object' && module.exports) module.exports = cfg;

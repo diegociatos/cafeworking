@@ -45,6 +45,13 @@ test('card do plano mensal leva para a contratação com plano e unidade', () =>
   assert.doesNotMatch(html, /wa\.me/);
 });
 
+test('sala privativa oferece contratar e agendar visita', () => {
+  const html = cardPlano({ ...pro, id: 'pl_sp4', categoria: 'sala_privativa', destaque: null });
+  assert.match(html, />Quero este plano</);
+  assert.match(html, /href="\/contratar\?plano=pl_sp4&amp;unidade=un_lux&amp;visita=1"[^>]*>Agendar visita</);
+  assert.doesNotMatch(cardPlano(pro), /Agendar visita/);
+});
+
 test('card sob consulta pede proposta pelo formulário e não mostra preço', () => {
   const html = cardPlano({ ...pro, sobConsulta: true, preco: null, precoAnual: null, destaque: null });
   assert.match(html, /Sob consulta/);
@@ -61,6 +68,21 @@ test('vitrine: só a categoria pedida; vazio quando não há plano (a página ma
   assert.equal((html.match(/<article/g) || []).length, 1);
   assert.equal(renderVitrine(dados, 'sala_privativa'), '');
   assert.equal(renderVitrine(null, 'endereco_fiscal'), '');
+});
+
+test('vitrine abre na unidade escolhida; sem escolha, na principal', () => {
+  const dados = {
+    unidades: [{ id: 'un_est', nome: 'CafeWorkingEstoril' }, { id: 'un_lux', nome: 'CafeWorkingLuxemburgo' }],
+    planos: [pro, { ...pro, id: 'pl_est', unidade_id: 'un_est' }],
+  };
+  const principal = renderVitrine(dados, 'endereco_fiscal', { principal: 'un_lux' });
+  assert.match(principal, /^<div class="vitrine-abas"[^>]*><button[^>]*data-vitrine-aba="un_lux"[^>]*aria-selected="true">Luxemburgo</);
+  assert.match(principal, /data-vitrine-unidade="un_est" hidden/);
+  const escolhida = renderVitrine(dados, 'endereco_fiscal', { principal: 'un_lux', escolhida: 'un_est' });
+  assert.match(escolhida, /data-vitrine-aba="un_est"[^>]*aria-selected="true"/);
+  assert.match(escolhida, /data-vitrine-unidade="un_lux" hidden/);
+  const invalida = renderVitrine(dados, 'endereco_fiscal', { principal: 'un_lux', escolhida: 'un_xyz' });
+  assert.match(invalida, /data-vitrine-aba="un_lux"[^>]*aria-selected="true"/);
 });
 
 test('vitrine com mais de uma unidade mostra abas e só a primeira aberta', () => {

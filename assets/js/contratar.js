@@ -139,8 +139,15 @@
         estado.plano = planos.filter(function (p) { return p.id === planoId && p.unidade_id === unidadeId; })[0] || null;
         estado.unidade = ((r.dados && r.dados.unidades) || []).filter(function (u) { return u.id === unidadeId; })[0] || null;
         if (r.status !== 200) throw new Error('catalogo');
-        if (estado.plano && estado.plano.sobConsulta) {
+        var visita = params.get('visita') === '1';
+        if (estado.plano && (estado.plano.sobConsulta || visita)) {
           desenharPlano();
+          if (visita) {
+            document.title = 'Agendar visita: ' + estado.plano.nome + ' · CafeWorking';
+            formProposta.querySelector('.loja-seguro').textContent = 'Conte quando prefere visitar e quantas pessoas vão usar a sala. A equipe confirma o horário com você.';
+            formProposta.mensagem.placeholder = 'Ex.: visita na quinta à tarde, equipe de 3 pessoas';
+            $('loja-proposta-enviar').textContent = 'Agendar visita';
+          }
           formProposta.hidden = false;
           renderTurnstile();
           return null;
@@ -202,7 +209,8 @@
       method: 'POST',
       headers: Object.assign({ 'content-type': 'application/json' }, HEADERS),
       body: JSON.stringify(Object.assign(d, {
-        unidade_id: estado.plano.unidade_id, plano_id: estado.plano.id, pagina: location.pathname, turnstile: estado.turnstile,
+        unidade_id: estado.plano.unidade_id, plano_id: estado.plano.id, turnstile: estado.turnstile,
+        pagina: location.pathname + (params.get('visita') === '1' ? ' (pedido de visita)' : ''),
       })),
     })
       .then(function (r) { return r.json().catch(function () { return {}; }).then(function (x) { return { ok: r.ok, x: x }; }); })
@@ -217,7 +225,7 @@
         resetTurnstile();
         estado.enviando = false;
         botao.disabled = false;
-        botao.textContent = 'Pedir proposta';
+        botao.textContent = params.get('visita') === '1' ? 'Agendar visita' : 'Pedir proposta';
       });
   });
 

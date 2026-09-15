@@ -69,11 +69,20 @@
     h += p.sobConsulta
       ? '<a class="btn btn-outline" href="' + escapar(urlContratar(p)) + '">Pedir proposta</a>'
       : '<a class="btn btn-primary" href="' + escapar(urlContratar(p)) + '">Quero este plano</a>';
+    // sala privativa: também dá para conhecer antes de fechar
+    if (p.categoria === 'sala_privativa' && !p.sobConsulta) {
+      h += '<a class="btn btn-outline fiscal-card-visita" href="' + escapar(urlContratar(p) + '&visita=1') + '">Agendar visita</a>';
+    }
     return h + '</article>';
   }
 
   /** HTML da vitrine de uma categoria. Vazio quando não há plano: a página mantém o que já tem. */
-  function renderVitrine(dados, categoria) {
+  /**
+   * opts.escolhida: unidade que o visitante escolheu (abre nela, se tiver planos);
+   * opts.principal: unidade padrão (Luxemburgo). As demais seguem por nome.
+   */
+  function renderVitrine(dados, categoria, opts) {
+    opts = opts || {};
     if (!dados || !Array.isArray(dados.planos)) return '';
     var planos = dados.planos.filter(function (p) { return p.categoria === categoria; });
     if (!planos.length) return '';
@@ -82,6 +91,10 @@
       return planos.some(function (p) { return p.unidade_id === u.id; });
     });
     if (!unidades.length) unidades = [{ id: planos[0].unidade_id, nome: '' }];
+    var peso = function (u) { return u.id === opts.escolhida ? 0 : u.id === opts.principal ? 1 : 2; };
+    unidades = unidades.slice().sort(function (a, b) {
+      return peso(a) - peso(b) || nomeUnidade(a.nome).localeCompare(nomeUnidade(b.nome), 'pt-BR');
+    });
 
     var grade = function (u, oculta) {
       var cards = planos.filter(function (p) { return p.unidade_id === u.id; })

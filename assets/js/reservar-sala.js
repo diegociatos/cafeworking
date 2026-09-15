@@ -7,6 +7,7 @@
   var loja = window.CW_LOJA;
   var Cards = window.CWCards;
   var Agenda = window.CWAgenda;
+  var Documento = window.CWDocumento;
   var $ = function (id) { return document.getElementById(id); };
   var FN = loja.supabaseUrl + '/functions/v1/';
   var HEADERS = { apikey: loja.anonKey, authorization: 'Bearer ' + loja.anonKey };
@@ -152,14 +153,25 @@
     });
   }
 
-  function trocarUnidade(id) {
+  // automatico: a unidade veio do link ou do navegador, não de uma escolha feita agora no seletor
+  function trocarUnidade(id, automatico) {
     estado.unidadeId = id;
     estado.salaId = '';
-    try { localStorage.setItem('cw_unidade', id); } catch (_) { /* navegador sem storage */ }
     $('rs-aviso').hidden = true;
     $('rs-app').hidden = false;
     $('rs-final').hidden = true;
+    var principal = loja.unidadePrincipal;
+    var temPrincipal = Array.prototype.some.call($('rs-unidade').options, function (o) { return o.value === principal; });
+    // unidade guardada sem reserva por hora (ex.: quem veio do endereço fiscal no Estoril): abre na principal
+    var irParaPrincipal = function () {
+      if (!automatico || id === principal || !temPrincipal) return false;
+      $('rs-unidade').value = principal;
+      trocarUnidade(principal, false);
+      return true;
+    };
     return carregarContrato().then(function (ok) {
+      if (!ok && irParaPrincipal()) return;
+      if (ok || !automatico) { try { localStorage.setItem('cw_unidade', id); } catch (_) { /* navegador sem storage */ } }
       if (!ok) {
         // o seletor continua visível para o visitante trocar de unidade
         estado.disp = null;
@@ -169,7 +181,9 @@
           '<a class="btn btn-primary" href="' + whatsapp('Olá! Quero reservar uma sala de reunião no CafeWorking.') + '" target="_blank" rel="noopener">Reservar pelo WhatsApp</a></div>';
         return;
       }
-      return carregarDisponibilidade();
+      return carregarDisponibilidade().then(function () {
+        if (estado.disp && !estado.disp.salas.length) irParaPrincipal();
+      });
     });
   }
 
@@ -189,7 +203,7 @@
       var pedida = params.get('unidade') || guardada;
       if (pedida && unidades.some(function (u) { return u.id === pedida; })) sel.value = pedida;
       $('rs-unidade-rotulo').hidden = unidades.length === 1;
-      sel.addEventListener('change', function () { trocarUnidade(sel.value); });
+      sel.addEventListener('change', function () { trocarUnidade(sel.value, false); });
 
       var janelaPadrao = { diasSemana: [1, 2, 3, 4, 5], abre: '08:00', fecha: '18:00', antecedenciaMinMinutos: 60, maxHoras: 10 };
       var campoData = $('rs-data');
@@ -204,7 +218,7 @@
         estado.data = campoData.value;
         carregarDisponibilidade();
       });
-      return trocarUnidade(sel.value);
+      return trocarUnidade(sel.value, true);
     }).catch(function () {
       aviso('<p>Não conseguimos carregar a agenda agora.</p><button class="btn btn-primary" type="button" onclick="location.reload()">Tentar de novo</button> ' +
         '<a class="btn btn-outline" href="' + whatsapp('Olá! Quero reservar uma sala de reunião no CafeWorking.') + '" target="_blank" rel="noopener">Reservar pelo WhatsApp</a>');
@@ -229,11 +243,13 @@
     if (estado.enviando || !s || estado.inicio === null || !estado.contrato) return;
     erro('');
     var d = {
-      nome: form.nome.value.trim(), documento: form.documento.value.replace(/[^0-9A-Za-z]/g, ''),
+      nome: form.nome.value.trim(),
+      documento: Documento ? Documento.normalizar(form.documento.value) : form.documento.value.replace(/[^0-9A-Za-z]/g, ''),
       email: form.email.value.trim(), telefone: form.telefone.value.trim(),
     };
     if (d.nome.length < 3) return erro('Informe o nome completo ou a razão social.'), form.nome.focus();
-    if ([11, 14].indexOf(d.documento.length) < 0) return erro('Informe um CPF (11 dígitos) ou CNPJ (14 caracteres).'), form.documento.focus();
+    var doc = Documento ? Documento.validarDocumento(d.documento) : { ok: [11, 14].indexOf(d.documento.length) >= 0, erro: 'Informe um CPF (11 dígitos) ou CNPJ (14 caracteres).' };
+    if (!doc.ok) return erro(doc.erro), form.documento.focus();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return erro('Informe um e-mail válido.'), form.email.focus();
     if (!form.aceite.checked) return erro('Para continuar, aceite o termo de reserva.'), form.aceite.focus();
     if (!estado.turnstile) return erro('Aguarde a verificação de segurança terminar e tente de novo.');
@@ -295,6 +311,13 @@
         botao.textContent = 'Reservar e pagar';
       });
   });
+
+  if (Documento && form.documento) {
+    form.documento.addEventListener('input', function () {
+      var mascarado = Documento.mascararDocumento(form.documento.value);
+      if (mascarado !== form.documento.value) form.documento.value = mascarado;
+    });
+  }
 
   iniciar();
 })();

@@ -63,7 +63,57 @@
     }
   }
 
+  /** Mede a compra uma vez por token, mesmo que a página seja recarregada. */
+  function medirConfirmacao() {
+    if (!window.cwTrack) return;
+    var chave = 'cw_medido_' + token;
+    try { if (localStorage.getItem(chave)) return; localStorage.setItem(chave, '1'); } catch (_) { /* sem storage: mede nesta visita */ }
+    var valor = compra && Number(compra.valor) || undefined;
+    if (ehReserva) {
+      window.cwTrack('reserve_room', { transaction_id: token, value: valor, currency: 'BRL', item_name: compra ? compra.plano : undefined, item_category: 'sala_hora' });
+      return;
+    }
+    window.cwTrack('purchase', {
+      transaction_id: token, value: valor, currency: 'BRL',
+      item_name: compra ? compra.plano : undefined, item_category: compra ? compra.categoria : undefined,
+      items: compra ? [{ item_id: compra.plano_id, item_name: compra.plano, item_category: compra.categoria, price: valor, quantity: 1 }] : undefined,
+    });
+  }
+
+  var LINK_SENHA = function (email) {
+    return 'Crie sua senha pelo link que enviamos para <b>' + Cards.escapar(email) + '</b> (confira também o spam).';
+  };
+
+  /** Próximos passos por categoria do plano. Sem categoria conhecida, devolve vazio. */
+  function proximosPassos(categoria, email) {
+    var passos = {
+      endereco_fiscal: [
+        LINK_SENHA(email),
+        'Em até 30 dias, envie pela área do cliente os documentos da empresa ou, se ela ainda vai ser aberta, os documentos dos futuros sócios.',
+        'A equipe confere os documentos em até 5 dias úteis e libera o que você precisa para registrar o endereço.',
+      ],
+      abertura_empresa: [
+        'A equipe entra em contato em até 1 dia útil, pelo e-mail ou telefone informados, para coletar as informações e os documentos.',
+        'As taxas oficiais dos órgãos públicos são pagas à parte e informadas antes de cada etapa.',
+        LINK_SENHA(email) + ' Pela área do cliente você acompanha o andamento.',
+      ],
+      coworking: [
+        'Use o espaço de segunda a sexta, das 8h às 18h, exceto feriados, na Rua Guaicuí, 715, Luxemburgo.',
+        'Na chegada, apresente-se na recepção com o e-mail usado na compra.',
+        LINK_SENHA(email),
+      ],
+      sala_privativa: [
+        'A equipe confirma a entrega da sua sala em até 5 dias úteis, com o termo de entrega.',
+        LINK_SENHA(email) + ' Pela área do cliente você cadastra quem vai usar a sala.',
+        'O uso é de segunda a sexta, das 8h às 18h, exceto feriados, na Rua Guaicuí, 715, Luxemburgo.',
+      ],
+    }[categoria];
+    if (!passos) return '';
+    return '<p><b>Próximos passos</b></p><ol class="pg-passos">' + passos.map(function (p) { return '<li>' + p + '</li>'; }).join('') + '</ol>';
+  }
+
   function confirmado() {
+    medirConfirmacao();
     if (ehReserva) {
       $('pg-titulo').textContent = 'Reserva confirmada';
       $('pg-resumo').textContent = compra ? compra.plano : '';
@@ -77,10 +127,13 @@
     }
     $('pg-titulo').textContent = 'Pagamento confirmado';
     $('pg-resumo').textContent = compra ? compra.plano + ' ativo.' : 'Seu plano está ativo.';
-    $('pg-acao').innerHTML =
-      '<p>Enviamos para <b>' + Cards.escapar(compra && compra.email ? compra.email : 'o seu e-mail') + '</b> o link para criar sua senha e entrar na área do cliente.</p>' +
-      '<p>Não chegou em alguns minutos? Confira a caixa de spam.</p>' +
-      botao(loja.appUrl, 'Ir para a área do cliente');
+    var email = compra && compra.email ? compra.email : 'o seu e-mail';
+    var passos = proximosPassos(compra && compra.categoria, email);
+    $('pg-acao').innerHTML = passos
+      ? passos + botao(loja.appUrl, 'Ir para a área do cliente')
+      : '<p>Enviamos para <b>' + Cards.escapar(email) + '</b> o link para criar sua senha e entrar na área do cliente.</p>' +
+        '<p>Não chegou em alguns minutos? Confira a caixa de spam.</p>' +
+        botao(loja.appUrl, 'Ir para a área do cliente');
     $('pg-status').textContent = '';
     try { sessionStorage.removeItem(CHAVE); } catch (_) { /* ignore */ }
   }

@@ -7,7 +7,7 @@
     "dev": "netlify dev",
     "serve": "python -m http.server 8888",
     "check": "node scripts/check-links.js",
-    "test": "node --test scripts/cards-plano.test.js scripts/vitrine.test.js scripts/agenda-sala.test.js",
+    "test": "node --test scripts/cards-plano.test.js scripts/vitrine.test.js scripts/agenda-sala.test.js scripts/validacao-documento.test.js",
     "vitrine": "node scripts/vitrine.js"
   },
   "devDependencies": {

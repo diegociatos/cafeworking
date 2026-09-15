@@ -6,7 +6,10 @@
 (function () {
   var loja = window.CW_LOJA;
   var Cards = window.CWCards;
+  var Documento = window.CWDocumento;
   var $ = function (id) { return document.getElementById(id); };
+  var track = function (evento, dados) { if (window.cwTrack) window.cwTrack(evento, dados); };
+  var TEMPO_TURNSTILE = 12000;
   var FN = loja.supabaseUrl + '/functions/v1/';
   var HEADERS = { apikey: loja.anonKey, authorization: 'Bearer ' + loja.anonKey };
   var FORMAS = { PIX: 'PIX', BOLETO: 'Boleto', CREDIT_CARD: 'Cartão de crédito' };
@@ -96,6 +99,25 @@
       : estado.periodicidade === 'anual' ? 'Renova sozinho a cada 12 meses. Avisamos antes.' : 'Pagamento único.';
     $('loja-pagar').textContent = estado.periodicidade === 'mensal' || estado.forma === 'CREDIT_CARD'
       ? 'Ir para o pagamento no cartão' : 'Gerar ' + FORMAS[estado.forma];
+
+    // fidelidade e multa perto do total (cláusula 7.4 dos contratos: 20% das mensalidades que faltarem)
+    var fidelidade = $('loja-fidelidade');
+    if (fidelidade) {
+      var meses = Number(p.prazoMinimoMeses) || 0;
+      var mostrar = estado.periodicidade === 'mensal' && meses > 0;
+      fidelidade.hidden = !mostrar;
+      fidelidade.textContent = mostrar
+        ? 'Fidelidade de ' + meses + (meses === 1 ? ' mês' : ' meses') + ' no plano mensal. Se cancelar antes, há multa de 20% sobre as mensalidades que faltarem, nas condições do contrato.'
+        : '';
+    }
+  }
+
+  function itemDoPlano() {
+    var p = estado.plano;
+    return {
+      item_id: p.id, item_name: p.nome, item_category: p.categoria,
+      price: estado.periodicidade === 'anual' ? p.precoAnual : p.preco, quantity: 1,
+    };
   }
 
   function desenharContrato(c) {
@@ -123,20 +145,55 @@
   }
 
   var formProposta = $('loja-proposta');
+  var timerTurnstile = null;
+
+  function alvoTurnstile() {
+    return !form.hidden ? 'cw-turnstile' : !formProposta.hidden ? 'cw-turnstile-proposta' : null;
+  }
+
+  // Sem o widget, o envio nunca é liberado: em vez de "aguarde" para sempre, explica o que fazer.
+  function avisoTurnstile() {
+    var id = alvoTurnstile();
+    var caixa = id && $(id);
+    if (!caixa || caixa.querySelector('.cw-turnstile-falha')) return;
+    caixa.insertAdjacentHTML('beforeend',
+      '<p class="loja-erro cw-turnstile-falha" role="alert">A verificação de segurança não carregou. Recarregue a página ' +
+      '(um bloqueador de anúncios pode estar impedindo) ou <a href="' + whatsapp('Olá! Não consegui concluir a contratação pelo site do CafeWorking.') +
+      '" target="_blank" rel="noopener">fale com a gente pelo WhatsApp</a>.</p>');
+  }
+
+  function turnstileFalhou() {
+    return !window.turnstile || estado.widget === null || !!document.querySelector('.cw-turnstile-falha');
+  }
 
   // O widget vai no formulário visível: compra ou pedido de proposta.
   function renderTurnstile() {
-    var alvo = !form.hidden ? '#cw-turnstile' : !formProposta.hidden ? '#cw-turnstile-proposta' : null;
+    var alvo = alvoTurnstile();
+    if (alvo && !timerTurnstile) {
+      timerTurnstile = setTimeout(function () {
+        if (!window.turnstile || estado.widget === null) avisoTurnstile();
+      }, TEMPO_TURNSTILE);
+    }
     if (!window.turnstile || estado.widget !== null || !alvo) return;
-    estado.widget = window.turnstile.render(alvo, {
+    estado.widget = window.turnstile.render('#' + alvo, {
       sitekey: loja.turnstileSiteKey,
       language: 'pt-br',
-      callback: function (t) { estado.turnstile = t; },
+      callback: function (t) {
+        estado.turnstile = t;
+        var falha = document.querySelector('.cw-turnstile-falha');
+        if (falha) falha.remove();
+      },
       'expired-callback': function () { estado.turnstile = ''; },
-      'error-callback': function () { estado.turnstile = ''; },
+      'error-callback': function () { estado.turnstile = ''; avisoTurnstile(); },
     });
   }
   window.cwTurnstilePronto = renderTurnstile;
+
+  function mensagemTurnstile() {
+    return turnstileFalhou()
+      ? 'A verificação de segurança não carregou. Recarregue a página ou fale com a gente pelo WhatsApp.'
+      : 'Aguarde a verificação de segurança terminar e tente de novo.';
+  }
 
   function resetTurnstile() {
     estado.turnstile = '';
@@ -209,6 +266,7 @@
         desenharContrato(r.dados.contrato);
         form.hidden = false;
         renderTurnstile();
+        track('begin_checkout', { currency: 'BRL', value: itemDoPlano().price, item_category: estado.plano.categoria, items: [itemDoPlano()] });
       })
       .catch(function () {
         $('loja-titulo').textContent = 'Não foi possível carregar';
@@ -235,7 +293,7 @@
     if (d.nome.length < 3) return falha('Informe seu nome.', formProposta.nome);
     if (d.telefone.replace(/\D/g, '').length < 10) return falha('Informe um celular com DDD.', formProposta.telefone);
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return falha('Informe um e-mail válido.', formProposta.email);
-    if (!estado.turnstile) return falha('Aguarde a verificação de segurança terminar e tente de novo.');
+    if (!estado.turnstile) return falha(mensagemTurnstile());
     falha('');
 
     estado.enviando = true;
@@ -254,6 +312,10 @@
       .then(function (r) {
         if (!r.ok) throw new Error(r.x.error || 'Não foi possível enviar o pedido.');
         formProposta.hidden = true;
+        track('generate_lead', {
+          lead_type: params.get('visita') === '1' ? 'visita' : 'proposta',
+          item_id: estado.plano.id, item_name: estado.plano.nome, item_category: estado.plano.categoria, page_path: location.pathname,
+        });
         aviso('<h2 class="h2">Pedido recebido</h2><p>A equipe do CafeWorking vai entrar em contato em até 1 dia útil, pelo WhatsApp ou pelo e-mail informado.</p>' +
           '<a class="btn btn-outline" href="/">Voltar ao site</a>');
       })
@@ -265,6 +327,26 @@
         botao.textContent = params.get('visita') === '1' ? 'Agendar visita' : 'Pedir proposta';
       });
   });
+
+  // máscara de CPF/CNPJ enquanto digita; a validação completa acontece no envio
+  if (Documento && form.documento) {
+    form.documento.addEventListener('input', function () {
+      var campo = form.documento;
+      var fimAntes = campo.selectionStart === campo.value.length;
+      var mascarado = Documento.mascararDocumento(campo.value);
+      if (mascarado !== campo.value) {
+        campo.value = mascarado;
+        if (fimAntes) campo.setSelectionRange(mascarado.length, mascarado.length);
+      }
+    });
+    form.documento.addEventListener('blur', function () {
+      // no blur só avisa, sem rolar a página
+      var r = Documento.validarDocumento(form.documento.value);
+      var el = $('loja-erro');
+      if (form.documento.value && !r.ok) { el.textContent = r.erro; el.hidden = false; }
+      else if (/CPF|CNPJ/.test(el.textContent)) { el.textContent = ''; el.hidden = true; }
+    });
+  }
 
   form.addEventListener('change', function (e) {
     if (!estado.plano) return;
@@ -278,18 +360,24 @@
     if (estado.enviando || !estado.plano || !estado.contrato) return;
     erro('');
 
+    var doc = Documento ? Documento.validarDocumento(form.documento.value) : { ok: true, valor: form.documento.value.replace(/[^0-9A-Za-z]/g, '') };
     var d = {
       nome: form.nome.value.trim(),
-      documento: form.documento.value.replace(/[^0-9A-Za-z]/g, ''),
+      documento: doc.valor,
       email: form.email.value.trim(),
       telefone: form.telefone.value.trim(),
     };
     if (d.nome.length < 3) return erro('Informe o nome completo ou a razão social.'), form.nome.focus();
-    if ([11, 14].indexOf(d.documento.length) < 0) return erro('Informe um CPF (11 dígitos) ou CNPJ (14 caracteres).'), form.documento.focus();
+    if (!doc.ok) return erro(doc.erro), form.documento.focus();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return erro('Informe um e-mail válido. É por ele que você recebe o acesso.'), form.email.focus();
     if (estado.plano.escolhaTurno && !estado.turno) return erro('Escolha o turno: manhã ou tarde.'), $('loja-turno').scrollIntoView({ block: 'center' });
     if (!form.aceite.checked) return erro('Para continuar, aceite o contrato.'), form.aceite.focus();
-    if (!estado.turnstile) return erro('Aguarde a verificação de segurança terminar e tente de novo.');
+    if (!estado.turnstile) return erro(mensagemTurnstile());
+
+    track('add_payment_info', {
+      currency: 'BRL', value: itemDoPlano().price, payment_type: estado.periodicidade === 'mensal' ? 'CREDIT_CARD' : estado.forma,
+      item_category: estado.plano.categoria, items: [itemDoPlano()],
+    });
 
     estado.enviando = true;
     var botao = $('loja-pagar');
@@ -320,6 +408,8 @@
           try {
             sessionStorage.setItem('cw_pagamento_' + x.status_token, JSON.stringify({
               plano: x.plano, valor: x.valor, periodicidade: x.periodicidade, forma: x.forma, email: d.email,
+              // pagamento.js usa a categoria para mostrar os próximos passos e medir a compra
+              categoria: estado.plano.categoria, plano_id: estado.plano.id,
               checkoutUrl: x.checkoutUrl, pix_payload: x.pix_payload, pix_imagem: x.pix_imagem, boleto_url: x.boleto_url,
             }));
           } catch (_) { /* sem sessionStorage: a página de pagamento mostra o link da fatura */ }

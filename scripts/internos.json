@@ -1,0 +1,41 @@
+{
+  "_comentario": "Arquivos e pastas do repositório que NÃO podem ir para o ar. O passo de build copia para dist/ só o que não estiver aqui. 'arquivos' são caminhos exatos a partir da raiz; 'pastas' excluem a pasta inteira; 'padroes' são globs simples (* = qualquer trecho sem barra) aplicados ao caminho a partir da raiz. As páginas .html desta lista também recebem noindex e ficam fora do sitemap (scripts/seo.js). Arquivos públicos de propósito que parecem internos e DEVEM ficar no ar: robots.txt, llms.txt (se existir), google*.html, sitemap.xml, manifest.json, sw.js, _headers e _redirects.",
+  "pastas": [
+    ".git",
+    ".github",
+    ".claude",
+    "node_modules",
+    "netlify",
+    "scripts",
+    "dist",
+    "docs"
+  ],
+  "padroes": [
+    "admin*.html",
+    "*.md",
+    "README*",
+    ".env*"
+  ],
+  "arquivos": [
+    "analytics-tags.html",
+    "checklist-publicacao.html",
+    "google-business-profile.html",
+    "guia-fotos-site.html",
+    "modelos-mensagens.html",
+    "login.html",
+    "cadastro.html",
+    "perfil.html",
+    "documentos.html",
+    "reservas.html",
+    "solicitacoes.html",
+    "financeiro.html",
+    "area-do-cliente.html",
+    "area-do-membro.html",
+    "coworking-estoril-bh.html",
+    "README-CafeWorking.txt",
+    "package.json",
+    "package-lock.json",
+    "netlify.toml",
+    "deno.lock"
+  ]
+}

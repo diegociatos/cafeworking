@@ -1,33 +1,54 @@
-# Regras fixas de redirecionamento (Netlify).
+# Regras fixas de redirecionamento (Cloudflare Pages).
 # ATENCAO: este arquivo e a FONTE. O _redirects da raiz e gerado por
-# scripts/seo.js = este conteudo + os 301 de /pagina.html -> /pagina.
-# Nao edite o _redirects direto; edite aqui e rode "node scripts/seo.js".
+# scripts/seo.js a partir deste conteudo. Nao edite o _redirects direto;
+# edite aqui e rode "node scripts/seo.js".
 #
-# Regras de SEO seguidas:
-#  - conteudo duplicado em duas URLs = 301 para a URL canonica (nunca 200)
-#  - URL inexistente = 404 de verdade (nunca a home com status 200)
-#  - a barra final (/cafeteria/ -> /cafeteria) a Netlify ja resolve sozinha
+# Formato do Cloudflare Pages: "/origem /destino codigo", so com 301/302.
+# Sem "!" (sintaxe da Netlify) e sem regra de status 404: o Pages ja serve o
+# 404.html para URL inexistente e redireciona /pagina.html para /pagina.
+#
+# Paginas internas (admin, roteiros, checklists, documentacao) nao sao
+# bloqueadas aqui: elas simplesmente nao vao para o ar. A lista fica em
+# scripts/internos.json e e usada pelo passo de build que monta o dist/.
 
-# Area do cliente mora no aplicativo
-/area-do-cliente        https://app.cafeworking.com.br  301!
-/area-do-cliente.html   https://app.cafeworking.com.br  301!
-/area-do-membro         https://app.cafeworking.com.br  301!
-/area-do-membro.html    https://app.cafeworking.com.br  301!
+# Area do cliente, login e cadastro moram no aplicativo
+/area-do-cliente        https://app.cafeworking.com.br  301
+/area-do-cliente.html   https://app.cafeworking.com.br  301
+/area-do-membro         https://app.cafeworking.com.br  301
+/area-do-membro.html    https://app.cafeworking.com.br  301
+/login                  https://app.cafeworking.com.br  301
+/login.html             https://app.cafeworking.com.br  301
+/cadastro               https://app.cafeworking.com.br  301
+/cadastro.html          https://app.cafeworking.com.br  301
+/perfil                 https://app.cafeworking.com.br  301
+/perfil.html            https://app.cafeworking.com.br  301
+/documentos             https://app.cafeworking.com.br  301
+/documentos.html        https://app.cafeworking.com.br  301
+/reservas               https://app.cafeworking.com.br  301
+/reservas.html          https://app.cafeworking.com.br  301
+/solicitacoes           https://app.cafeworking.com.br  301
+/solicitacoes.html      https://app.cafeworking.com.br  301
+/financeiro             https://app.cafeworking.com.br  301
+/financeiro.html        https://app.cafeworking.com.br  301
+
+# Estoril hoje so vende endereco fiscal: a pagina de coworking saiu do site
+/coworking-estoril-bh       /unidade-estoril  301
+/coworking-estoril-bh.html  /unidade-estoril  301
 
 # Caminhos antigos por pasta -> pagina canonica
-/ambientes/salas-privativas       /salas-privativas       301!
-/ambientes/atendimento-privativo  /atendimento-privativo  301!
-/ambientes/sala-compartilhada     /coworking              301!
-/ambientes/salas-de-reuniao       /salas-de-reuniao       301!
-/unidades/luxemburgo              /unidade-luxemburgo     301!
-/unidades/estoril                 /unidade-estoril        301!
+/ambientes/salas-privativas       /salas-privativas       301
+/ambientes/atendimento-privativo  /atendimento-privativo  301
+/ambientes/sala-compartilhada     /coworking              301
+/ambientes/salas-de-reuniao       /salas-de-reuniao       301
+/unidades/luxemburgo              /unidade-luxemburgo     301
+/unidades/estoril                 /unidade-estoril        301
 
 # Links antigos do menu que apontavam para paginas inexistentes
-/sala-compartilhada       /coworking             301!
-/sala-compartilhada.html  /coworking             301!
-/juridico                 /juridico-empresarial  301!
-/juridico.html            /juridico-empresarial  301!
+/sala-compartilhada       /coworking             301
+/sala-compartilhada.html  /coworking             301
+/juridico                 /juridico-empresarial  301
+/juridico.html            /juridico-empresarial  301
 
 # Atalhos em ingles para a pagina em ingles
-/en       /coworking-in-belo-horizonte  301!
-/english  /coworking-in-belo-horizonte  301!
+/en       /coworking-in-belo-horizonte  301
+/english  /coworking-in-belo-horizonte  301

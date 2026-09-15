@@ -30,7 +30,7 @@ const NEGOCIO = {
     'Coworking, cafeteria e hub empresarial premium em Belo Horizonte, com salas privativas, salas de reuniao, endereco fiscal, abertura de empresa e contabilidade.',
   telefone: '+55-31-3181-0140',
   whatsapp: '+55-31-99712-9789',
-  email: 'contato@cafeworking.com.br',
+  email: 'atendimento@cafeworking.com.br',
   faixaPreco: '$$',
   sameAs: [
     'https://www.instagram.com/cafeworkingoficial/',
@@ -93,8 +93,12 @@ const UNIDADES = {
     pagina: 'unidade-estoril.html',
     imagem: '/assets/img/og/og-estoril.jpg',
     cafeteria: false,
+    // O Estoril esta todo alugado para uma empresa: hoje so vende endereco
+    // fiscal. Nada de coworking, estacoes, salas ou cafeteria no schema.
+    publicAccess: false,
+    comodidades: [],
     descricao:
-      'Coworking corporativo na Av. Raja Gabaglia, 2000, no Estoril, em Belo Horizonte: salas em vidro, estacoes de trabalho, salas de reuniao e vista privilegiada.',
+      'Endereco fiscal na Av. Raja Gabaglia, 2000, no Estoril, em Belo Horizonte: endereco comercial para registrar o CNPJ e receber correspondencias. Nao funciona como coworking aberto ao publico.',
     // perfilGoogle: 'https://maps.app.goo.gl/...',  <- colar o link do Google Empresas
   },
 };
@@ -120,6 +124,14 @@ const NAO_INDEXAR = new Set([
 
 const ehAdmin = (arq) => arq.startsWith('admin');
 
+/* Paginas internas que nao vao para o ar (scripts/internos.json). O passo de
+ * build copia para dist/ so o que nao estiver na lista; aqui elas ganham noindex
+ * e ficam fora do sitemap, para o caso de algum arquivo escapar. */
+const INTERNOS = JSON.parse(fs.readFileSync(path.join(__dirname, 'internos.json'), 'utf8'));
+const globParaRegex = (g) => new RegExp('^' + g.split('*').map((t) => t.replace(/[.+?^${}()|[\]\\]/g, (c) => '\\' + c)).join('[^/]*') + '$', 'i');
+const PADROES_INTERNOS = (INTERNOS.padroes || []).map(globParaRegex);
+const ehInterno = (arq) => (INTERNOS.arquivos || []).includes(arq) || PADROES_INTERNOS.some((re) => re.test(arq));
+
 /* Arquivos .html que NAO sao paginas e nao podem ser tocados nem entrar no
  * sitemap - hoje, os arquivos de verificacao de propriedade (Google Search
  * Console, Bing etc). Eles precisam ser servidos exatamente como vieram. */
@@ -144,7 +156,7 @@ const BLOG = ['Blog', 'blog.html'];
 const PAGINAS = {
   'index.html': {
     t: 'Coworking em Belo Horizonte | Salas e Cafeteria | CafeWorking',
-    d: 'Coworking premium em Belo Horizonte com salas privativas, salas de reunião, cafeteria, endereço fiscal e contabilidade. Unidades Luxemburgo e Estoril.',
+    d: 'Coworking em Belo Horizonte com preços no site: hora avulsa, day pass, planos mensais, salas privativas, salas de reunião por hora e endereço fiscal no Luxemburgo.',
     img: 'og-default.jpg', tipo: 'home',
   },
 
@@ -175,17 +187,17 @@ const PAGINAS = {
    * entre a posicao 8 e a 13 e todas caindo na home. */
   'coworking.html': {
     t: 'Café para trabalhar em BH: coworking por dia ou mês',
-    d: 'Lugar para trabalhar em BH com tomada em toda mesa e wi-fi que aguenta chamada de vídeo. Diária ou plano mensal, café incluso, no Luxemburgo.',
+    d: 'Lugar para trabalhar em BH com tomada em toda mesa e wi-fi que aguenta chamada de vídeo. Hora avulsa R$ 20, day pass R$ 65 e planos mensais no Luxemburgo.',
     img: 'og-coworking.jpg', tipo: 'servico', bc: [AMB, ['Sala Compartilhada', 'coworking.html']],
   },
   'salas-privativas.html': {
     t: 'Sala Privativa em BH | Escritório para Equipes | CafeWorking',
-    d: 'Escritório privativo mobiliado em Belo Horizonte, com recepção, cafeteria e salas de reunião inclusas. Ideal para equipes de 2 a 12 pessoas.',
+    d: 'Sala privativa mobiliada no Luxemburgo, em BH, para até 4 pessoas por R$ 2.200/mês: internet, limpeza, recepção e cafeteria. Contratação online.',
     img: 'og-salas-privativas.jpg', tipo: 'servico', bc: [AMB, ['Salas Privativas', 'salas-privativas.html']],
   },
   'salas-de-reuniao.html': {
     t: 'Sala de Reunião em BH por Hora | CafeWorking',
-    d: 'Alugue sala de reunião em Belo Horizonte por hora ou período: TV, videoconferência, recepção e café. Unidades no Luxemburgo e no Estoril.',
+    d: 'Sala de reunião por hora no Luxemburgo, em BH, a partir de R$ 50: veja os horários livres, reserve e pague online por PIX ou cartão.',
     img: 'og-salas-reuniao.jpg', tipo: 'servico', bc: [AMB, ['Salas de Reunião', 'salas-de-reuniao.html']],
   },
   'atendimento-privativo.html': {
@@ -212,7 +224,7 @@ const PAGINAS = {
    * no trimestre, posicao 41,9) e nenhuma URL respondia por ela. */
   'cafeteria.html': {
     t: 'Cafeteria coworking em BH: café, wi-fi e sala privativa',
-    d: 'Cafeteria com coworking no Luxemburgo e no Estoril: wi-fi rápido, tomada em toda mesa, sala de reunião e café de verdade. Aberto todo dia útil em BH.',
+    d: 'Cafeteria com coworking no Luxemburgo, em BH: wi-fi rápido, tomada em toda mesa, sala de reunião por hora e café de verdade. Segunda a sexta, 8h às 18h.',
     img: 'og-cafeteria.jpg', tipo: 'servico', bc: [['Cafeteria', 'cafeteria.html']],
     hreflang: { 'pt-BR': 'cafeteria.html', en: 'coworking-in-belo-horizonte.html' },
   },
@@ -226,7 +238,7 @@ const PAGINAS = {
    * conteudo, porque nao havia uma linha em ingles. */
   'coworking-in-belo-horizonte.html': {
     t: 'Coworking in Belo Horizonte | Coffee Shop with Wi-Fi',
-    d: 'A coffee shop built for laptops in Belo Horizonte: fast wi-fi, a power outlet at every table, meeting rooms by the hour and day passes. Two locations.',
+    d: 'A coffee shop built for laptops in Belo Horizonte: fast wi-fi, a power outlet at every table, meeting rooms by the hour and day passes in Luxemburgo.',
     img: 'og-coworking.jpg', tipo: 'servico', lang: 'en',
     bc: [['Coworking in Belo Horizonte', 'coworking-in-belo-horizonte.html']],
     hreflang: { 'pt-BR': 'cafeteria.html', en: 'coworking-in-belo-horizonte.html' },
@@ -266,7 +278,7 @@ const PAGINAS = {
   },
   'planos.html': {
     t: 'Planos e Preços do Coworking em BH | CafeWorking',
-    d: 'Planos do CafeWorking em Belo Horizonte: coworking, sala privativa, endereço fiscal e reuniões. Compare formatos e escolha o ideal para sua empresa.',
+    d: 'Preços do CafeWorking em BH: coworking a partir de R$ 390/mês, day pass R$ 65, hora R$ 20, sala privativa, sala de reunião e endereço fiscal. Contrate online.',
     img: 'og-coworking.jpg', tipo: 'pagina', bc: [['Planos', 'planos.html']],
   },
   'franquias.html': {
@@ -278,7 +290,7 @@ const PAGINAS = {
   /* ---- unidades ---- */
   'unidades.html': {
     t: 'Unidades CafeWorking em BH | Luxemburgo e Estoril',
-    d: 'O CafeWorking tem duas unidades em Belo Horizonte: Luxemburgo (Rua Guaicuí, 715) e Estoril (Av. Raja Gabaglia, 2000). Veja estrutura e como chegar.',
+    d: 'CafeWorking Luxemburgo, na Rua Guaicuí, 715: coworking, cafeteria e salas. No Estoril, na Av. Raja Gabaglia, 2000, endereço fiscal. Veja como chegar.',
     img: 'og-default.jpg', tipo: 'unidades', bc: [UNI],
   },
   'unidade-luxemburgo.html': {
@@ -287,19 +299,14 @@ const PAGINAS = {
     img: 'og-luxemburgo.jpg', tipo: 'unidade:luxemburgo', bc: [UNI, ['Luxemburgo', 'unidade-luxemburgo.html']],
   },
   'unidade-estoril.html': {
-    t: 'CafeWorking Estoril | Coworking na Raja Gabaglia, 2000',
-    d: 'Unidade Estoril do CafeWorking, na Av. Raja Gabaglia, 2000, em Belo Horizonte: estrutura corporativa, salas em vidro e vista privilegiada.',
+    t: 'Endereço Fiscal no Estoril, BH | Av. Raja Gabaglia, 2000',
+    d: 'Endereço fiscal do CafeWorking na Av. Raja Gabaglia, 2000, no Estoril, em Belo Horizonte: endereço para CNPJ e recebimento de correspondências.',
     img: 'og-estoril.jpg', tipo: 'unidade:estoril', bc: [UNI, ['Estoril', 'unidade-estoril.html']],
   },
   'coworking-luxemburgo-bh.html': {
     t: 'Coworking no Luxemburgo, BH | Rua Guaicuí, 715',
     d: 'Coworking no bairro Luxemburgo, em Belo Horizonte: estações de trabalho, salas de reunião, cafeteria e endereço fiscal na Rua Guaicuí, 715.',
     img: 'og-luxemburgo.jpg', tipo: 'unidade:luxemburgo', bc: [UNI, ['Coworking no Luxemburgo', 'coworking-luxemburgo-bh.html']],
-  },
-  'coworking-estoril-bh.html': {
-    t: 'Coworking no Estoril, BH | Av. Raja Gabaglia, 2000',
-    d: 'Coworking no bairro Estoril, em Belo Horizonte: ambiente corporativo, salas de reunião, recepção e cafeteria na Av. Raja Gabaglia, 2000.',
-    img: 'og-estoril.jpg', tipo: 'unidade:estoril', bc: [UNI, ['Coworking no Estoril', 'coworking-estoril-bh.html']],
   },
   'endereco-fiscal-luxemburgo-bh.html': {
     t: 'Endereço Fiscal no Luxemburgo, BH | CafeWorking',
@@ -347,7 +354,7 @@ const PAGINAS = {
   },
   'contato.html': {
     t: 'Contato | CafeWorking Belo Horizonte',
-    d: 'Fale com o CafeWorking: WhatsApp (31) 99712-9789, telefone (31) 3181-0140 e endereços das unidades Luxemburgo e Estoril em Belo Horizonte.',
+    d: 'Fale com o CafeWorking: WhatsApp (31) 99712-9789, telefone (31) 3181-0140 e atendimento@cafeworking.com.br. Rua Guaicuí, 715, Luxemburgo, BH.',
     img: 'og-default.jpg', tipo: 'contato', bc: [['Contato', 'contato.html']],
   },
   'agendar-visita.html': {
@@ -554,6 +561,7 @@ function localBusiness(chave) {
     description: u.descricao || NEGOCIO.descricao,
     url: urlDe(u.pagina),
     telephone: NEGOCIO.telefone,
+    email: NEGOCIO.email,
     image: SITE + u.imagem,
     logo: `${SITE}/assets/img/logo-cafeworking.png`,
     priceRange: NEGOCIO.faixaPreco,
@@ -569,12 +577,13 @@ function localBusiness(chave) {
     geo: { '@type': 'GeoCoordinates', latitude: u.lat, longitude: u.lon },
     hasMap: `https://www.google.com/maps/search/?api=1&query=${u.lat},${u.lon}`,
     areaServed: { '@type': 'City', name: 'Belo Horizonte' },
-    amenityFeature: comodidades(u.comodidades || NEGOCIO.comodidades),
-    publicAccess: true,
+    publicAccess: u.publicAccess !== false,
     isAccessibleForFree: false,
     parentOrganization: { '@id': `${SITE}/#organizacao` },
     sameAs: [...NEGOCIO.sameAs, ...(u.perfilGoogle ? [u.perfilGoogle] : [])],
   };
+  const lista = u.comodidades || NEGOCIO.comodidades;
+  if (lista.length) o.amenityFeature = comodidades(lista);
   if (u.cafeteria) o.servesCuisine = 'Café';
   if (NEGOCIO.horario && NEGOCIO.horario.length) {
     o.openingHoursSpecification = NEGOCIO.horario.map((h) => ({
@@ -805,7 +814,7 @@ for (const arq of arquivos) {
   let html = fs.readFileSync(caminho, 'utf8');
   const original = html;
 
-  const naoIndexar = NAO_INDEXAR.has(arq) || ehAdmin(arq);
+  const naoIndexar = NAO_INDEXAR.has(arq) || ehAdmin(arq) || ehInterno(arq);
   let meta = PAGINAS[arq];
 
   if (!meta) {
@@ -904,43 +913,15 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://w
 if (!SOMENTE_CHECAR) fs.writeFileSync(path.join(RAIZ, 'sitemap.xml'), sitemap, 'utf8');
 
 /* ------------------------------------------------------------------ *
- * _redirects = regras fixas + 301 de /pagina.html para /pagina
+ * _redirects = regras fixas de scripts/redirects-base.txt
  *
- * A Netlify serve os dois com 200 por padrao. Sem o 301, cada pagina do site
- * existe em duas URLs - foi o que aconteceu com /cafeteria.
+ * Formato do Cloudflare Pages: "/origem /destino 301", sem o "!" da Netlify e
+ * sem regra de status 404. O Pages ja redireciona /pagina.html para /pagina e
+ * serve o 404.html sozinho para URL inexistente, entao as regras que o script
+ * gerava para a Netlify (.html -> sem extensao e o /* 404) sairam.
  * ------------------------------------------------------------------ */
 
-const base = fs.readFileSync(path.join(__dirname, 'redirects-base.txt'), 'utf8').trimEnd();
-const jaNaBase = new Set(
-  base
-    .split('\n')
-    .filter((l) => l.trim() && !l.trim().startsWith('#'))
-    .map((l) => l.trim().split(/\s+/)[0])
-);
-
-/* 404.html e offline.html ficam de fora: o service worker faz cache.addAll
- * dessas URLs, e a Cache API recusa resposta redirecionada - um 301 aqui
- * quebraria a instalacao do service worker. */
-const SEM_REDIRECT = new Set(['index.html', '404.html', 'offline.html']);
-
-const trezentosUm = arquivos
-  .filter((arq) => !ehIntocavel(arq) && !SEM_REDIRECT.has(arq))
-  .map((arq) => `/${arq}`)
-  .filter((origem) => !jaNaBase.has(origem))
-  .sort()
-  .map((origem) => `${origem.padEnd(38)} ${origem.replace(/\.html$/, '').padEnd(36)} 301!`);
-
-const redirects = [
-  base,
-  '',
-  '# --- gerado por scripts/seo.js: .html -> URL canonica sem extensao ---',
-  `/index.html${' '.repeat(27)} /${' '.repeat(35)} 301!`,
-  ...trezentosUm,
-  '',
-  '# Qualquer outra URL inexistente devolve 404 (e nao a home)',
-  '/*  /404.html  404',
-  '',
-].join('\n');
+const redirects = fs.readFileSync(path.join(__dirname, 'redirects-base.txt'), 'utf8').trimEnd() + '\n';
 
 if (!SOMENTE_CHECAR) fs.writeFileSync(path.join(RAIZ, '_redirects'), redirects, 'utf8');
 

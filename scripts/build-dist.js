@@ -36,7 +36,8 @@ function lerInternos() {
   const arq = path.join(RAIZ, 'scripts', 'internos.json');
   if (!fs.existsSync(arq)) return INTERNOS_PADRAO;
   const extra = JSON.parse(fs.readFileSync(arq, 'utf8'));
-  const lista = Array.isArray(extra) ? extra : extra.arquivos || extra.internos || [];
+  // formato: lista simples, ou { arquivos: [...], padroes: [...] } (as pastas já ficam fora: só assets/ é copiada)
+  const lista = Array.isArray(extra) ? extra : [...(extra.arquivos || []), ...(extra.padroes || [])];
   return [...new Set([...INTERNOS_PADRAO, ...lista.map(String)])];
 }
 

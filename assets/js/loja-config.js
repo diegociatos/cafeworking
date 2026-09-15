@@ -23,8 +23,8 @@
     // Medição (assets/js/analytics.js). Vazio = não carrega nada de terceiros e
     // não mostra o banner de cookies. Preencha só um entre gtmId e ga4Id.
     gtmId: '',        // ex.: 'GTM-XXXXXXX'
-    ga4Id: '',        // ex.: 'G-XXXXXXXXXX'
-    metaPixelId: '',  // ex.: '123456789012345'
+    ga4Id: 'G-88TFYNM6GJ',             // propriedade "CafeWorking", fluxo "Site CafeWorking"
+    metaPixelId: '2508252106115491',   // "Pixel Grupo Ciatos - LEADS" (1 pixel por conta de anúncios)
   };
   if (typeof module === 'object' && module.exports) module.exports = cfg;
   else raiz.CW_LOJA = cfg;

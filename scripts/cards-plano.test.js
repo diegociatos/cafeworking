@@ -109,3 +109,26 @@ test('sala privativa ocupada não vende: só fila de visita', () => {
   assert.match(cardPlano({ ...sala, disponiveis: 1 }), /Última sala disponível/);
   assert.doesNotMatch(cardPlano({ ...sala, disponiveis: null }), /disponíve|Ocupada/);
 });
+test('sala privativa com salas: um card por sala, ocupada sem compra, fotos na galeria', () => {
+  const { renderVitrine } = require('../assets/js/cards-plano.js');
+  const plano = {
+    ...pro, id: 'pl_sala4', nome: 'Sala privativa para 4 pessoas', categoria: 'sala_privativa', capacidade: 4, destaque: null,
+    salas: [
+      { id: 's_a', nome: 'Sala Bourbon', capacidade: 4, ocupada: false, descricao: 'Janela para a rua', comodidades: [], fotos: ['https://x.supabase.co/a.webp', 'https://x.supabase.co/b.webp'] },
+      { id: 's_b', nome: 'Sala Catuaí', capacidade: 4, ocupada: false, descricao: '', comodidades: [], fotos: [] },
+      { id: 's_c', nome: 'Sala Geisha', capacidade: 4, ocupada: true, descricao: '', comodidades: [], fotos: ['data:image/png;base64,AAA'] },
+    ],
+  };
+  const html = renderVitrine({ planos: [plano], unidades: [{ id: 'un_lux', nome: 'CafeWorking Luxemburgo' }] }, 'sala_privativa');
+  assert.equal((html.match(/<article/g) || []).length, 3);
+  assert.match(html, /Sala Bourbon/);
+  assert.match(html, /sala=s_a/);
+  assert.match(html, /Ver fotos \(2\)/);
+  assert.match(html, /data-galeria="\[&quot;https:\/\/x\.supabase\.co\/a\.webp&quot;/);
+  assert.match(html, /Foto ilustrativa/);
+  const geisha = html.split('<article').find((c) => c.includes('Sala Geisha'));
+  assert.match(geisha, /Ocupada/);
+  assert.doesNotMatch(geisha, /Quero esta sala/);
+  assert.doesNotMatch(geisha, /data:image/);
+  assert.match(geisha, /sala=s_c&amp;visita=1/);
+});

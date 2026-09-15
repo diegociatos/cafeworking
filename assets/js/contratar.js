@@ -13,7 +13,7 @@
 
   var params = new URLSearchParams(location.search);
   var estado = {
-    plano: null, unidade: null, contrato: null,
+    plano: null, unidade: null, sala: null, contrato: null,
     periodicidade: params.get('periodo') === 'anual' ? 'anual' : 'mensal',
     forma: 'PIX', turno: '', turnstile: '', widget: null, enviando: false,
   };
@@ -107,9 +107,15 @@
 
   function desenharPlano() {
     var p = estado.plano;
-    document.title = (p.sobConsulta ? 'Proposta: ' : 'Contratar ') + p.nome + ' · CafeWorking';
-    $('loja-titulo').textContent = p.nome;
-    $('loja-unidade').textContent = estado.unidade ? 'Unidade ' + Cards.nomeUnidade(estado.unidade.nome) : '';
+    var nome = estado.sala ? estado.sala.nome : p.nome;
+    document.title = (p.sobConsulta ? 'Proposta: ' : 'Contratar ') + nome + ' · CafeWorking';
+    $('loja-titulo').textContent = nome;
+    var unidade = estado.unidade ? 'Unidade ' + Cards.nomeUnidade(estado.unidade.nome) : '';
+    $('loja-unidade').textContent = estado.sala ? p.nome + (unidade ? ' · ' + unidade : '') : unidade;
+    // sala escolhida: a capa abre a galeria de fotos
+    var capa = $('loja-sala-capa');
+    capa.hidden = !estado.sala;
+    if (estado.sala) capa.innerHTML = Cards.capaSala(estado.sala).replace('class="sala-capa"', 'class="sala-capa loja-sala-capa"');
     $('loja-beneficios').innerHTML = Cards.beneficiosDoPlano(p).map(function (b) {
       return '<li>' + Cards.escapar(b) + '</li>';
     }).join('');
@@ -152,16 +158,28 @@
         estado.unidade = ((r.dados && r.dados.unidades) || []).filter(function (u) { return u.id === unidadeId; })[0] || null;
         if (r.status !== 200) throw new Error('catalogo');
         var visita = params.get('visita') === '1';
+        var salaId = params.get('sala');
+        if (estado.plano && salaId) {
+          estado.sala = (estado.plano.salas || []).filter(function (s) { return s.id === salaId; })[0] || null;
+        }
         if (estado.plano && (estado.plano.sobConsulta || visita)) {
           desenharPlano();
           if (visita) {
-            document.title = 'Agendar visita: ' + estado.plano.nome + ' · CafeWorking';
+            document.title = 'Agendar visita: ' + (estado.sala ? estado.sala.nome : estado.plano.nome) + ' · CafeWorking';
             formProposta.querySelector('.loja-seguro').textContent = 'Conte quando prefere visitar e quantas pessoas vão usar a sala. A equipe confirma o horário com você.';
             formProposta.mensagem.placeholder = 'Ex.: visita na quinta à tarde, equipe de 3 pessoas';
             $('loja-proposta-enviar').textContent = 'Agendar visita';
           }
           formProposta.hidden = false;
           renderTurnstile();
+          return null;
+        }
+        if (estado.sala && estado.sala.ocupada) {
+          desenharPlano();
+          $('loja-total').hidden = true;
+          aviso('<p>A ' + Cards.escapar(estado.sala.nome) + ' está alugada no momento. Veja as outras salas ou agende uma visita e avisamos quando vagar.</p>' +
+            '<a class="btn btn-primary" href="/salas-privativas#planos">Ver outras salas</a> ' +
+            '<a class="btn btn-outline" href="' + Cards.escapar(Cards.urlContratar(estado.plano, estado.sala) + '&visita=1') + '">Agendar visita</a>');
           return null;
         }
         if (estado.plano && estado.plano.disponiveis === 0) {
@@ -229,7 +247,7 @@
       headers: Object.assign({ 'content-type': 'application/json' }, HEADERS),
       body: JSON.stringify(Object.assign(d, {
         unidade_id: estado.plano.unidade_id, plano_id: estado.plano.id, turnstile: estado.turnstile,
-        pagina: location.pathname + (params.get('visita') === '1' ? ' (pedido de visita)' : ''),
+        pagina: location.pathname + (params.get('visita') === '1' ? ' (pedido de visita)' : '') + (estado.sala ? ' · ' + estado.sala.nome : ''),
       })),
     })
       .then(function (r) { return r.json().catch(function () { return {}; }).then(function (x) { return { ok: r.ok, x: x }; }); })
@@ -286,6 +304,7 @@
         nome: d.nome, documento: d.documento, email: d.email, telefone: d.telefone,
         unidade_id: estado.plano.unidade_id, plano_id: estado.plano.id,
         turno: estado.turno || undefined,
+        sala_id: estado.sala ? estado.sala.id : undefined,
         periodicidade: estado.periodicidade === 'avulso' ? undefined : estado.periodicidade,
         forma: estado.periodicidade === 'mensal' ? 'CREDIT_CARD' : estado.forma,
         aceite: { modelo_id: estado.contrato.id, hash: estado.contrato.hash },
@@ -317,7 +336,7 @@
           throw new Error('Este e-mail já tem conta no CafeWorking. Entre em ' + loja.appUrl.replace('https://', '') + ' para contratar pela área do cliente, ou use outro e-mail.');
         }
         if (x.codigo === 'SEM_DISPONIBILIDADE') {
-          throw new Error('Esta sala acabou de ser alugada. Agende uma visita e avisamos quando vagar outra.');
+          throw new Error(x.error || 'Esta sala acabou de ser alugada. Escolha outra sala ou agende uma visita.');
         }
         if (x.codigo === 'SEM_CONTRATO') {
           throw new Error('A contratação online deste plano está pausada. Fale com a gente pelo WhatsApp.');

@@ -44,8 +44,53 @@
     return String(nome || '').replace(/^\s*cafe\s*working\s*/i, '').trim() || String(nome || '');
   }
 
-  function urlContratar(p) {
-    return '/contratar?plano=' + encodeURIComponent(p.id) + '&unidade=' + encodeURIComponent(p.unidade_id);
+  function urlContratar(p, sala) {
+    return '/contratar?plano=' + encodeURIComponent(p.id) + '&unidade=' + encodeURIComponent(p.unidade_id) +
+      (sala ? '&sala=' + encodeURIComponent(sala.id) : '');
+  }
+
+  var FOTO_ILUSTRATIVA = '/assets/img/real/salas-privativas/sala-4-lugares.webp';
+
+  /** Capa da sala: abre a galeria (galeria-sala.js). Sem foto cadastrada, mostra uma ilustrativa. */
+  function capaSala(sala) {
+    var fotos = (sala.fotos || []).filter(function (f) { return /^https:\/\//.test(f); });
+    if (!fotos.length) {
+      return '<div class="sala-capa"><img loading="lazy" src="' + FOTO_ILUSTRATIVA + '" alt=""><small>Foto ilustrativa</small></div>';
+    }
+    return '<button type="button" class="sala-capa" data-galeria="' + escapar(JSON.stringify(fotos)) + '" data-galeria-titulo="' + escapar(sala.nome) + '"' +
+      ' aria-label="Ver fotos da ' + escapar(sala.nome) + '">' +
+      '<img loading="lazy" src="' + escapar(fotos[0]) + '" alt="' + escapar(sala.nome) + '">' +
+      '<small>Ver fotos' + (fotos.length > 1 ? ' (' + fotos.length + ')' : '') + '</small></button>';
+  }
+
+  /** Card de uma sala privativa específica: nome e fotos da sala, preço e contrato do plano. */
+  function cardSala(p, sala) {
+    var h = '<article class="fiscal-card sala-card' + (sala.ocupada ? ' fiscal-card-ocupada' : '') + '">';
+    h += capaSala(sala);
+    h += '<span>' + (sala.ocupada ? 'Ocupada' : 'Disponível') + '</span>';
+    h += '<h3>' + escapar(sala.nome) + '</h3>';
+    h += '<p class="sala-sub">Sala privativa para ' + escapar(sala.capacidade || p.capacidade) + ' pessoas</p>';
+    h += '<p class="fiscal-price">' + escapar(precoBRL(p.preco)) + '<span>/mês</span></p>';
+    if (p.precoAnual && !sala.ocupada) {
+      h += '<p class="fiscal-anual">ou ' + escapar(precoBRL(p.precoAnual)) + ' no plano anual (' + escapar(p.descontoAnualPct) + '% de desconto)</p>';
+    }
+    if (sala.descricao) h += '<p class="sala-descricao">' + escapar(sala.descricao) + '</p>';
+    var itens = beneficiosDoPlano(p);
+    h += '<ul>' + itens.map(function (b) { return '<li>' + escapar(b) + '</li>'; }).join('') + '</ul>';
+    if (sala.ocupada) {
+      return h + '<a class="btn btn-outline" href="' + escapar(urlContratar(p, sala) + '&visita=1') + '">Entrar na fila (agendar visita)</a></article>';
+    }
+    h += '<a class="btn btn-primary" href="' + escapar(urlContratar(p, sala)) + '">Quero esta sala</a>';
+    h += '<a class="btn btn-outline fiscal-card-visita" href="' + escapar(urlContratar(p, sala) + '&visita=1') + '">Agendar visita</a>';
+    return h + '</article>';
+  }
+
+  /** Cards de um plano: sala privativa com salas cadastradas vira um card por sala. */
+  function cardsDoPlano(p) {
+    if (p.categoria === 'sala_privativa' && Array.isArray(p.salas) && p.salas.length && !p.sobConsulta) {
+      return p.salas.map(function (s) { return cardSala(p, s); }).join('');
+    }
+    return cardPlano(p);
   }
 
   function cardPlano(p) {
@@ -109,7 +154,7 @@
 
     var grade = function (u, oculta) {
       var cards = planos.filter(function (p) { return p.unidade_id === u.id; })
-        .map(function (p) { return cardPlano(p); }).join('');
+        .map(cardsDoPlano).join('');
       return '<div class="fiscal-pricing" data-vitrine-unidade="' + escapar(u.id) + '"' + (oculta ? ' hidden' : '') + '>' + cards + '</div>';
     };
 
@@ -124,6 +169,6 @@
 
   return {
     escapar: escapar, precoBRL: precoBRL, beneficiosDoPlano: beneficiosDoPlano, nomeUnidade: nomeUnidade,
-    urlContratar: urlContratar, cardPlano: cardPlano, renderVitrine: renderVitrine,
+    urlContratar: urlContratar, cardPlano: cardPlano, cardSala: cardSala, capaSala: capaSala, renderVitrine: renderVitrine,
   };
 });

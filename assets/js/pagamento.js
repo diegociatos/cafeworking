@@ -1,6 +1,7 @@
 /**
  * Página de pagamento: mostra o PIX, o boleto ou o link do cartão e acompanha a
- * confirmação pela função status-pagamento (só devolve o status da compra).
+ * confirmação pela função status-pagamento (hoje só devolve o status da compra;
+ * a categoria usada nos próximos passos vem da compra guardada pelo checkout).
  * Depende de loja-config.js e cards-plano.js.
  */
 (function () {
@@ -33,6 +34,10 @@
   function desenharAcao() {
     var acao = $('pg-acao');
     var link = (compra && compra.checkoutUrl) || fatura;
+    if (compra && compra.confirmado) {
+      acao.innerHTML = '<p>Conferindo o pagamento…</p>';
+      return;
+    }
     if (!compra) {
       acao.innerHTML = link
         ? '<p>Abra a fatura para pagar:</p>' + botao(link, 'Abrir fatura')
@@ -63,79 +68,136 @@
     }
   }
 
-  /** Mede a compra uma vez por token, mesmo que a página seja recarregada. */
+  /**
+   * Mede a compra uma vez por pagamento (token ou id da reserva), mesmo que a
+   * página seja recarregada. Sem os dados da compra nesta aba (link aberto em
+   * outro aparelho) não há valor: não mede, para não contar receita vazia nem
+   * repetir a compra que a aba original já mediu.
+   */
   function medirConfirmacao() {
-    if (!window.cwTrack) return;
+    if (!window.cwTrack || !compra || !(Number(compra.valor) > 0)) return;
     var chave = 'cw_medido_' + token;
     try { if (localStorage.getItem(chave)) return; localStorage.setItem(chave, '1'); } catch (_) { /* sem storage: mede nesta visita */ }
-    var valor = compra && Number(compra.valor) || undefined;
-    if (ehReserva) {
-      window.cwTrack('reserve_room', { transaction_id: token, value: valor, currency: 'BRL', item_name: compra ? compra.plano : undefined, item_category: 'sala_hora' });
-      return;
-    }
+    var valor = Number(compra.valor);
+    var categoria = ehReserva ? 'sala_hora' : compra.categoria;
+    var item = { item_id: ehReserva ? 'sala_hora' : compra.plano_id, item_name: compra.plano, item_category: categoria, price: valor, quantity: 1 };
     window.cwTrack('purchase', {
       transaction_id: token, value: valor, currency: 'BRL',
-      item_name: compra ? compra.plano : undefined, item_category: compra ? compra.categoria : undefined,
-      items: compra ? [{ item_id: compra.plano_id, item_name: compra.plano, item_category: compra.categoria, price: valor, quantity: 1 }] : undefined,
+      item_name: compra.plano, item_category: categoria, items: [item],
     });
+    if (ehReserva) window.cwTrack('reserve_room', { transaction_id: token, value: valor, currency: 'BRL', item_name: compra.plano, item_category: 'sala_hora' });
   }
 
-  var LINK_SENHA = function (email) {
-    return 'Crie sua senha pelo link que enviamos para <b>' + Cards.escapar(email) + '</b> (confira também o spam).';
-  };
+  var LUXEMBURGO = 'Rua Guaicuí, 715, Luxemburgo, Belo Horizonte/MG';
+  var HORARIO = 'de segunda a sexta, das 8h às 18h, exceto feriados';
+  var TURNOS = { manha: 'das 8h ao meio-dia', tarde: 'do meio-dia às 18h' };
 
-  /** Próximos passos por categoria do plano. Sem categoria conhecida, devolve vazio. */
-  function proximosPassos(categoria, email) {
-    var passos = {
-      endereco_fiscal: [
-        LINK_SENHA(email),
-        'Em até 30 dias, envie pela área do cliente os documentos da empresa ou, se ela ainda vai ser aberta, os documentos dos futuros sócios.',
-        'A equipe confere os documentos em até 5 dias úteis e libera o que você precisa para registrar o endereço.',
-      ],
-      abertura_empresa: [
-        'A equipe entra em contato em até 1 dia útil, pelo e-mail ou telefone informados, para coletar as informações e os documentos.',
-        'As taxas oficiais dos órgãos públicos são pagas à parte e informadas antes de cada etapa.',
-        LINK_SENHA(email) + ' Pela área do cliente você acompanha o andamento.',
-      ],
-      coworking: [
-        'Use o espaço de segunda a sexta, das 8h às 18h, exceto feriados, na Rua Guaicuí, 715, Luxemburgo.',
-        'Na chegada, apresente-se na recepção com o e-mail usado na compra.',
-        LINK_SENHA(email),
-      ],
-      sala_privativa: [
-        'A equipe confirma a entrega da sua sala em até 5 dias úteis, com o termo de entrega.',
-        LINK_SENHA(email) + ' Pela área do cliente você cadastra quem vai usar a sala.',
-        'O uso é de segunda a sexta, das 8h às 18h, exceto feriados, na Rua Guaicuí, 715, Luxemburgo.',
-      ],
-    }[categoria];
-    if (!passos) return '';
+  function linkSenha(email) {
+    return 'Crie sua senha pelo link que enviamos para <b>' + Cards.escapar(email) + '</b> (confira também o spam).';
+  }
+
+  function lista(passos) {
     return '<p><b>Próximos passos</b></p><ol class="pg-passos">' + passos.map(function (p) { return '<li>' + p + '</li>'; }).join('') + '</ol>';
   }
 
-  function confirmado() {
+  /**
+   * Próximos passos conforme o produto pago. A categoria vem do retorno de
+   * status-pagamento quando ele trouxer (categoria/tipo) e, hoje, da compra
+   * guardada nesta aba pelo checkout. Sem categoria conhecida, devolve vazio
+   * e a página mostra o texto genérico.
+   */
+  function proximosPassos(info, email) {
+    var c = info.categoria;
+    var senha = linkSenha(email);
+    if (c === 'endereco_fiscal') {
+      return lista([
+        senha,
+        'Em até 30 dias, envie pela área do cliente os documentos da empresa ou, se ela ainda vai ser aberta, os documentos dos futuros sócios.',
+        'A equipe confere os documentos em até 5 dias úteis e libera o que você precisa para registrar o endereço.',
+      ].concat(info.abertura ? ['Seu plano inclui a abertura da empresa: na área do cliente, abra <b>Abertura da empresa</b> e preencha os dados.'] : []));
+    }
+    if (c === 'abertura_empresa') {
+      return lista([
+        senha,
+        'Na área do cliente, abra <b>Abertura da empresa</b>, preencha os dados e anexe os documentos. A Ciatos Contabilidade acompanha o registro por lá.',
+        'As taxas oficiais dos órgãos públicos são pagas à parte e informadas antes de cada etapa.',
+      ]);
+    }
+    if (c === 'coworking' && info.recorrencia === 'avulso') {
+      return lista([
+        senha,
+        'O seu ' + (/hora/i.test(info.plano || '') ? 'crédito de hora avulsa' : /day/i.test(info.plano || '') ? 'day pass' : 'crédito') + ' fica na área do cliente.',
+        'Venha ' + HORARIO + ', na ' + LUXEMBURGO + ', e apresente-se na recepção com o e-mail usado na compra.',
+      ]);
+    }
+    if (c === 'coworking') {
+      return lista([
+        senha,
+        'Pela área do cliente você acompanha o plano e faz suas reservas.',
+        'Use o espaço ' + (TURNOS[info.turno] ? 'no seu turno, ' + TURNOS[info.turno] + ', de segunda a sexta, exceto feriados' : HORARIO) +
+          ', na ' + LUXEMBURGO + '. Na chegada, apresente-se na recepção com o e-mail usado na compra.',
+      ]);
+    }
+    if (c === 'sala_privativa') {
+      return lista([
+        'A equipe confirma a entrega da sua sala em até 5 dias úteis, com o termo de entrega.',
+        senha + ' Pela área do cliente você cadastra quem vai usar a sala.',
+        'O uso é ' + HORARIO + ', na ' + LUXEMBURGO + '.',
+      ]);
+    }
+    return '';
+  }
+
+  /** O que sobra da compra depois da confirmação: sem e-mail, PIX nem link de pagamento. */
+  function guardarResumo() {
+    try {
+      if (!compra) return;
+      sessionStorage.setItem(CHAVE, JSON.stringify({
+        confirmado: true, reserva: compra.reserva, plano: compra.plano, valor: compra.valor, plano_id: compra.plano_id,
+        categoria: compra.categoria, recorrencia: compra.recorrencia, abertura: compra.abertura, turno: compra.turno,
+        sala: compra.sala, quando: compra.quando, unidade_id: compra.unidade_id,
+      }));
+    } catch (_) { /* ignore */ }
+  }
+
+  function confirmado(d) {
     medirConfirmacao();
+    d = d || {};
     if (ehReserva) {
       $('pg-titulo').textContent = 'Reserva confirmada';
       $('pg-resumo').textContent = compra ? compra.plano : '';
-      $('pg-acao').innerHTML =
-        '<p>Enviamos a confirmação para <b>' + Cards.escapar(compra && compra.email ? compra.email : 'o seu e-mail') + '</b>. No dia, procure a recepção alguns minutos antes.</p>' +
-        '<p>Para remarcar ou cancelar, fale com a gente com pelo menos 24 horas de antecedência.</p>' +
+      var naSede = !compra || !compra.unidade_id || compra.unidade_id === loja.unidadePrincipal;
+      $('pg-acao').innerHTML = lista([
+        '<b>Horário confirmado' + (compra && compra.sala ? ': ' + Cards.escapar(compra.sala) : '') + '</b>' +
+          (compra && compra.quando ? ', ' + Cards.escapar(compra.quando) : '') + '. A confirmação foi para ' +
+          (compra && compra.email ? '<b>' + Cards.escapar(compra.email) + '</b>' : 'o seu e-mail') + '.',
+        (naSede ? 'Endereço: ' + LUXEMBURGO + ', CEP 30380-342. ' : '') + 'Chegue alguns minutos antes e procure a recepção.',
+        'O que levar: seu notebook e o material da reunião. A sala tem Wi-Fi, ar-condicionado, TV ou projetor e quadro branco.',
+        'Para remarcar ou cancelar, fale com a gente com pelo menos 24 horas de antecedência.',
+      ]) +
+        (naSede ? botao('https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent('Rua Guaicuí, 715, Luxemburgo, Belo Horizonte - MG'), 'Traçar rota', 'btn-primary') + ' ' : '') +
         '<a class="btn btn-outline" href="/">Voltar ao site</a>';
       $('pg-status').textContent = '';
-      try { sessionStorage.removeItem(CHAVE); } catch (_) { /* ignore */ }
+      guardarResumo();
       return;
     }
+    // status-pagamento pode passar a devolver a categoria; enquanto não devolve, vale a da compra desta aba
+    var info = {
+      categoria: d.categoria || d.tipo || (compra && compra.categoria) || '',
+      recorrencia: d.recorrencia || (compra && compra.recorrencia) || '',
+      abertura: !!(compra && compra.abertura), turno: compra && compra.turno, plano: (compra && compra.plano) || '',
+    };
     $('pg-titulo').textContent = 'Pagamento confirmado';
-    $('pg-resumo').textContent = compra ? compra.plano + ' ativo.' : 'Seu plano está ativo.';
+    $('pg-resumo').textContent = compra ? compra.plano + (info.recorrencia === 'avulso' ? ' confirmado.' : ' ativo.') : 'Seu plano está ativo.';
     var email = compra && compra.email ? compra.email : 'o seu e-mail';
-    var passos = proximosPassos(compra && compra.categoria, email);
+    var passos = proximosPassos(info, email);
     $('pg-acao').innerHTML = passos
       ? passos + botao(loja.appUrl, 'Ir para a área do cliente')
       : '<p>Enviamos para <b>' + Cards.escapar(email) + '</b> o link para criar sua senha e entrar na área do cliente.</p>' +
         '<p>Não chegou em alguns minutos? Confira a caixa de spam.</p>' +
         botao(loja.appUrl, 'Ir para a área do cliente');
     $('pg-status').textContent = '';
-    try { sessionStorage.removeItem(CHAVE); } catch (_) { /* ignore */ }
+    guardarResumo();
   }
 
   function cancelado() {
@@ -152,7 +214,7 @@
     })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) {
-        if (d && d.status === 'confirmado') return confirmado();
+        if (d && d.status === 'confirmado') return confirmado(d);
         if (d && d.status === 'cancelado') return cancelado();
         if (d && d.fatura && !fatura) { fatura = d.fatura; desenharAcao(); }
         agendar();

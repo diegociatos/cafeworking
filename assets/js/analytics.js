@@ -24,16 +24,29 @@
   function gravarEscolha(v) { try { localStorage.setItem(CHAVE, v); } catch (_) { /* sem storage */ } }
   function temId() { return !!(cfg.gtmId || cfg.ga4Id || cfg.metaPixelId); }
 
+  // nomes de produto e de lista (item_name, item_list_name) não são dado pessoal
+  var PRODUTO = /^(item|item_list|content|link|page)_/;
+  // ids aleatórios (token da compra, id da reserva) têm sequências de números que parecem CPF
+  var IDS = /^(transaction_id|item_id|item_list_id)$/;
+
   function semDadosPessoais(dados) {
     var limpo = {};
     Object.keys(dados || {}).forEach(function (k) {
-      if (PESSOAIS.test(k) || dados[k] === undefined) return;
+      if ((PESSOAIS.test(k) && !PRODUTO.test(k)) || dados[k] === undefined) return;
       var v = dados[k];
-      // e-mail ou CPF escondido dentro de um valor de texto também não sai
-      if (typeof v === 'string' && (/@/.test(v) || /\d{3}\.?\d{3}\.?\d{3}-?\d{2}/.test(v))) return;
+      // e-mail, CPF/CNPJ ou telefone escondido dentro de um valor de texto também não sai
+      if (typeof v === 'string' && !IDS.test(k) &&
+        (/@/.test(v) || /\d{3}\.?\d{3}\.?\d{3}-?\d{2}/.test(v) || /\d{2}\.?\d{3}\.?\d{3}\/?\d{4}/.test(v) || /\(?\d{2}\)?\s?9?\d{4}-?\d{4}/.test(v))) return;
+      // listas de itens: cada item passa pelo mesmo filtro
+      if (Array.isArray(v)) v = v.map(function (it) { return it && typeof it === 'object' ? semDadosPessoais(it) : it; });
       limpo[k] = v;
     });
     return limpo;
+  }
+
+  function semIndefinidos(o) {
+    Object.keys(o).forEach(function (k) { if (o[k] === undefined) delete o[k]; });
+    return o;
   }
 
   function script(src) {
@@ -66,9 +79,19 @@
     }
   }
 
+  /*
+   * Funil (mesmo nome no GA4) e o evento padrão equivalente no Meta Pixel:
+   *   view_item         card de plano visto ou clicado          ViewContent
+   *   begin_checkout    abriu contratar / a agenda de reserva   InitiateCheckout
+   *   add_payment_info  dados enviados e cobrança gerada       AddPaymentInfo
+   *   purchase          pagamento confirmado, 1x por pagamento  Purchase
+   *   contact           clique no WhatsApp                      Contact
+   *   generate_lead     pedido de proposta ou visita            Lead
+   * Os demais (view_item_list, select_item, reserve_room) vão ao Pixel como evento personalizado.
+   */
   var PIXEL = {
-    view_item_list: 'ViewContent', begin_checkout: 'InitiateCheckout', add_payment_info: 'AddPaymentInfo',
-    purchase: 'Purchase', generate_lead: 'Lead', reserve_room: 'Schedule', whatsapp_click: 'Contact',
+    view_item: 'ViewContent', begin_checkout: 'InitiateCheckout', add_payment_info: 'AddPaymentInfo',
+    purchase: 'Purchase', generate_lead: 'Lead', contact: 'Contact',
   };
 
   window.cwTrack = function (evento, dados) {
@@ -79,8 +102,15 @@
     try {
       if (cfg.ga4Id && typeof window.gtag === 'function') window.gtag('event', evento, d);
       if (cfg.metaPixelId && typeof window.fbq === 'function') {
-        var extra = { value: d.value, currency: d.currency, content_name: d.item_name || d.item_list_name, content_category: d.item_category };
-        if (PIXEL[evento]) window.fbq('track', PIXEL[evento], extra);
+        var itens = Array.isArray(d.items) ? d.items : [];
+        var extra = semIndefinidos({
+          value: d.value, currency: d.currency, content_name: d.item_name || d.item_list_name, content_category: d.item_category,
+          content_ids: itens.length ? itens.map(function (it) { return it.item_id; }).filter(Boolean) : undefined,
+          content_type: itens.length ? 'product' : undefined, num_items: itens.length || undefined,
+        });
+        // transaction_id vira eventID: o Pixel descarta a mesma compra enviada duas vezes
+        var opcoes = d.transaction_id ? { eventID: String(d.transaction_id) } : undefined;
+        if (PIXEL[evento]) window.fbq('track', PIXEL[evento], extra, opcoes);
         else window.fbq('trackCustom', evento, d);
       }
     } catch (_) { /* medição nunca quebra a página */ }
@@ -134,7 +164,7 @@
       if (link) {
         var secao = link.closest('.cw-barra') ? 'barra_celular' : link.classList.contains('wa-float') ? 'botao_flutuante'
           : link.closest('.nav-actions') ? 'topo' : link.closest('footer') ? 'rodape' : 'conteudo';
-        window.cwTrack('whatsapp_click', { page_path: location.pathname, link_location: secao, link_text: (link.textContent || '').trim().slice(0, 60) });
+        window.cwTrack('contact', { method: 'whatsapp', page_path: location.pathname, link_location: secao, link_text: (link.textContent || '').trim().slice(0, 60) });
       }
     });
   }

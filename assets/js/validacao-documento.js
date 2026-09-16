@@ -1,7 +1,7 @@
 /**
- * Validação e máscara de CPF e CNPJ (inclusive o CNPJ alfanumérico da Receita,
+ * Validação e máscara de CPF, CNPJ (inclusive o CNPJ alfanumérico da Receita,
  * que passa a ser emitido em 2026: 12 caracteres de A-Z/0-9 + 2 dígitos
- * verificadores). Funciona no navegador (window.CWDocumento) e no Node
+ * verificadores) e telefone com DDD. Funciona no navegador (window.CWDocumento) e no Node
  * (scripts/validacao-documento.test.js).
  */
 (function (raiz, fabrica) {
@@ -84,8 +84,93 @@
       .replace(/\/(\w{4})(\w{1,2})$/, '/$1-$2');
   }
 
+  /** Só os dígitos do telefone, sem o 55 do Brasil quando vier junto. */
+  function digitosTelefone(valor) {
+    var d = String(valor == null ? '' : valor).replace(/\D/g, '');
+    if (/^55\d{10,11}$/.test(d)) d = d.slice(2);
+    return d;
+  }
+
+  /**
+   * Telefone brasileiro com DDD: celular (11 dígitos, começa com 9 depois do
+   * DDD) ou fixo (10 dígitos). Vazio vale quando o campo é opcional.
+   * { ok, valor: só dígitos, erro }
+   */
+  function validarTelefone(valor, obrigatorio) {
+    var d = digitosTelefone(valor);
+    if (!d) {
+      return obrigatorio
+        ? { ok: false, valor: d, erro: 'Informe o celular com DDD, ex.: (31) 99999-9999.' }
+        : { ok: true, valor: d, erro: '' };
+    }
+    var ddd = /^[1-9][1-9]/.test(d);
+    var celular = d.length === 11 && d[2] === '9';
+    var fixo = d.length === 10 && /[2-5]/.test(d[2]);
+    if (!ddd || !(celular || fixo) || todosIguais(d.slice(2))) {
+      return { ok: false, valor: d, erro: 'Telefone inválido. Informe o DDD e o número, ex.: (31) 99999-9999.' };
+    }
+    return { ok: true, valor: d, erro: '' };
+  }
+
+  /** Máscara progressiva: (31) 3181-0140 ou (31) 99999-9999. */
+  function mascararTelefone(valor) {
+    var d = String(valor == null ? '' : valor).replace(/\D/g, '');
+    if (d.length > 11 && d.slice(0, 2) === '55') d = d.slice(2);
+    d = d.slice(0, 11);
+    if (!d) return '';
+    if (d.length <= 2) return '(' + d;
+    var meio = d.length === 11 ? 7 : 6;
+    return '(' + d.slice(0, 2) + ') ' + d.slice(2, meio) + (d.length > meio ? '-' + d.slice(meio) : '');
+  }
+
+  /* ---- ajuda de formulário (só no navegador) ---- */
+
+  /** Mostra (ou limpa, com msg vazia) a mensagem de erro logo abaixo do campo. */
+  function erroNoCampo(campo, msg) {
+    if (!campo || typeof document === 'undefined') return;
+    var id = (campo.form && campo.form.id ? campo.form.id + '-' : '') + campo.name + '-erro';
+    var el = document.getElementById(id);
+    if (!el && msg) {
+      el = document.createElement('small');
+      el.id = id;
+      el.className = 'campo-erro';
+      el.setAttribute('role', 'alert');
+      campo.insertAdjacentElement('afterend', el);
+      var desc = (campo.getAttribute('aria-describedby') || '').split(' ').filter(Boolean);
+      if (desc.indexOf(id) < 0) campo.setAttribute('aria-describedby', desc.concat(id).join(' '));
+    }
+    if (el) { el.textContent = msg || ''; el.hidden = !msg; }
+    if (msg) campo.setAttribute('aria-invalid', 'true');
+    else campo.removeAttribute('aria-invalid');
+  }
+
+  /**
+   * Máscara enquanto digita e conferência ao sair do campo.
+   * mascara(valor) → texto; validar(valor) → { ok, erro }.
+   */
+  function ligarCampo(campo, mascara, validar) {
+    if (!campo) return;
+    campo.addEventListener('input', function () {
+      var noFim = campo.selectionStart === campo.value.length;
+      var novo = mascara(campo.value);
+      if (novo !== campo.value) {
+        campo.value = novo;
+        if (noFim && campo.setSelectionRange) campo.setSelectionRange(novo.length, novo.length);
+      }
+      // corrigiu: some o aviso na hora; o erro novo só aparece ao sair do campo
+      if (campo.getAttribute('aria-invalid') === 'true' && validar(campo.value).ok) erroNoCampo(campo, '');
+    });
+    campo.addEventListener('blur', function () {
+      if (!campo.value) { erroNoCampo(campo, ''); return; }
+      var r = validar(campo.value);
+      erroNoCampo(campo, r.ok ? '' : r.erro);
+    });
+  }
+
   return {
     normalizar: normalizar, cpfValido: cpfValido, cnpjValido: cnpjValido,
     validarDocumento: validarDocumento, mascararDocumento: mascararDocumento,
+    digitosTelefone: digitosTelefone, validarTelefone: validarTelefone, mascararTelefone: mascararTelefone,
+    erroNoCampo: erroNoCampo, ligarCampo: ligarCampo,
   };
 });

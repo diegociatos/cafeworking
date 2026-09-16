@@ -283,6 +283,7 @@
     var falha = function (msg, campo) {
       campoErro.textContent = msg;
       campoErro.hidden = !msg;
+      if (campo && Documento) Documento.erroNoCampo(campo, msg);
       if (campo) campo.focus();
     };
     var d = {
@@ -290,8 +291,11 @@
       telefone: formProposta.telefone.value.trim(), email: formProposta.email.value.trim(),
       mensagem: formProposta.mensagem.value.trim(),
     };
+    limparErrosCampos(formProposta);
+    var telProposta = Documento ? Documento.validarTelefone(d.telefone, true)
+      : { ok: d.telefone.replace(/\D/g, '').length >= 10, erro: 'Informe um celular com DDD.' };
     if (d.nome.length < 3) return falha('Informe seu nome.', formProposta.nome);
-    if (d.telefone.replace(/\D/g, '').length < 10) return falha('Informe um celular com DDD.', formProposta.telefone);
+    if (!telProposta.ok) return falha(telProposta.erro, formProposta.telefone);
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return falha('Informe um e-mail válido.', formProposta.email);
     if (!estado.turnstile) return falha(mensagemTurnstile());
     falha('');
@@ -328,24 +332,25 @@
       });
   });
 
-  // máscara de CPF/CNPJ enquanto digita; a validação completa acontece no envio
-  if (Documento && form.documento) {
-    form.documento.addEventListener('input', function () {
-      var campo = form.documento;
-      var fimAntes = campo.selectionStart === campo.value.length;
-      var mascarado = Documento.mascararDocumento(campo.value);
-      if (mascarado !== campo.value) {
-        campo.value = mascarado;
-        if (fimAntes) campo.setSelectionRange(mascarado.length, mascarado.length);
-      }
-    });
-    form.documento.addEventListener('blur', function () {
-      // no blur só avisa, sem rolar a página
-      var r = Documento.validarDocumento(form.documento.value);
-      var el = $('loja-erro');
-      if (form.documento.value && !r.ok) { el.textContent = r.erro; el.hidden = false; }
-      else if (/CPF|CNPJ/.test(el.textContent)) { el.textContent = ''; el.hidden = true; }
-    });
+  // máscara enquanto digita e aviso junto do campo ao sair dele; a validação completa acontece no envio
+  if (Documento) {
+    Documento.ligarCampo(form.documento, Documento.mascararDocumento, Documento.validarDocumento);
+    Documento.ligarCampo(form.telefone, Documento.mascararTelefone, function (v) { return Documento.validarTelefone(v); });
+    Documento.ligarCampo(formProposta.telefone, Documento.mascararTelefone, function (v) { return Documento.validarTelefone(v, true); });
+  }
+
+  /** Erro junto do campo (com foco nele) e resumo no aviso geral do formulário. */
+  function erroCampo(campo, msg) {
+    if (Documento) Documento.erroNoCampo(campo, msg);
+    // aviso perto do botão sem rolar a página: quem rola é o foco, até o campo
+    $('loja-erro').textContent = msg;
+    $('loja-erro').hidden = false;
+    campo.focus();
+  }
+
+  function limparErrosCampos(f) {
+    if (!Documento) return;
+    ['nome', 'documento', 'telefone', 'email'].forEach(function (n) { if (f[n]) Documento.erroNoCampo(f[n], ''); });
   }
 
   form.addEventListener('change', function (e) {
@@ -359,25 +364,23 @@
     e.preventDefault();
     if (estado.enviando || !estado.plano || !estado.contrato) return;
     erro('');
+    limparErrosCampos(form);
 
     var doc = Documento ? Documento.validarDocumento(form.documento.value) : { ok: true, valor: form.documento.value.replace(/[^0-9A-Za-z]/g, '') };
+    var tel = Documento ? Documento.validarTelefone(form.telefone.value) : { ok: true };
     var d = {
       nome: form.nome.value.trim(),
       documento: doc.valor,
       email: form.email.value.trim(),
       telefone: form.telefone.value.trim(),
     };
-    if (d.nome.length < 3) return erro('Informe o nome completo ou a razão social.'), form.nome.focus();
-    if (!doc.ok) return erro(doc.erro), form.documento.focus();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return erro('Informe um e-mail válido. É por ele que você recebe o acesso.'), form.email.focus();
+    if (d.nome.length < 3) return erroCampo(form.nome, 'Informe o nome completo ou a razão social.');
+    if (!doc.ok) return erroCampo(form.documento, doc.erro);
+    if (!tel.ok) return erroCampo(form.telefone, tel.erro);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return erroCampo(form.email, 'Informe um e-mail válido. É por ele que você recebe o acesso.');
     if (estado.plano.escolhaTurno && !estado.turno) return erro('Escolha o turno: manhã ou tarde.'), $('loja-turno').scrollIntoView({ block: 'center' });
     if (!form.aceite.checked) return erro('Para continuar, aceite o contrato.'), form.aceite.focus();
     if (!estado.turnstile) return erro(mensagemTurnstile());
-
-    track('add_payment_info', {
-      currency: 'BRL', value: itemDoPlano().price, payment_type: estado.periodicidade === 'mensal' ? 'CREDIT_CARD' : estado.forma,
-      item_category: estado.plano.categoria, items: [itemDoPlano()],
-    });
 
     estado.enviando = true;
     var botao = $('loja-pagar');
@@ -408,12 +411,20 @@
           try {
             sessionStorage.setItem('cw_pagamento_' + x.status_token, JSON.stringify({
               plano: x.plano, valor: x.valor, periodicidade: x.periodicidade, forma: x.forma, email: d.email,
-              // pagamento.js usa a categoria para mostrar os próximos passos e medir a compra
-              categoria: estado.plano.categoria, plano_id: estado.plano.id,
+              // pagamento.js usa estes campos para mostrar os próximos passos e medir a compra
+              categoria: estado.plano.categoria, plano_id: estado.plano.id, recorrencia: estado.plano.recorrencia,
+              abertura: !!(estado.plano.direitos && estado.plano.direitos.aberturaEmpresa), turno: estado.turno || '',
               checkoutUrl: x.checkoutUrl, pix_payload: x.pix_payload, pix_imagem: x.pix_imagem, boleto_url: x.boleto_url,
             }));
           } catch (_) { /* sem sessionStorage: a página de pagamento mostra o link da fatura */ }
-          location.href = '/pagamento?t=' + encodeURIComponent(x.status_token);
+          // cobrança gerada: dados enviados e aceitos pelo servidor
+          track('add_payment_info', {
+            currency: 'BRL', value: Number(x.valor) || itemDoPlano().price,
+            payment_type: estado.periodicidade === 'mensal' ? 'CREDIT_CARD' : estado.forma,
+            item_category: estado.plano.categoria, items: [itemDoPlano()],
+          });
+          // um instante para o evento sair antes de trocar de página
+          setTimeout(function () { location.href = '/pagamento?t=' + encodeURIComponent(x.status_token); }, 300);
           return;
         }
         if (x.codigo === 'ACEITE_NECESSARIO' && x.contrato) {

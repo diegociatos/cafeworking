@@ -153,6 +153,14 @@
     });
   }
 
+  /** begin_checkout uma vez por visita, quando a agenda com salas reserváveis abre. */
+  var inicioMedido = false;
+  function medirInicio() {
+    if (inicioMedido || !window.cwTrack) return;
+    inicioMedido = true;
+    window.cwTrack('begin_checkout', { currency: 'BRL', item_category: 'sala_hora', items: [{ item_id: 'sala_hora', item_name: 'Sala de reunião por hora', item_category: 'sala_hora', quantity: 1 }] });
+  }
+
   // automatico: a unidade veio do link ou do navegador, não de uma escolha feita agora no seletor
   function trocarUnidade(id, automatico) {
     estado.unidadeId = id;
@@ -182,6 +190,7 @@
         return;
       }
       return carregarDisponibilidade().then(function () {
+        if (estado.disp && estado.disp.salas.length) medirInicio();
         if (estado.disp && !estado.disp.salas.length) irParaPrincipal();
       });
     });
@@ -242,15 +251,18 @@
     var s = sala();
     if (estado.enviando || !s || estado.inicio === null || !estado.contrato) return;
     erro('');
+    if (Documento) ['nome', 'documento', 'telefone', 'email'].forEach(function (n) { Documento.erroNoCampo(form[n], ''); });
     var d = {
       nome: form.nome.value.trim(),
       documento: Documento ? Documento.normalizar(form.documento.value) : form.documento.value.replace(/[^0-9A-Za-z]/g, ''),
       email: form.email.value.trim(), telefone: form.telefone.value.trim(),
     };
-    if (d.nome.length < 3) return erro('Informe o nome completo ou a razão social.'), form.nome.focus();
+    if (d.nome.length < 3) return erroCampo(form.nome, 'Informe o nome completo ou a razão social.');
     var doc = Documento ? Documento.validarDocumento(d.documento) : { ok: [11, 14].indexOf(d.documento.length) >= 0, erro: 'Informe um CPF (11 dígitos) ou CNPJ (14 caracteres).' };
-    if (!doc.ok) return erro(doc.erro), form.documento.focus();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return erro('Informe um e-mail válido.'), form.email.focus();
+    if (!doc.ok) return erroCampo(form.documento, doc.erro);
+    var tel = Documento ? Documento.validarTelefone(d.telefone) : { ok: true };
+    if (!tel.ok) return erroCampo(form.telefone, tel.erro);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return erroCampo(form.email, 'Informe um e-mail válido. A confirmação chega por ele.');
     if (!form.aceite.checked) return erro('Para continuar, aceite o termo de reserva.'), form.aceite.focus();
     if (!estado.turnstile) return erro('Aguarde a verificação de segurança terminar e tente de novo.');
 
@@ -274,13 +286,23 @@
       .then(function (r) {
         var x = r.x;
         if (x.ok && x.reserva_id) {
+          var quando = dataLonga(estado.data) + ', das ' + estado.inicio + 'h às ' + (estado.inicio + estado.horas) + 'h';
           try {
             sessionStorage.setItem('cw_pagamento_' + x.reserva_id, JSON.stringify({
               reserva: true, plano: x.descricao, valor: x.valor, periodicidade: 'avulso', forma: forma, email: d.email,
+              // pagamento.js mostra sala, horário e endereço na confirmação
+              sala: s.nome, quando: quando, unidade_id: estado.unidadeId,
               checkoutUrl: x.checkoutUrl, pix_payload: x.pix_payload, pix_imagem: x.pix_imagem, expira_em: x.expira_em,
             }));
           } catch (_) { /* a página de pagamento busca o link da fatura */ }
-          location.href = '/pagamento?r=' + encodeURIComponent(x.reserva_id);
+          // cobrança gerada: dados enviados e aceitos pelo servidor
+          if (window.cwTrack) {
+            window.cwTrack('add_payment_info', {
+              currency: 'BRL', value: Number(x.valor) || undefined, payment_type: forma, item_category: 'sala_hora',
+              items: [{ item_id: 'sala_hora', item_name: s.nome, item_category: 'sala_hora', price: Number(x.valor) ? Math.round(Number(x.valor) / estado.horas * 100) / 100 : undefined, quantity: estado.horas }],
+            });
+          }
+          setTimeout(function () { location.href = '/pagamento?r=' + encodeURIComponent(x.reserva_id); }, 300);
           return;
         }
         if (x.codigo === 'ACEITE_NECESSARIO' && x.contrato) {
@@ -312,11 +334,17 @@
       });
   });
 
-  if (Documento && form.documento) {
-    form.documento.addEventListener('input', function () {
-      var mascarado = Documento.mascararDocumento(form.documento.value);
-      if (mascarado !== form.documento.value) form.documento.value = mascarado;
-    });
+  /** Erro junto do campo (com foco nele) e repetido perto do botão de pagar. */
+  function erroCampo(campo, msg) {
+    if (Documento) Documento.erroNoCampo(campo, msg);
+    erro(msg);
+    campo.focus();
+  }
+
+  // máscara enquanto digita e aviso junto do campo ao sair dele
+  if (Documento) {
+    Documento.ligarCampo(form.documento, Documento.mascararDocumento, Documento.validarDocumento);
+    Documento.ligarCampo(form.telefone, Documento.mascararTelefone, function (v) { return Documento.validarTelefone(v); });
   }
 
   iniciar();

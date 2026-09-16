@@ -53,3 +53,29 @@ test('máscara progressiva de CPF e CNPJ', () => {
   assert.equal(D.mascararDocumento('12abc34501de35'), '12.ABC.345/01DE-35');
   assert.equal(D.mascararDocumento('20.351.761/0001-039999'), '20.351.761/0001-03');
 });
+
+test('telefone: celular e fixo com DDD, com ou sem +55', () => {
+  assert.equal(D.validarTelefone('(31) 99712-9789').ok, true);
+  assert.equal(D.validarTelefone('3131810140').ok, true);
+  assert.equal(D.validarTelefone('+55 31 99712-9789').valor, '31997129789');
+});
+
+test('telefone: sem DDD, DDD com zero, celular sem 9 ou repetido é inválido', () => {
+  assert.equal(D.validarTelefone('99712-9789').ok, false);
+  assert.equal(D.validarTelefone('(01) 99712-9789').ok, false);
+  assert.equal(D.validarTelefone('(31) 89712-9789').ok, false);
+  assert.equal(D.validarTelefone('(31) 99999-9999').ok, false);
+});
+
+test('telefone: vazio só vale quando o campo é opcional', () => {
+  assert.equal(D.validarTelefone('').ok, true);
+  assert.equal(D.validarTelefone('', true).ok, false);
+});
+
+test('máscara de telefone enquanto digita', () => {
+  assert.equal(D.mascararTelefone('3'), '(3');
+  assert.equal(D.mascararTelefone('3199'), '(31) 99');
+  assert.equal(D.mascararTelefone('3131810140'), '(31) 3181-0140');
+  assert.equal(D.mascararTelefone('31997129789'), '(31) 99712-9789');
+  assert.equal(D.mascararTelefone('5531997129789'), '(31) 99712-9789');
+});

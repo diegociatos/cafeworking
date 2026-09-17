@@ -110,7 +110,7 @@ const UNIDADES = {
  * ------------------------------------------------------------------ */
 
 const NAO_INDEXAR = new Set([
-  '404.html', 'offline.html', 'obrigado.html',
+  '404.html', 'offline.html', 'obrigado.html', 'obrigado-parceiro.html',
   'login.html', 'cadastro.html', 'perfil.html', 'documentos.html',
   'reservas.html', 'solicitacoes.html', 'financeiro.html',
   'area-do-cliente.html', 'area-do-membro.html',
@@ -344,6 +344,18 @@ const PAGINAS = {
     t: 'Trocar de Contador | Migração Contábil sem Dor de Cabeça',
     d: 'Trocar de contador com segurança: o que pedir ao escritório atual, quais documentos exigir e como fazer a migração sem perder prazos fiscais.',
     img: 'og-contabilidade.jpg', tipo: 'servico', bc: [SERV, ['Trocar de Contador', 'trocar-contador.html']],
+  },
+
+  /* ---- rede de parceiros (docs/PARCEIROS.md do app) ---- */
+  'seja-parceiro.html': {
+    t: 'Seja Parceiro CafeWorking | Endereço Fiscal na Sua Cidade',
+    d: 'Seu escritório vira uma unidade CafeWorking: nós vendemos e cobramos, você fornece o espaço e recebe 75% de cada pagamento. Não é franquia. Candidate-se online.',
+    img: 'og-default.jpg', tipo: 'servico', bc: [['Seja Parceiro', 'seja-parceiro.html']],
+  },
+  'obrigado-parceiro.html': {
+    t: 'Candidatura recebida | Seja Parceiro CafeWorking',
+    d: 'Recebemos a candidatura do seu escritório para a rede CafeWorking. A equipe responde em até 3 dias úteis.',
+    img: 'og-default.jpg', tipo: 'pagina',
   },
 
   /* ---- institucional ---- */
@@ -891,6 +903,26 @@ for (const arq of arquivos) {
  * sitemap.xml
  * ------------------------------------------------------------------ */
 
+/* Páginas por cidade da vitrine nacional (/endereco-fiscal/<cidade>-<uf>).
+ * Elas são geradas na publicação por scripts/paginas-cidade.js, que já grava o
+ * <head> completo; aqui só entram no sitemap, a partir da lista que ele deixa
+ * em scripts/cidades-geradas.json. Sem o arquivo (app fora do ar na última
+ * publicação), o sitemap sai só com as páginas da raiz. */
+function urlsDasCidades(lastmod) {
+  const arq = path.join(__dirname, 'cidades-geradas.json');
+  if (!fs.existsSync(arq)) return [];
+  let cidades = [];
+  try {
+    cidades = JSON.parse(fs.readFileSync(arq, 'utf8'));
+  } catch (e) {
+    console.log(`sitemap: cidades-geradas.json ilegivel (${e.message})`);
+    return [];
+  }
+  return (Array.isArray(cidades) ? cidades : [])
+    .filter((c) => c && c.slug)
+    .map((c) => `  <url>\n    <loc>${SITE}/endereco-fiscal/${c.slug}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <priority>0.8</priority>\n  </url>`);
+}
+
 const PRIORIDADE = {
   'index.html': '1.0',
   'coworking.html': '0.9', 'salas-privativas.html': '0.9', 'salas-de-reuniao.html': '0.9',
@@ -907,6 +939,7 @@ const urls = relatorio.indexaveis
     const prio = PRIORIDADE[arq] || (arq.startsWith('artigo-') ? '0.6' : '0.7');
     return `  <url>\n    <loc>${urlDe(arq)}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <priority>${prio}</priority>\n  </url>`;
   })
+  .concat(urlsDasCidades(hoje))
   .join('\n');
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;

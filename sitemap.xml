@@ -251,6 +251,11 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://cafeworking.com.br/seja-parceiro</loc>
+    <lastmod>2026-09-17</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://cafeworking.com.br/servicos</loc>
     <lastmod>2026-09-15</lastmod>
     <priority>0.7</priority>
@@ -299,5 +304,10 @@
     <loc>https://cafeworking.com.br/workshops</loc>
     <lastmod>2026-09-15</lastmod>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://cafeworking.com.br/endereco-fiscal/belo-horizonte</loc>
+    <lastmod>2026-09-17</lastmod>
+    <priority>0.8</priority>
   </url>
 </urlset>

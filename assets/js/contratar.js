@@ -200,10 +200,19 @@
     if (window.turnstile && estado.widget !== null) window.turnstile.reset(estado.widget);
   }
 
+  /** "Belo Horizonte/MG" → "belo-horizonte-mg" (o mesmo slug das páginas por cidade). */
+  function slugDaCidade(valor) {
+    return String(valor || '').normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  }
+
   function carregar() {
     var planoId = params.get('plano');
     var unidadeId = params.get('unidade');
-    if (!planoId || !unidadeId) {
+    // As páginas por cidade do site podem mandar só a cidade: a unidade é
+    // descoberta aqui, entre as que vendem o plano escolhido.
+    var cidade = slugDaCidade(params.get('cidade'));
+    if (!planoId || (!unidadeId && !cidade)) {
       aviso('<h2 class="h2">Escolha um plano</h2><p>Veja os planos e clique em <b>Quero este plano</b>.</p><a class="btn btn-primary" href="/planos">Ver planos</a>');
       return;
     }
@@ -211,8 +220,16 @@
     getJSON(FN + 'planos-publicos?site=1')
       .then(function (r) {
         var planos = (r.dados && r.dados.planos) || [];
+        var unidades = (r.dados && r.dados.unidades) || [];
+        if (!unidadeId && cidade) {
+          var daCidade = unidades.filter(function (u) {
+            return slugDaCidade(u.cidade) === cidade
+              && planos.some(function (p) { return p.id === planoId && p.unidade_id === u.id; });
+          })[0];
+          if (daCidade) unidadeId = daCidade.id;
+        }
         estado.plano = planos.filter(function (p) { return p.id === planoId && p.unidade_id === unidadeId; })[0] || null;
-        estado.unidade = ((r.dados && r.dados.unidades) || []).filter(function (u) { return u.id === unidadeId; })[0] || null;
+        estado.unidade = unidades.filter(function (u) { return u.id === unidadeId; })[0] || null;
         if (r.status !== 200) throw new Error('catalogo');
         var visita = params.get('visita') === '1';
         var salaId = params.get('sala');

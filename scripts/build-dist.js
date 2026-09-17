@@ -23,7 +23,9 @@ const DIST = path.join(RAIZ, 'dist');
 
 // arquivos soltos da raiz que o site precisa (além das páginas .html)
 const ARQUIVOS_PUBLICOS = ['robots.txt', 'llms.txt', 'sitemap.xml', 'manifest.json', 'sw.js', '_headers', 'favicon.ico'];
-const PASTAS_PUBLICAS = ['assets'];
+// endereco-fiscal/: páginas por cidade geradas por scripts/paginas-cidade.js
+// (/endereco-fiscal/<cidade>-<uf>). A pasta só existe depois de o script rodar.
+const PASTAS_PUBLICAS = ['assets', 'endereco-fiscal'];
 
 // páginas de uso interno que nunca vão para o ar (complementado por scripts/internos.json)
 const INTERNOS_PADRAO = [

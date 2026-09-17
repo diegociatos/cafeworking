@@ -1,12 +1,14 @@
 # Site CafeWorking no Cloudflare Pages (conectado ao GitHub, branch main).
 #
 # Configuração do build no painel do Pages:
-#   Build command:  node scripts/versionar-loja.js && node scripts/vitrine.js && node scripts/build-dist.js
+#   Build command:  node scripts/versionar-loja.js && node scripts/vitrine.js && node scripts/paginas-cidade.js && node scripts/build-dist.js
 #   Output:         dist
 #   Variável:       NODE_VERSION = 22
 #
-# O build grava a vitrine de planos a partir do app e monta dist/ só com o que é
-# público (ver scripts/build-dist.js). Funções em functions/api/.
+# O build grava a vitrine de planos a partir do app, gera as páginas por cidade
+# da vitrine nacional (scripts/paginas-cidade.js → /endereco-fiscal/<cidade>-<uf>)
+# e monta dist/ só com o que é público (ver scripts/build-dist.js). Funções em
+# functions/api/.
 
 name = "cafeworking-site"
 pages_build_output_dir = "dist"

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cafeworking-v36';
+const CACHE_NAME = 'cafeworking-v37';
 const CORE_ASSETS = ['/', '/offline.html', '/assets/css/style.css', '/assets/js/main.js'];
 
 /* Duas estrategias, pelo tipo de arquivo:
@@ -33,6 +33,9 @@ self.addEventListener('fetch', event => {
 
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+  // Checkout e endpoints precisam de resposta atual; tokens não vão ao cache.
+  if (/^\/(pagamento|contratar|reservar-sala|api)(?:\/|\.html|$)/.test(url.pathname)
+      || url.searchParams.has('t') || url.searchParams.has('r')) return;
 
   if (ehImagem(url)) {
     event.respondWith(

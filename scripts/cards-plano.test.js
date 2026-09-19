@@ -1,7 +1,7 @@
 // node --test scripts/
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { escapar, precoBRL, beneficiosDoPlano, cardPlano, renderVitrine } = require('../assets/js/cards-plano.js');
+const { escapar, precoBRL, beneficiosDoPlano, cardPlano, capaSala, renderVitrine } = require('../assets/js/cards-plano.js');
 
 const pro = {
   id: 'pl_pro', unidade_id: 'un_lux', nome: 'Fiscal Pro', preco: 149, precoAnual: 1609.2, descontoAnualPct: 10,
@@ -127,8 +127,57 @@ test('sala privativa com salas: um card por sala, ocupada sem compra, fotos na g
   assert.match(html, /data-galeria="\[&quot;https:\/\/x\.supabase\.co\/a\.webp&quot;/);
   assert.match(html, /Foto ilustrativa/);
   const geisha = html.split('<article').find((c) => c.includes('Sala Geisha'));
+  const bourbon = html.split('<article').find((c) => c.includes('Sala Bourbon'));
   assert.match(geisha, /Ocupada/);
+  assert.doesNotMatch(geisha, /fiscal-price|R\$/);
+  assert.match(bourbon, /fiscal-price|R\$/);
   assert.doesNotMatch(geisha, /Quero esta sala/);
   assert.doesNotMatch(geisha, /data:image/);
   assert.match(geisha, /sala=s_c&amp;visita=1/);
+});
+
+test('Sala Savassi usa a foto real local mesmo antes do cadastro no app', () => {
+  const html = capaSala({ id: 's1782420700809', nome: 'Sala Savassi', fotos: [] });
+  assert.match(html, /sala-savassi\.png\?v=savassi-20260919/);
+  assert.doesNotMatch(html, /Foto ilustrativa/);
+});
+
+test('Sala Belvedere usa a foto real local mesmo antes do cadastro no app', () => {
+  const html = capaSala({ id: 's1782420821947', nome: 'Sala Belvedere', fotos: [] });
+  assert.match(html, /sala-belvedere\.jpg\?v=belvedere-20260919/);
+  assert.doesNotMatch(html, /Foto ilustrativa/);
+});
+
+test('Sala Santa Tereza usa a foto real local mesmo antes do cadastro no app', () => {
+  const html = capaSala({ id: 's_lux_santa_tereza', nome: 'Sala Santa Tereza', fotos: [] });
+  assert.match(html, /sala-santa-tereza\.jpg\?v=santa-tereza-20260919/);
+  assert.doesNotMatch(html, /Foto ilustrativa/);
+});
+
+test('Sala Mangabeiras usa a foto real local mesmo antes do cadastro no app', () => {
+  const html = capaSala({ id: 's1782420889913', nome: 'Sala Mangabeiras', fotos: [] });
+  assert.match(html, /sala-mangabeiras\.jpg\?v=mangabeiras-20260919/);
+  assert.doesNotMatch(html, /Foto ilustrativa/);
+});
+
+test('Sala Funcionários usa a foto real local mesmo antes do cadastro no app', () => {
+  const html = capaSala({ id: 's_lux_funcionarios', nome: 'Sala Funcionários', fotos: [] });
+  assert.match(html, /sala-funcionarios\.jpg\?v=funcionarios-20260919/);
+  assert.doesNotMatch(html, /Foto ilustrativa/);
+});
+
+test('nova sala ocupada de 4 lugares usa a foto real local', () => {
+  const html = capaSala({ id: 's_lux_4_lugares_ocupada', nome: 'Sala Buritis', fotos: [] });
+  assert.match(html, /sala-4-lugares-ocupada\.jpg\?v=4-lugares-20260919/);
+  assert.doesNotMatch(html, /Foto ilustrativa/);
+});
+
+test('vitrine do Luxemburgo inclui todas as salas alugadas, mesmo de outras capacidades', () => {
+  const html = renderVitrine({
+    unidades: [{ id: 'un_cafeworkingluxembu_e78be3', nome: 'Luxemburgo' }],
+    planos: [{ ...pro, id: 'priv_4', unidade_id: 'un_cafeworkingluxembu_e78be3', categoria: 'sala_privativa', capacidade: 4, preco: 2200, salas: [{ id: 'livre', nome: 'Sala Livre', capacidade: 4, ocupada: false, fotos: [] }] }],
+  }, 'sala_privativa');
+  for (const nome of ['Sala Buritis', 'Sala Belvedere', 'Sala Mangabeiras', 'Sala Funcionários', 'Sala Santa Tereza']) assert.match(html, new RegExp(nome));
+  assert.equal((html.match(/Ocupada/g) || []).length, 5);
+  assert.equal((html.match(/Entrar na fila/g) || []).length, 5);
 });

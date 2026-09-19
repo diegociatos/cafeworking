@@ -349,7 +349,7 @@ const PAGINAS = {
   /* ---- rede de parceiros (docs/PARCEIROS.md do app) ---- */
   'seja-parceiro.html': {
     t: 'Seja Parceiro CafeWorking | Endereço Fiscal na Sua Cidade',
-    d: 'Seu escritório vira uma unidade CafeWorking: nós vendemos e cobramos, você fornece o espaço e recebe 75% de cada pagamento. Não é franquia. Candidate-se online.',
+    d: 'Aproveite o escritório que você já utiliza: comece com endereço fiscal e amplie para salas e estações. Conheça a rede e candidate sua unidade.',
     img: 'og-default.jpg', tipo: 'servico', bc: [['Seja Parceiro', 'seja-parceiro.html']],
   },
   'obrigado-parceiro.html': {
@@ -657,7 +657,7 @@ function breadcrumb(bc, arq) {
 /** Extrai o FAQ da propria pagina (<details><summary>P</summary><p>R</p></details>). */
 function faqDaPagina(html, arq) {
   const perguntas = [];
-  const re = /<details[^>]*>\s*<summary[^>]*>([\s\S]*?)<\/summary>\s*<p>([\s\S]*?)<\/p>/gi;
+  const re = /<details[^>]*>\s*<summary[^>]*>((?:(?!<\/details>)[\s\S])*?)<\/summary>\s*<p>((?:(?!<\/details>)[\s\S])*?)<\/p>/gi;
   let m;
   while ((m = re.exec(html)) !== null) {
     const p = m[1].replace(/<[^>]+>/g, '').trim();

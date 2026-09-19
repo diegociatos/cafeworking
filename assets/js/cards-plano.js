@@ -50,10 +50,28 @@
   }
 
   var FOTO_ILUSTRATIVA = '/assets/img/real/salas-privativas/sala-4-lugares.webp';
+  var FOTOS_LOCAIS = {
+    s1782420700809: '/assets/img/real/salas-privativas/sala-savassi.png?v=savassi-20260919',
+    s1782420821947: '/assets/img/real/salas-privativas/sala-belvedere.jpg?v=belvedere-20260919',
+    s1782420889913: '/assets/img/real/salas-privativas/sala-mangabeiras.jpg?v=mangabeiras-20260919',
+    s_lux_funcionarios: '/assets/img/real/salas-privativas/sala-funcionarios.jpg?v=funcionarios-20260919',
+    s_lux_santa_tereza: '/assets/img/real/salas-privativas/sala-santa-tereza.jpg?v=santa-tereza-20260919',
+    s_lux_4_lugares_ocupada: '/assets/img/real/salas-privativas/sala-4-lugares-ocupada.jpg?v=4-lugares-20260919',
+  };
+  var INVENTARIO_PRIVATIVAS = {
+    un_cafeworkingluxembu_e78be3: [
+      { id: 's_lux_4_lugares_ocupada', nome: 'Sala Buritis', capacidade: 4, ocupada: true, fotos: [] },
+      { id: 's1782420821947', nome: 'Sala Belvedere', capacidade: 5, ocupada: true, fotos: [] },
+      { id: 's1782420889913', nome: 'Sala Mangabeiras', capacidade: 5, ocupada: true, fotos: [] },
+      { id: 's_lux_funcionarios', nome: 'Sala Funcionários', capacidade: 6, ocupada: true, fotos: [] },
+      { id: 's_lux_santa_tereza', nome: 'Sala Santa Tereza', capacidade: 7, ocupada: true, fotos: [] },
+    ],
+  };
 
   /** Capa da sala: abre a galeria (galeria-sala.js). Sem foto cadastrada, mostra uma ilustrativa. */
   function capaSala(sala) {
     var fotos = (sala.fotos || []).filter(function (f) { return /^https:\/\//.test(f); });
+    if (FOTOS_LOCAIS[sala.id]) fotos.unshift(FOTOS_LOCAIS[sala.id]);
     if (!fotos.length) {
       return '<div class="sala-capa"><img loading="lazy" src="' + FOTO_ILUSTRATIVA + '" alt=""><small>Foto ilustrativa</small></div>';
     }
@@ -70,7 +88,7 @@
     h += '<span>' + (sala.ocupada ? 'Ocupada' : 'Disponível') + '</span>';
     h += '<h3>' + escapar(sala.nome) + '</h3>';
     h += '<p class="sala-sub">Sala privativa para ' + escapar(sala.capacidade || p.capacidade) + ' pessoas</p>';
-    h += '<p class="fiscal-price">' + escapar(precoBRL(p.preco)) + '<span>/mês</span></p>';
+    if (!sala.ocupada) h += '<p class="fiscal-price">' + escapar(precoBRL(p.preco)) + '<span>/mês</span></p>';
     if (p.precoAnual && !sala.ocupada) {
       h += '<p class="fiscal-anual">ou ' + escapar(precoBRL(p.precoAnual)) + ' no plano anual (' + escapar(p.descontoAnualPct) + '% de desconto)</p>';
     }
@@ -88,7 +106,11 @@
   /** Cards de um plano: sala privativa com salas cadastradas vira um card por sala. */
   function cardsDoPlano(p) {
     if (p.categoria === 'sala_privativa' && Array.isArray(p.salas) && p.salas.length && !p.sobConsulta) {
-      return p.salas.map(function (s) { return cardSala(p, s); }).join('');
+      var salas = p.salas.slice();
+      (INVENTARIO_PRIVATIVAS[p.unidade_id] || []).forEach(function (s) {
+        if (!salas.some(function (existente) { return existente.id === s.id; })) salas.push(s);
+      });
+      return salas.map(function (s) { return cardSala(p, s); }).join('');
     }
     return cardPlano(p);
   }

@@ -56,9 +56,11 @@
     s1782420889913: '/assets/img/real/salas-privativas/sala-mangabeiras.jpg?v=mangabeiras-20260919',
     s_lux_funcionarios: '/assets/img/real/salas-privativas/sala-funcionarios.jpg?v=funcionarios-20260919',
     s_lux_santa_tereza: '/assets/img/real/salas-privativas/sala-santa-tereza.jpg?v=santa-tereza-20260919',
+    s_lux_4_lugares_ocupada: '/assets/img/real/salas-privativas/sala-4-lugares-ocupada.jpg?v=4-lugares-20260919',
   };
   var INVENTARIO_PRIVATIVAS = {
     un_cafeworkingluxembu_e78be3: [
+      { id: 's_lux_4_lugares_ocupada', nome: 'Sala 4 lugares', capacidade: 4, ocupada: true, fotos: [] },
       { id: 's1782420821947', nome: 'Sala Belvedere', capacidade: 5, ocupada: true, fotos: [] },
       { id: 's1782420889913', nome: 'Sala Mangabeiras', capacidade: 5, ocupada: true, fotos: [] },
       { id: 's_lux_funcionarios', nome: 'Sala Funcionários', capacidade: 6, ocupada: true, fotos: [] },

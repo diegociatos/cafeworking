@@ -35,7 +35,6 @@ const ICONE_WA = '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="t
 
 const MENU = `<nav class="menu cw-menu">
   <a class="cw-menu-link" href="/">Home</a>
-  <a class="cw-menu-link" href="/planos">Planos</a>
 
   <div class="cw-dropdown">
     <a class="cw-menu-link" href="/ambientes">Salas <span>▾</span></a>
@@ -85,7 +84,7 @@ const MENU = `<nav class="menu cw-menu">
   <a class="cw-menu-link cw-menu-mobile" href="${APP}">Área do Cliente</a>
 </nav>`;
 
-const ACOES = `<div class="nav-actions"><a class="cw-nav-cliente" href="${APP}">Área do Cliente</a><a class="btn btn-outline" href="${wa('Olá! Quero falar com o CafeWorking.')}" target="_blank" rel="noopener">WhatsApp</a><a class="btn btn-primary" href="/planos">Ver planos</a></div>`;
+const ACOES = `<div class="nav-actions"><a class="cw-nav-cliente" href="${APP}">Área do Cliente</a><a class="btn btn-primary" href="${wa('Olá! Quero falar com a equipe do CafeWorking.')}" target="_blank" rel="noopener">Fale com a gente</a></div>`;
 
 const FLUTUANTE = `<a class="wa-float" href="${wa('Olá! Quero falar com o CafeWorking.')}" target="_blank" rel="noopener" aria-label="Falar com o CafeWorking no WhatsApp">${ICONE_WA}</a>`;
 

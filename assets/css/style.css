@@ -2968,3 +2968,27 @@ html.galeria-aberta{overflow:hidden}
 .meeting-audience-cards .service p{margin:0!important;font-size:16px!important;line-height:1.6!important;color:#625d55!important}
 @media(max-width:1080px){.meeting-audience:before{display:none}.meeting-audience-grid{grid-template-columns:1fr;gap:42px}.meeting-audience-copy .h2{max-width:760px}.meeting-audience-cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(max-width:620px){.meeting-audience-cards{grid-template-columns:1fr!important}.meeting-audience-cards .service{min-height:210px!important}.meeting-audience-copy .h2{font-size:clamp(38px,12vw,54px)!important}}
+
+/* v51 — escolha de cidade e unidade para endereço fiscal */
+.fiscal-escolha{background:linear-gradient(180deg,#f4efe6 0%,#faf8f3 100%);border-top:1px solid rgba(110,78,59,.12);border-bottom:1px solid rgba(110,78,59,.12)}
+.fiscal-escolha-head{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:50px;align-items:end;margin-bottom:34px}
+.fiscal-escolha-head .h2{max-width:780px;margin-bottom:0}
+.fiscal-escolha-head>p{color:var(--muted);font-size:18px;line-height:1.65;max-width:460px}
+.fiscal-seletor-shell{display:grid;grid-template-columns:340px minmax(0,1fr);background:#fff;border:1px solid rgba(110,78,59,.16);border-radius:36px;overflow:hidden;box-shadow:0 28px 90px rgba(31,31,28,.1)}
+.fiscal-seletor-controles{padding:34px;background:#123f42;color:#fff;display:flex;flex-direction:column;justify-content:center;gap:22px}
+.fiscal-seletor-controles label span{display:block;margin-bottom:9px;font-size:12px;font-weight:850;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.72)}
+.fiscal-seletor-controles select{width:100%;min-height:56px;padding:0 46px 0 16px;border:1px solid rgba(255,255,255,.25);border-radius:16px;background:#fff;color:#1f1f1c;font:700 16px var(--sans);cursor:pointer}
+.fiscal-seletor-ajuda{margin:4px 0 0;color:rgba(255,255,255,.7)!important;font-size:14px;line-height:1.5}
+.fiscal-unidade-preview{display:grid;grid-template-columns:minmax(320px,1.08fr) minmax(300px,.92fr);min-height:480px}
+.fiscal-unidade-foto{min-height:480px;overflow:hidden;background:var(--bg2)}
+.fiscal-unidade-foto img{width:100%;height:100%;object-fit:cover;transition:opacity .2s ease,transform .45s ease}
+.fiscal-unidade-preview:hover .fiscal-unidade-foto img{transform:scale(1.025)}
+.fiscal-unidade-info{padding:clamp(32px,4vw,58px);display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+.fiscal-unidade-info>span{font-size:12px;font-weight:850;letter-spacing:.15em;text-transform:uppercase;color:var(--coffee)}
+.fiscal-unidade-info h3{font-family:var(--serif);font-size:clamp(38px,4vw,58px);line-height:1;margin:16px 0 14px;letter-spacing:-.04em}
+.fiscal-unidade-info>p{color:var(--muted);font-size:17px;line-height:1.6;margin:0 0 24px}
+.fiscal-unidade-beneficios{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+.fiscal-unidade-beneficios small{padding:8px 11px;border-radius:999px;background:#f4efe6;color:#5d554c;font-weight:750}
+.fiscal-seletor-status{min-height:24px;padding-top:12px;color:var(--green);font-size:14px;font-weight:700}
+@media(max-width:1050px){.fiscal-escolha-head{grid-template-columns:1fr;gap:12px}.fiscal-seletor-shell{grid-template-columns:1fr}.fiscal-seletor-controles{display:grid;grid-template-columns:1fr 1fr}.fiscal-seletor-ajuda{grid-column:1/-1}.fiscal-unidade-preview{min-height:420px}}
+@media(max-width:720px){.fiscal-seletor-shell{border-radius:26px}.fiscal-seletor-controles{display:flex;padding:24px}.fiscal-unidade-preview{grid-template-columns:1fr}.fiscal-unidade-foto{min-height:300px;max-height:360px}.fiscal-unidade-info{padding:28px 24px 32px}.fiscal-unidade-info .btn{width:100%}}

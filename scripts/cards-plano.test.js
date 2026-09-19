@@ -151,6 +151,12 @@ test('Sala Santa Tereza usa a foto real local mesmo antes do cadastro no app', (
   assert.doesNotMatch(html, /Foto ilustrativa/);
 });
 
+test('Sala Mangabeiras usa a foto real local mesmo antes do cadastro no app', () => {
+  const html = capaSala({ id: 's1782420889913', nome: 'Sala Mangabeiras', fotos: [] });
+  assert.match(html, /sala-mangabeiras\.jpg\?v=mangabeiras-20260919/);
+  assert.doesNotMatch(html, /Foto ilustrativa/);
+});
+
 test('vitrine do Luxemburgo inclui todas as salas alugadas, mesmo de outras capacidades', () => {
   const html = renderVitrine({
     unidades: [{ id: 'un_cafeworkingluxembu_e78be3', nome: 'Luxemburgo' }],

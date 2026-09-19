@@ -2952,3 +2952,19 @@ html.galeria-aberta{overflow:hidden}
 .room-preco{margin:4px 0 14px;color:var(--muted);font-size:15px}
 .room-preco b{font-family:var(--serif);font-size:34px;color:var(--green);margin-right:4px}
 .room-body .btn{align-self:flex-start}
+
+/* v50 — aplicações das salas de reunião */
+.meeting-audience{position:relative;overflow:hidden;background:radial-gradient(circle at 88% 18%,rgba(14,75,79,.3),transparent 32%),linear-gradient(145deg,#101311 0%,#161714 100%)}
+.meeting-audience:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 0 49.9%,rgba(255,255,255,.06) 50%,transparent 50.1%);pointer-events:none}
+.meeting-audience-grid{position:relative;display:grid;grid-template-columns:minmax(0,.88fr) minmax(560px,1.12fr);gap:clamp(54px,7vw,110px);align-items:center}
+.meeting-audience-copy .h2{max-width:640px;font-size:clamp(48px,5.3vw,76px);line-height:.98}
+.meeting-audience-copy .lead{max-width:610px;font-size:18px;line-height:1.8}
+.meeting-audience-copy .hero-actions{margin-top:28px}
+.meeting-audience-cards{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:18px!important}
+.meeting-audience-cards .service{min-height:250px!important;padding:28px!important;border-radius:28px!important;background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(246,240,230,.98))!important;box-shadow:0 24px 70px rgba(0,0,0,.24)!important;display:flex;flex-direction:column;align-items:flex-start}
+.meeting-audience-cards .service:before{height:4px;background:linear-gradient(90deg,#0e4b4f,#c5aa82)}
+.meeting-audience-cards .service small{margin:0 0 auto!important;padding:8px 11px!important;background:rgba(14,75,79,.08)!important;color:#6e4e3b!important;border-color:rgba(14,75,79,.12)!important}
+.meeting-audience-cards .service h3{margin:26px 0 10px!important;font-size:clamp(25px,2.1vw,34px)!important;color:#171915!important}
+.meeting-audience-cards .service p{margin:0!important;font-size:16px!important;line-height:1.6!important;color:#625d55!important}
+@media(max-width:1080px){.meeting-audience:before{display:none}.meeting-audience-grid{grid-template-columns:1fr;gap:42px}.meeting-audience-copy .h2{max-width:760px}.meeting-audience-cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:620px){.meeting-audience-cards{grid-template-columns:1fr!important}.meeting-audience-cards .service{min-height:210px!important}.meeting-audience-copy .h2{font-size:clamp(38px,12vw,54px)!important}}

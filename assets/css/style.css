@@ -3124,3 +3124,57 @@ html.galeria-aberta{overflow:hidden}
 .fiscal-seletor-status{min-height:24px;padding-top:12px;color:var(--green);font-size:14px;font-weight:700}
 @media(max-width:1050px){.fiscal-escolha-head{grid-template-columns:1fr;gap:12px}.fiscal-seletor-shell{grid-template-columns:1fr}.fiscal-seletor-controles{display:grid;grid-template-columns:1fr 1fr}.fiscal-seletor-ajuda{grid-column:1/-1}.fiscal-unidade-preview{min-height:420px}}
 @media(max-width:720px){.fiscal-seletor-shell{border-radius:26px}.fiscal-seletor-controles{display:flex;padding:24px}.fiscal-unidade-preview{grid-template-columns:1fr}.fiscal-unidade-foto{min-height:300px;max-height:360px}.fiscal-unidade-info{padding:28px 24px 32px}.fiscal-unidade-info .btn{width:100%}}
+
+/* v54 — jornada nacional de endereço fiscal */
+.fiscal-hero .page-hero-grid{grid-template-columns:.92fr 1.08fr}
+.fiscal-hero .page-hero-img{min-height:610px}
+.fiscal-hero .page-hero-img img{object-position:center 44%}
+.fiscal-network-band{background:var(--green);color:#fff}
+.fiscal-network-band-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.fiscal-network-band-grid>div{position:relative;display:grid;gap:5px;min-height:132px;padding:27px 20px 24px 51px;border-right:1px solid rgba(255,255,255,.15)}
+.fiscal-network-band-grid>div:last-child{border-right:0}
+.fiscal-network-band span{position:absolute;top:31px;left:20px;font:700 11px/1 var(--serif);color:#cfb58f}
+.fiscal-network-band strong{font:500 19px/1.2 var(--serif)}
+.fiscal-network-band small{font-size:13px;line-height:1.4;color:rgba(255,255,255,.67)}
+.fiscal-escolha{padding-top:78px;padding-bottom:54px}
+.fiscal-seletor-status{display:none}
+#planos{padding-top:70px}
+#planos .vitrine-abas{margin-bottom:26px}
+.fiscal-how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:38px}
+.fiscal-how-grid article{min-height:285px;padding:29px;border:1px solid var(--line);border-radius:28px;background:linear-gradient(180deg,#fff,#fbf8f2);box-shadow:0 16px 45px rgba(31,31,28,.05)}
+.fiscal-how-grid span,.fiscal-included-grid span{display:inline-grid;place-items:center;width:39px;height:39px;border-radius:50%;background:var(--soft);font:700 12px/1 var(--serif);color:var(--brown)}
+.fiscal-how-grid h3,.fiscal-included-grid h3{margin:42px 0 12px;font:500 clamp(25px,2.2vw,34px)/1.08 var(--serif)}
+.fiscal-how-grid p,.fiscal-included-grid p{margin:0;line-height:1.62;color:var(--muted)}
+.fiscal-legal-note{margin:24px 0 0;padding:17px 20px;border-left:3px solid var(--green);background:var(--soft);border-radius:0 14px 14px 0;color:var(--muted);font-size:14px;line-height:1.55}
+.fiscal-origin-grid{display:grid;grid-template-columns:.94fr 1.06fr;gap:72px;align-items:center}
+.fiscal-origin-photo{height:680px;overflow:hidden;border-radius:34px;box-shadow:var(--shadow)}
+.fiscal-origin-photo img{width:100%;height:100%;object-fit:cover}
+.fiscal-origin .lead{font-size:19px}
+.fiscal-origin-points{margin:28px 0 30px;border-top:1px solid var(--line)}
+.fiscal-origin-points p{display:grid;gap:5px;margin:0;padding:16px 0;border-bottom:1px solid var(--line)}
+.fiscal-origin-points strong{font:500 18px/1.2 var(--serif);color:var(--ink)}
+.fiscal-origin-points span{font-size:14px;line-height:1.5;color:var(--muted)}
+.fiscal-included-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:34px}
+.fiscal-included-grid article{min-height:290px;padding:25px;border:1px solid var(--line);border-radius:25px;background:#fff;box-shadow:0 12px 38px rgba(31,31,28,.045)}
+.fiscal-included-grid h3{margin-top:36px;font-size:27px}
+@media(max-width:1080px){
+  .fiscal-hero .page-hero-grid{grid-template-columns:1fr}
+  .fiscal-hero .page-hero-img{min-height:500px}
+  .fiscal-network-band-grid{grid-template-columns:1fr 1fr}
+  .fiscal-network-band-grid>div:nth-child(2){border-right:0}
+  .fiscal-network-band-grid>div:nth-child(-n+2){border-bottom:1px solid rgba(255,255,255,.15)}
+  .fiscal-how-grid{grid-template-columns:1fr}
+  .fiscal-how-grid article{min-height:auto}
+  .fiscal-origin-grid{grid-template-columns:1fr;gap:42px}
+  .fiscal-origin-photo{height:520px}
+  .fiscal-included-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:700px){
+  .fiscal-hero .page-hero-img{min-height:410px}
+  .fiscal-network-band-grid{grid-template-columns:1fr}
+  .fiscal-network-band-grid>div{min-height:102px;border-right:0!important;border-bottom:1px solid rgba(255,255,255,.15)}
+  .fiscal-escolha{padding-top:56px;padding-bottom:30px}
+  .fiscal-origin-photo{height:420px}
+  .fiscal-included-grid{grid-template-columns:1fr}
+  .fiscal-included-grid article{min-height:auto}
+}

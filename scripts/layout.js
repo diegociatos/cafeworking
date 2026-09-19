@@ -46,13 +46,8 @@ const MENU = `<nav class="menu cw-menu">
     </div>
   </div>
 
-  <div class="cw-dropdown">
-    <a class="cw-menu-link" href="/servicos">Serviços <span>▾</span></a>
-    <div class="cw-dropdown-panel">
-      <a href="/endereco-fiscal"><b>Endereço Fiscal</b><small>Endereço profissional para sua empresa.</small></a>
-      <a href="/abertura-de-empresa"><b>Abertura de Empresa</b><small>Constituição com apoio da Ciatos Contabilidade.</small></a>
-    </div>
-  </div>
+  <a class="cw-menu-link" href="/endereco-fiscal">Endereço Fiscal</a>
+  <a class="cw-menu-link" href="/abertura-de-empresa">Abertura de Empresa</a>
 
   <div class="cw-dropdown">
     <a class="cw-menu-link" href="/cafeteria">Cafeteria <span>▾</span></a>

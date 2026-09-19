@@ -138,3 +138,13 @@ test('Sala Savassi usa a foto real local mesmo antes do cadastro no app', () => 
   assert.match(html, /sala-savassi\.png\?v=savassi-20260919/);
   assert.doesNotMatch(html, /Foto ilustrativa/);
 });
+
+test('vitrine do Luxemburgo inclui todas as salas alugadas, mesmo de outras capacidades', () => {
+  const html = renderVitrine({
+    unidades: [{ id: 'un_cafeworkingluxembu_e78be3', nome: 'Luxemburgo' }],
+    planos: [{ ...pro, id: 'priv_4', unidade_id: 'un_cafeworkingluxembu_e78be3', categoria: 'sala_privativa', capacidade: 4, preco: 2200, salas: [{ id: 'livre', nome: 'Sala Livre', capacidade: 4, ocupada: false, fotos: [] }] }],
+  }, 'sala_privativa');
+  for (const nome of ['Sala Belvedere', 'Sala Mangabeiras', 'Sala Funcionários', 'Sala Santa Tereza']) assert.match(html, new RegExp(nome));
+  assert.equal((html.match(/Ocupada/g) || []).length, 4);
+  assert.equal((html.match(/Entrar na fila/g) || []).length, 4);
+});

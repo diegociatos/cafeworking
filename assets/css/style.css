@@ -2812,6 +2812,34 @@ html.galeria-aberta{overflow:hidden}
 @media(max-width:1100px){.cw-faixa-precos .cw-categorias{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:620px){.cw-faixa-precos .cw-categorias{grid-template-columns:repeat(2,minmax(0,1fr))}.cw-faixa-precos .cw-categoria b{font-size:19px}}
 
+/* v49 — faixa de preços da home */
+.cw-faixa-precos{padding:62px 0 72px;background:linear-gradient(180deg,#f7f4ee 0%,#f1ebe2 100%)}
+.cw-faixa-head{display:flex;align-items:end;justify-content:space-between;gap:28px;margin-bottom:24px}
+.cw-faixa-head span{display:block;color:var(--coffee);font-size:11px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;margin-bottom:7px}
+.cw-faixa-head h2{font-family:var(--serif);font-size:clamp(30px,3.3vw,46px);font-weight:500;line-height:1;margin:0;letter-spacing:-.035em}
+.cw-faixa-head>a{color:var(--green);font-size:14px;font-weight:850;padding:9px 0;border-bottom:1px solid rgba(14,75,79,.32);white-space:nowrap}
+.cw-faixa-head>a b{display:inline-block;margin-left:6px;transition:transform .2s ease}
+.cw-faixa-head>a:hover b{transform:translateX(4px)}
+.cw-faixa-precos .cw-categorias{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;align-items:stretch}
+.cw-faixa-precos .cw-categoria{position:relative;display:flex;flex-direction:column;min-height:268px;padding:22px 22px 20px;border:1px solid rgba(110,78,59,.16);border-radius:26px;background:rgba(255,255,255,.88);box-shadow:0 14px 42px rgba(31,31,28,.055);overflow:hidden;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.cw-faixa-precos .cw-categoria:after{content:"";position:absolute;right:-58px;bottom:-68px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(184,155,116,.15),transparent 68%);pointer-events:none}
+.cw-faixa-precos .cw-categoria:hover{transform:translateY(-7px);border-color:rgba(14,75,79,.34);box-shadow:0 25px 70px rgba(31,31,28,.11)}
+.cw-faixa-precos .cw-categoria>i{display:grid;place-items:center;width:34px;height:34px;margin-bottom:24px;border:1px solid rgba(14,75,79,.18);border-radius:11px;background:#eef4f1;color:var(--green);font-size:10px;font-style:normal;font-weight:900;letter-spacing:.08em}
+.cw-faixa-precos .cw-categoria>span{color:var(--coffee);font-size:11px;font-weight:900;letter-spacing:.15em;text-transform:uppercase;line-height:1.3;margin-bottom:9px}
+.cw-faixa-precos .cw-categoria>b{display:flex;align-items:baseline;flex-wrap:wrap;gap:0 5px;min-height:54px;color:var(--green);font-family:var(--serif);font-size:31px;line-height:.98;letter-spacing:-.035em}
+.cw-faixa-precos .cw-categoria>b small{color:var(--muted);font-family:var(--sans);font-size:11px;font-weight:750;letter-spacing:0}
+.cw-faixa-precos .cw-categoria>small{display:block;color:var(--muted);font-size:13px;line-height:1.5;margin:8px 0 20px}
+.cw-faixa-precos .cw-categoria>em{display:flex;align-items:center;justify-content:space-between;margin-top:auto;color:var(--green);font-size:13px;font-style:normal;font-weight:900;position:relative;z-index:1}
+.cw-faixa-precos .cw-categoria>em b{font-size:18px;transition:transform .2s ease}
+.cw-faixa-precos .cw-categoria:hover>em b{transform:translateX(4px)}
+.cw-faixa-precos .cw-categoria-destaque{background:var(--green);border-color:var(--green);box-shadow:0 20px 60px rgba(14,75,79,.2)}
+.cw-faixa-precos .cw-categoria-destaque:after{background:radial-gradient(circle,rgba(255,255,255,.15),transparent 68%)}
+.cw-faixa-precos .cw-categoria-destaque>i{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#fff}
+.cw-faixa-precos .cw-categoria-destaque>span,.cw-faixa-precos .cw-categoria-destaque>b,.cw-faixa-precos .cw-categoria-destaque>em{color:#fff}
+.cw-faixa-precos .cw-categoria-destaque>b small,.cw-faixa-precos .cw-categoria-destaque>small{color:rgba(255,255,255,.7)}
+@media(max-width:1100px){.cw-faixa-precos .cw-categorias{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.cw-faixa-precos{padding:42px 0 50px}.cw-faixa-head{display:block}.cw-faixa-head>a{display:inline-block;margin-top:17px}.cw-faixa-precos .cw-categorias{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:-18px;padding:4px 18px 20px;gap:12px}.cw-faixa-precos .cw-categoria{flex:0 0 82vw;min-height:250px;scroll-snap-align:start}.cw-faixa-precos .cw-categoria>b{font-size:30px}}
+
 .cw-nota{margin:22px 0 0;color:var(--muted);font-size:15px}
 .cw-nota a{color:var(--green);font-weight:700;text-decoration:underline;text-underline-offset:3px}
 

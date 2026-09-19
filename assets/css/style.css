@@ -3013,8 +3013,13 @@ html.galeria-aberta{overflow:hidden}
 /* cabeçalho: área do cliente em texto e item só no celular */
 .cw-nav-cliente{font-weight:700;color:var(--green);white-space:nowrap;padding:0 6px}
 .cw-nav-cliente:hover{text-decoration:underline}
-/* até 1600px não cabem os três: fica Área do Cliente + Ver planos (o WhatsApp segue no botão flutuante) */
-@media(min-width:981px) and (max-width:1600px){.nav-actions .btn-outline{display:none!important}}
+/* Em notebooks e em telas com escala de 125%/150%, o CTA final excedia a
+   largura útil e era cortado. O WhatsApp continua disponível no botão
+   flutuante; preservamos no cabeçalho o acesso mais importante: Área do Cliente. */
+@media(min-width:981px) and (max-width:1680px){
+  .nav-actions .btn-outline,.nav-actions .btn-primary{display:none!important}
+  .nav-inner{overflow:visible!important}
+}
 @media(min-width:981px) and (max-width:1120px){.nav-actions .cw-nav-cliente{display:none!important}}
 @media(min-width:981px){.cw-menu .cw-menu-mobile,.nav .cw-menu > a.cw-menu-link.cw-menu-mobile,header .cw-menu > a.cw-menu-link.cw-menu-mobile{display:none!important}}
 /* o logo já leva para a home: sem espaço, o item Home sai do menu do desktop */

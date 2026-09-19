@@ -2768,11 +2768,13 @@ header.nav{
 .cafeteria-photo figcaption b{font-family:var(--serif);font-size:17px;color:var(--ink)}
 .cafeteria-photo figcaption span{font-size:12px;color:var(--muted)}
 .cafeteria-menu-section{background:#f2eadf}
-.cafeteria-menu-card{padding:32px}
-.cafeteria-menu-lines{margin-top:22px;border-top:1px solid var(--line)}
-.cafeteria-menu-lines p{display:grid;grid-template-columns:1fr auto;align-items:end;gap:16px;margin:0;padding:15px 0;border-bottom:1px solid var(--line)}
-.cafeteria-menu-lines b{font:500 21px/1.1 var(--serif);color:var(--ink)}
-.cafeteria-menu-lines small{color:var(--muted)}
+.cafeteria-menu-card{padding:32px;color:#fff}
+.cafeteria-menu-card>span,.cafeteria-menu-lines{position:relative;z-index:1}
+.cafeteria-menu-card>span{color:#efd9bd}
+.cafeteria-menu-lines{margin-top:22px;border-top:1px solid rgba(255,255,255,.5)}
+.cafeteria-menu-lines p{display:grid;grid-template-columns:1fr auto;align-items:end;gap:16px;margin:0;padding:15px 0;border-bottom:1px solid rgba(255,255,255,.42)}
+.cafeteria-menu-lines b{font:500 21px/1.1 var(--serif);color:#fff}
+.cafeteria-menu-lines small{color:rgba(255,255,255,.8)}
 .cafeteria-events-grid{align-items:center}
 .cafeteria-events .photo-split{height:560px;overflow:hidden}
 .cafeteria-events .photo-split img{width:100%;height:100%;object-fit:cover}

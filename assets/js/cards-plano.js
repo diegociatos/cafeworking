@@ -50,10 +50,14 @@
   }
 
   var FOTO_ILUSTRATIVA = '/assets/img/real/salas-privativas/sala-4-lugares.webp';
+  var FOTOS_LOCAIS = {
+    s1782420700809: '/assets/img/real/salas-privativas/sala-savassi.png?v=savassi-20260919',
+  };
 
   /** Capa da sala: abre a galeria (galeria-sala.js). Sem foto cadastrada, mostra uma ilustrativa. */
   function capaSala(sala) {
     var fotos = (sala.fotos || []).filter(function (f) { return /^https:\/\//.test(f); });
+    if (FOTOS_LOCAIS[sala.id]) fotos.unshift(FOTOS_LOCAIS[sala.id]);
     if (!fotos.length) {
       return '<div class="sala-capa"><img loading="lazy" src="' + FOTO_ILUSTRATIVA + '" alt=""><small>Foto ilustrativa</small></div>';
     }

@@ -1,7 +1,7 @@
 // node --test scripts/
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { escapar, precoBRL, beneficiosDoPlano, cardPlano, renderVitrine } = require('../assets/js/cards-plano.js');
+const { escapar, precoBRL, beneficiosDoPlano, cardPlano, capaSala, renderVitrine } = require('../assets/js/cards-plano.js');
 
 const pro = {
   id: 'pl_pro', unidade_id: 'un_lux', nome: 'Fiscal Pro', preco: 149, precoAnual: 1609.2, descontoAnualPct: 10,
@@ -131,4 +131,10 @@ test('sala privativa com salas: um card por sala, ocupada sem compra, fotos na g
   assert.doesNotMatch(geisha, /Quero esta sala/);
   assert.doesNotMatch(geisha, /data:image/);
   assert.match(geisha, /sala=s_c&amp;visita=1/);
+});
+
+test('Sala Savassi usa a foto real local mesmo antes do cadastro no app', () => {
+  const html = capaSala({ id: 's1782420700809', nome: 'Sala Savassi', fotos: [] });
+  assert.match(html, /sala-savassi\.png\?v=savassi-20260919/);
+  assert.doesNotMatch(html, /Foto ilustrativa/);
 });

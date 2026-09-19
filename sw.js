@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cafeworking-v37';
+const CACHE_NAME = 'cafeworking-v38';
 const CORE_ASSETS = ['/', '/offline.html', '/assets/css/style.css', '/assets/js/main.js'];
 
 /* Duas estrategias, pelo tipo de arquivo:

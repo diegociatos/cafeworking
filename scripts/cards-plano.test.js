@@ -167,7 +167,7 @@ test('Sala Funcionários usa a foto real local mesmo antes do cadastro no app', 
 });
 
 test('nova sala ocupada de 4 lugares usa a foto real local', () => {
-  const html = capaSala({ id: 's_lux_4_lugares_ocupada', nome: 'Sala 4 lugares', fotos: [] });
+  const html = capaSala({ id: 's_lux_4_lugares_ocupada', nome: 'Sala Buritis', fotos: [] });
   assert.match(html, /sala-4-lugares-ocupada\.jpg\?v=4-lugares-20260919/);
   assert.doesNotMatch(html, /Foto ilustrativa/);
 });
@@ -177,7 +177,7 @@ test('vitrine do Luxemburgo inclui todas as salas alugadas, mesmo de outras capa
     unidades: [{ id: 'un_cafeworkingluxembu_e78be3', nome: 'Luxemburgo' }],
     planos: [{ ...pro, id: 'priv_4', unidade_id: 'un_cafeworkingluxembu_e78be3', categoria: 'sala_privativa', capacidade: 4, preco: 2200, salas: [{ id: 'livre', nome: 'Sala Livre', capacidade: 4, ocupada: false, fotos: [] }] }],
   }, 'sala_privativa');
-  for (const nome of ['Sala 4 lugares', 'Sala Belvedere', 'Sala Mangabeiras', 'Sala Funcionários', 'Sala Santa Tereza']) assert.match(html, new RegExp(nome));
+  for (const nome of ['Sala Buritis', 'Sala Belvedere', 'Sala Mangabeiras', 'Sala Funcionários', 'Sala Santa Tereza']) assert.match(html, new RegExp(nome));
   assert.equal((html.match(/Ocupada/g) || []).length, 5);
   assert.equal((html.match(/Entrar na fila/g) || []).length, 5);
 });

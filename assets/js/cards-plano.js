@@ -60,7 +60,7 @@
   };
   var INVENTARIO_PRIVATIVAS = {
     un_cafeworkingluxembu_e78be3: [
-      { id: 's_lux_4_lugares_ocupada', nome: 'Sala 4 lugares', capacidade: 4, ocupada: true, fotos: [] },
+      { id: 's_lux_4_lugares_ocupada', nome: 'Sala Buritis', capacidade: 4, ocupada: true, fotos: [] },
       { id: 's1782420821947', nome: 'Sala Belvedere', capacidade: 5, ocupada: true, fotos: [] },
       { id: 's1782420889913', nome: 'Sala Mangabeiras', capacidade: 5, ocupada: true, fotos: [] },
       { id: 's_lux_funcionarios', nome: 'Sala Funcionários', capacidade: 6, ocupada: true, fotos: [] },

@@ -88,7 +88,7 @@
     h += '<span>' + (sala.ocupada ? 'Ocupada' : 'Disponível') + '</span>';
     h += '<h3>' + escapar(sala.nome) + '</h3>';
     h += '<p class="sala-sub">Sala privativa para ' + escapar(sala.capacidade || p.capacidade) + ' pessoas</p>';
-    h += '<p class="fiscal-price">' + escapar(precoBRL(p.preco)) + '<span>/mês</span></p>';
+    if (!sala.ocupada) h += '<p class="fiscal-price">' + escapar(precoBRL(p.preco)) + '<span>/mês</span></p>';
     if (p.precoAnual && !sala.ocupada) {
       h += '<p class="fiscal-anual">ou ' + escapar(precoBRL(p.precoAnual)) + ' no plano anual (' + escapar(p.descontoAnualPct) + '% de desconto)</p>';
     }

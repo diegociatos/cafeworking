@@ -127,7 +127,10 @@ test('sala privativa com salas: um card por sala, ocupada sem compra, fotos na g
   assert.match(html, /data-galeria="\[&quot;https:\/\/x\.supabase\.co\/a\.webp&quot;/);
   assert.match(html, /Foto ilustrativa/);
   const geisha = html.split('<article').find((c) => c.includes('Sala Geisha'));
+  const bourbon = html.split('<article').find((c) => c.includes('Sala Bourbon'));
   assert.match(geisha, /Ocupada/);
+  assert.doesNotMatch(geisha, /fiscal-price|R\$/);
+  assert.match(bourbon, /fiscal-price|R\$/);
   assert.doesNotMatch(geisha, /Quero esta sala/);
   assert.doesNotMatch(geisha, /data:image/);
   assert.match(geisha, /sala=s_c&amp;visita=1/);

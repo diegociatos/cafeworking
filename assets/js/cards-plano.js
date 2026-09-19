@@ -52,6 +52,7 @@
   var FOTO_ILUSTRATIVA = '/assets/img/real/salas-privativas/sala-4-lugares.webp';
   var FOTOS_LOCAIS = {
     s1782420700809: '/assets/img/real/salas-privativas/sala-savassi.png?v=savassi-20260919',
+    s1782420821947: '/assets/img/real/salas-privativas/sala-belvedere.jpg?v=belvedere-20260919',
   };
   var INVENTARIO_PRIVATIVAS = {
     un_cafeworkingluxembu_e78be3: [

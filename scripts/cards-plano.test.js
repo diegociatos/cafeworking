@@ -139,6 +139,12 @@ test('Sala Savassi usa a foto real local mesmo antes do cadastro no app', () => 
   assert.doesNotMatch(html, /Foto ilustrativa/);
 });
 
+test('Sala Belvedere usa a foto real local mesmo antes do cadastro no app', () => {
+  const html = capaSala({ id: 's1782420821947', nome: 'Sala Belvedere', fotos: [] });
+  assert.match(html, /sala-belvedere\.jpg\?v=belvedere-20260919/);
+  assert.doesNotMatch(html, /Foto ilustrativa/);
+});
+
 test('vitrine do Luxemburgo inclui todas as salas alugadas, mesmo de outras capacidades', () => {
   const html = renderVitrine({
     unidades: [{ id: 'un_cafeworkingluxembu_e78be3', nome: 'Luxemburgo' }],

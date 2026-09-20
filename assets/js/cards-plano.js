@@ -49,7 +49,8 @@
       (sala ? '&sala=' + encodeURIComponent(sala.id) : '');
   }
 
-  var FOTO_ILUSTRATIVA = '/assets/img/real/salas-privativas/sala-4-lugares.webp';
+  // Foto real de cada sala já publicada no site, enquanto a unidade não sobe as
+  // fotos pelo app. A capa pertence à sala: sem foto própria, não usa a de outra.
   var FOTOS_LOCAIS = {
     s1782420700809: '/assets/img/real/salas-privativas/sala-savassi.png?v=savassi-20260919',
     s1782420821947: '/assets/img/real/salas-privativas/sala-belvedere.jpg?v=belvedere-20260919',
@@ -58,22 +59,11 @@
     s_lux_santa_tereza: '/assets/img/real/salas-privativas/sala-santa-tereza.jpg?v=santa-tereza-20260919',
     s_lux_4_lugares_ocupada: '/assets/img/real/salas-privativas/sala-4-lugares-ocupada.jpg?v=4-lugares-20260919',
   };
-  var INVENTARIO_PRIVATIVAS = {
-    un_cafeworkingluxembu_e78be3: [
-      { id: 's_lux_4_lugares_ocupada', nome: 'Sala Buritis', capacidade: 4, ocupada: true, fotos: [] },
-      { id: 's1782420821947', nome: 'Sala Belvedere', capacidade: 5, ocupada: true, fotos: [] },
-      { id: 's1782420889913', nome: 'Sala Mangabeiras', capacidade: 5, ocupada: true, fotos: [] },
-      { id: 's_lux_funcionarios', nome: 'Sala Funcionários', capacidade: 6, ocupada: true, fotos: [] },
-      { id: 's_lux_santa_tereza', nome: 'Sala Santa Tereza', capacidade: 7, ocupada: true, fotos: [] },
-    ],
-  };
-
-  /** Capa da sala: abre a galeria (galeria-sala.js). Sem foto cadastrada, mostra uma ilustrativa. */
   function capaSala(sala) {
-    var fotos = (sala.fotos || []).filter(function (f) { return /^https:\/\//.test(f); });
+    var fotos = (Array.isArray(sala.fotos) ? sala.fotos : []).filter(function (f) { return typeof f === 'string' && /^https:\/\//.test(f); });
     if (FOTOS_LOCAIS[sala.id]) fotos.unshift(FOTOS_LOCAIS[sala.id]);
     if (!fotos.length) {
-      return '<div class="sala-capa"><img loading="lazy" src="' + FOTO_ILUSTRATIVA + '" alt=""><small>Foto ilustrativa</small></div>';
+      return '<div class="sala-capa sala-sem-foto"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 40h30M14 40V8h20v32M29 24h1"/></svg><strong>Fotos em breve</strong><span>Agende uma visita para conhecer esta sala.</span></div>';
     }
     return '<button type="button" class="sala-capa" data-galeria="' + escapar(JSON.stringify(fotos)) + '" data-galeria-titulo="' + escapar(sala.nome) + '"' +
       ' aria-label="Ver fotos da ' + escapar(sala.nome) + '">' +

@@ -125,7 +125,8 @@ test('sala privativa com salas: um card por sala, ocupada sem compra, fotos na g
   assert.match(html, /sala=s_a/);
   assert.match(html, /Ver fotos \(2\)/);
   assert.match(html, /data-galeria="\[&quot;https:\/\/x\.supabase\.co\/a\.webp&quot;/);
-  assert.match(html, /Foto ilustrativa/);
+  assert.match(html, /Fotos em breve/);
+  assert.doesNotMatch(html, /Foto ilustrativa|sala-4-lugares\.webp/);
   const geisha = html.split('<article').find((c) => c.includes('Sala Geisha'));
   const bourbon = html.split('<article').find((c) => c.includes('Sala Bourbon'));
   assert.match(geisha, /Ocupada/);

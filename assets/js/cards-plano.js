@@ -59,6 +59,18 @@
     s_lux_santa_tereza: '/assets/img/real/salas-privativas/sala-santa-tereza.jpg?v=santa-tereza-20260919',
     s_lux_4_lugares_ocupada: '/assets/img/real/salas-privativas/sala-4-lugares-ocupada.jpg?v=4-lugares-20260919',
   };
+  // Salas já alugadas que não vêm do catálogo do app, para a vitrine mostrar a
+  // casa cheia sem oferecer o que não está livre.
+  var INVENTARIO_PRIVATIVAS = {
+    un_cafeworkingluxembu_e78be3: [
+      { id: 's_lux_4_lugares_ocupada', nome: 'Sala Buritis', capacidade: 4, ocupada: true, fotos: [] },
+      { id: 's1782420821947', nome: 'Sala Belvedere', capacidade: 5, ocupada: true, fotos: [] },
+      { id: 's1782420889913', nome: 'Sala Mangabeiras', capacidade: 5, ocupada: true, fotos: [] },
+      { id: 's_lux_funcionarios', nome: 'Sala Funcionários', capacidade: 6, ocupada: true, fotos: [] },
+      { id: 's_lux_santa_tereza', nome: 'Sala Santa Tereza', capacidade: 7, ocupada: true, fotos: [] },
+    ],
+  };
+
   function capaSala(sala) {
     var fotos = (Array.isArray(sala.fotos) ? sala.fotos : []).filter(function (f) { return typeof f === 'string' && /^https:\/\//.test(f); });
     if (FOTOS_LOCAIS[sala.id]) fotos.unshift(FOTOS_LOCAIS[sala.id]);

@@ -49,13 +49,11 @@
       (sala ? '&sala=' + encodeURIComponent(sala.id) : '');
   }
 
-  var FOTO_ILUSTRATIVA = '/assets/img/real/salas-privativas/sala-4-lugares.webp';
-
-  /** Capa da sala: abre a galeria (galeria-sala.js). Sem foto cadastrada, mostra uma ilustrativa. */
+  /** A capa pertence à sala. Sem foto própria, não substitui pela de outra sala. */
   function capaSala(sala) {
-    var fotos = (sala.fotos || []).filter(function (f) { return /^https:\/\//.test(f); });
+    var fotos = (Array.isArray(sala.fotos) ? sala.fotos : []).filter(function (f) { return typeof f === 'string' && /^https:\/\//.test(f); });
     if (!fotos.length) {
-      return '<div class="sala-capa"><img loading="lazy" src="' + FOTO_ILUSTRATIVA + '" alt=""><small>Foto ilustrativa</small></div>';
+      return '<div class="sala-capa sala-sem-foto"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 40h30M14 40V8h20v32M29 24h1"/></svg><strong>Fotos em breve</strong><span>Agende uma visita para conhecer esta sala.</span></div>';
     }
     return '<button type="button" class="sala-capa" data-galeria="' + escapar(JSON.stringify(fotos)) + '" data-galeria-titulo="' + escapar(sala.nome) + '"' +
       ' aria-label="Ver fotos da ' + escapar(sala.nome) + '">' +

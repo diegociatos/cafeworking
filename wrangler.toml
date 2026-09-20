@@ -1,7 +1,7 @@
 # Site CafeWorking no Cloudflare Pages (conectado ao GitHub, branch main).
 #
 # Configuração do build no painel do Pages:
-#   Build command:  node scripts/versionar-loja.js && node scripts/vitrine.js && node scripts/paginas-cidade.js && node scripts/build-dist.js
+#   Build command:  npm run build   (scripts/build-site.js faz a cadeia toda)
 #   Output:         dist
 #   Variável:       NODE_VERSION = 22
 #

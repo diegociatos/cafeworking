@@ -54,6 +54,8 @@
     var fotos = (Array.isArray(sala.fotos) ? sala.fotos : []).filter(function (f) { return typeof f === 'string' && /^https:\/\//.test(f); });
     // Foto fornecida pelo proprietário para esta sala; o cadastro do app tem prioridade.
     if (!fotos.length && sala.id === 's1782410118483') fotos = ['/assets/img/sala-serra.png'];
+    // Identificação confirmada pelo proprietário; substitui a foto anterior do catálogo.
+    if (sala.id === 's1782420700809') fotos = ['/assets/img/sala-savassi.png'];
     if (!fotos.length) {
       return '<div class="sala-capa sala-sem-foto"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 40h30M14 40V8h20v32M29 24h1"/></svg><strong>Fotos em breve</strong><span>Agende uma visita para conhecer esta sala.</span></div>';
     }

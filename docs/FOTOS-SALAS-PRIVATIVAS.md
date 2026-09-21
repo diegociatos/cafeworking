@@ -15,3 +15,5 @@ Lourdes e Serra ainda precisam de suas fotos próprias. O app já oferece Salas 
 Validação: 42 testes do site e build aprovados; navegador confirma fotos carregadas de Savassi/Sion e ausência de imagem/galeria nos cards sem foto. PR baseado na branch da auditoria do site (#1), para revisão antes de publicar.
 
 Atualização 21/09/2026: foto original da Sala Serra enviada pelo proprietário, incluída em assets/img/sala-serra.png. Vinculada exclusivamente ao ID s1782410118483 quando o catálogo não tem foto; fotos futuras cadastradas no app têm prioridade. Apenas Lourdes continua sem foto identificada.
+
+Atualização 21/09/2026: proprietário confirmou a foto da Sala Savassi, incluída sem alterações em assets/img/sala-savassi.png. O ID s1782420700809 usa essa imagem na capa e galeria, substituindo a associação anterior do catálogo apenas no site.

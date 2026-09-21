@@ -53,6 +53,7 @@ const MENU = `<nav class="menu cw-menu">
     <a class="cw-menu-link" href="/cafeteria">Cafeteria <span>▾</span></a>
     <div class="cw-dropdown-panel">
       <a href="/cafeteria"><b>Cafeteria</b><small>Café especial para trabalhar e receber clientes.</small></a>
+      <a href="/cardapio"><b>Cardápio</b><small>Produtos, fotos e preços atualizados.</small></a>
       <a href="/galeria"><b>Galeria</b><small>Fotos dos ambientes CafeWorking.</small></a>
     </div>
   </div>
@@ -95,6 +96,7 @@ function blocoGlobal(arq, html) {
     (SEM_BARRA.has(arq) ? '' : BARRA) +
     (semMenu ? '<script src="assets/js/mobile-menu.js"></script>' : '') +
     (semLoja ? '<script defer src="assets/js/loja-config.js"></script>' : '') +
+    (arq === 'cardapio.html' ? '<script defer src="assets/js/cardapio.js"></script>' : '') +
     '<script defer src="assets/js/analytics.js"></script>' +
     '<!-- /cw:global -->';
 }

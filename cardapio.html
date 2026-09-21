@@ -67,30 +67,31 @@
   </div>
 </section>
 
-<section class="section section-soft">
+<section class="section section-soft cardapio-live" aria-labelledby="cardapio-titulo">
   <div class="wrap">
     <div class="section-head">
       <div>
-        <div class="eyebrow">Opções</div>
-        <h2 class="h2">Uma cafeteria pensada para a rotina empresarial.</h2>
+        <div class="eyebrow">Cardápio atualizado</div>
+        <h2 class="h2" id="cardapio-titulo">Escolha sua pausa favorita.</h2>
       </div>
-      <p>Os itens podem variar por disponibilidade. Para valores e opções do dia, fale com nossa equipe.</p>
+      <p>Produtos e preços publicados diretamente pela equipe da cafeteria.</p>
     </div>
-    <div class="menu-grid">
-      <article class="menu-card"><small>01</small><h3>Cafés especiais</h3><p>Espresso, cappuccino, café coado, mocha e bebidas preparadas para transformar pausas em experiências.</p></article>
-      <article class="menu-card"><small>02</small><h3>Drinks e bebidas geladas</h3><p>Sucos, águas, refrigerantes, cafés gelados e opções refrescantes para reuniões e momentos de networking.</p></article>
-      <article class="menu-card"><small>03</small><h3>Lanches artesanais</h3><p>Salgados, doces, acompanhamentos e opções práticas para quem passa o dia em um ambiente produtivo.</p></article>
-      <article class="menu-card"><small>04</small><h3>Experiências para eventos</h3><p>Coffee break corporativo, workshops, reuniões e encontros empresariais com estrutura integrada.</p></article>
+    <div class="cardapio-toolbar">
+      <label class="cardapio-unidade" hidden>Cardápio da unidade <select data-cardapio-unidade aria-label="Escolher unidade"></select></label>
+      <div class="cardapio-filtros" data-cardapio-filtros aria-label="Filtrar o cardápio"></div>
     </div>
+    <div class="cardapio-status" data-cardapio-status role="status">Carregando o cardápio…</div>
+    <div class="cardapio-produtos" data-cardapio-produtos></div>
+    <noscript><p class="cardapio-status">Ative o JavaScript para consultar o cardápio atualizado ou fale com nossa equipe pelo WhatsApp.</p></noscript>
   </div>
 </section>
 
 <section class="section">
   <div class="wrap menu-cta">
     <div>
-      <div class="eyebrow">Atualizado pela equipe</div>
-      <h2 class="h2">Quer o cardápio completo e atualizado?</h2>
-      <p class="lead">Clique no botão abaixo e fale diretamente com a equipe do CafeWorking pelo WhatsApp.</p>
+      <div class="eyebrow">Pedidos e dúvidas</div>
+      <h2 class="h2">Quer confirmar a opção do dia?</h2>
+      <p class="lead">Fale diretamente com a equipe da cafeteria pelo WhatsApp.</p>
     </div>
     <a class="btn btn-primary" href="https://wa.me/5531997129789?text=Olá! Quero receber o cardápio atualizado da cafeteria CafeWorking." target="_blank">Pedir cardápio no WhatsApp</a>
   </div>

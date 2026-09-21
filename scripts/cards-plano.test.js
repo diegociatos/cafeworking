@@ -138,8 +138,9 @@ test('sala privativa com salas: um card por sala, ocupada sem compra, fotos na g
 });
 
 test('Sala Savassi usa a foto real local mesmo antes do cadastro no app', () => {
-  const html = capaSala({ id: 's1782420700809', nome: 'Sala Savassi', fotos: [] });
-  assert.match(html, /sala-savassi\.png\?v=savassi-20260919/);
+  const html = capaSala({ id: 's1782420700809', nome: 'Sala Savassi', fotos: ['https://example.com/foto-antiga.jpg'] });
+  assert.match(html, /sala-savassi\.png\?v=savassi-20260921/);
+  assert.doesNotMatch(html, /foto-antiga|Ver fotos \(2\)/);
   assert.doesNotMatch(html, /Foto ilustrativa/);
 });
 

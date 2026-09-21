@@ -123,7 +123,8 @@ test('sala privativa com salas: um card por sala, ocupada sem compra, fotos na g
   assert.equal((html.match(/<article/g) || []).length, 3);
   assert.match(html, /Sala Bourbon/);
   assert.match(html, /sala=s_a/);
-  assert.match(html, /Ver fotos \(2\)/);
+  assert.doesNotMatch(html, /<small>Ver fotos/);
+  assert.match(html, /Ampliar imagem da Sala Bourbon/);
   assert.match(html, /data-galeria="\[&quot;https:\/\/x\.supabase\.co\/a\.webp&quot;/);
   assert.match(html, /Fotos em breve/);
   assert.doesNotMatch(html, /Foto ilustrativa|sala-4-lugares\.webp/);

@@ -80,9 +80,9 @@
       return '<div class="sala-capa sala-sem-foto"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 40h30M14 40V8h20v32M29 24h1"/></svg><strong>Fotos em breve</strong><span>Agende uma visita para conhecer esta sala.</span></div>';
     }
     return '<button type="button" class="sala-capa" data-galeria="' + escapar(JSON.stringify(fotos)) + '" data-galeria-titulo="' + escapar(sala.nome) + '"' +
-      ' aria-label="Ver fotos da ' + escapar(sala.nome) + '">' +
+      ' aria-label="Ampliar imagem da ' + escapar(sala.nome) + '">' +
       '<img loading="lazy" src="' + escapar(fotos[0]) + '" alt="' + escapar(sala.nome) + '">' +
-      '<small>Ver fotos' + (fotos.length > 1 ? ' (' + fotos.length + ')' : '') + '</small></button>';
+      '</button>';
   }
 
   /** Card de uma sala privativa específica: nome e fotos da sala, preço e contrato do plano. */

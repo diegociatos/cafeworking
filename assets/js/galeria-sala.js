@@ -85,7 +85,7 @@
   function abrir(botao) {
     var lista;
     try { lista = JSON.parse(botao.getAttribute('data-galeria') || '[]'); } catch (_) { lista = []; }
-    fotos = lista.filter(function (f) { return typeof f === 'string' && /^https:\/\//.test(f); });
+    fotos = lista.filter(function (f) { return typeof f === 'string' && (/^https:\/\//.test(f) || /^\/assets\/img\/[a-zA-Z0-9_-]+\.(png|jpe?g|webp)$/.test(f)); });
     if (!fotos.length) return;
     if (!dialogo) montar();
     origem = botao;

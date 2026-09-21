@@ -75,7 +75,7 @@ const MENU = `<nav class="menu cw-menu">
   </div>
 
   <a class="cw-menu-link" href="/blog">Blog</a>
-  <a class="cw-menu-link" href="/contato">Contato</a>
+  <a class="cw-menu-link" href="/seja-parceiro">Parceiros</a>
   <a class="cw-menu-link cw-menu-mobile" href="${APP}">Área do Cliente</a>
 </nav>`;
 

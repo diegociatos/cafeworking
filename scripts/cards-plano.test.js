@@ -146,7 +146,7 @@ test('Sala Savassi usa a foto real local mesmo antes do cadastro no app', () => 
 
 test('Sala Belvedere usa a foto real local mesmo antes do cadastro no app', () => {
   const html = capaSala({ id: 's1782420821947', nome: 'Sala Belvedere', fotos: [] });
-  assert.match(html, /sala-belvedere\.jpg\?v=belvedere-20260919/);
+  assert.match(html, /sala-belvedere-confirmada\.png/);
   assert.doesNotMatch(html, /Foto ilustrativa/);
 });
 

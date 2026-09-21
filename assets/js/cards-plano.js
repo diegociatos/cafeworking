@@ -53,7 +53,7 @@
   // fotos pelo app. A capa pertence à sala: sem foto própria, não usa a de outra.
   var FOTOS_LOCAIS = {
     s1782420700809: '/assets/img/real/salas-privativas/sala-savassi.png?v=savassi-20260921',
-    s1782420821947: '/assets/img/real/salas-privativas/sala-belvedere.jpg?v=belvedere-20260919',
+    s1782420821947: '/assets/img/real/salas-privativas/sala-belvedere-confirmada.png',
     s1782420889913: '/assets/img/real/salas-privativas/sala-mangabeiras.jpg?v=mangabeiras-20260919',
     s_lux_funcionarios: '/assets/img/real/salas-privativas/sala-funcionarios.jpg?v=funcionarios-20260919',
     s_lux_santa_tereza: '/assets/img/real/salas-privativas/sala-santa-tereza.jpg?v=santa-tereza-20260919',
@@ -75,7 +75,7 @@
     var fotos = (Array.isArray(sala.fotos) ? sala.fotos : []).filter(function (f) { return typeof f === 'string' && /^https:\/\//.test(f); });
     if (FOTOS_LOCAIS[sala.id]) fotos.unshift(FOTOS_LOCAIS[sala.id]);
     // A foto confirmada pelo proprietário substitui a associação antiga da Savassi.
-    if (sala.id === 's1782420700809') fotos = [FOTOS_LOCAIS[sala.id]];
+    if (sala.id === 's1782420700809' || sala.id === 's1782420821947') fotos = [FOTOS_LOCAIS[sala.id]];
     if (!fotos.length) {
       return '<div class="sala-capa sala-sem-foto"><svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 40h30M14 40V8h20v32M29 24h1"/></svg><strong>Fotos em breve</strong><span>Agende uma visita para conhecer esta sala.</span></div>';
     }

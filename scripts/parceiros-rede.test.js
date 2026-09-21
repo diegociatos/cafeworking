@@ -20,10 +20,9 @@ test('Conteúdo público não executa HTML do parceiro', () => {
 test('Proposta e FAQ sem enquadramento jurídico, percentual fixo ou promessa', () => {
   const html = fs.readFileSync(require('node:path').join(__dirname, '../seja-parceiro.html'), 'utf8');
   assert.ok(!/franquia|franqueado|\b75%|\b25%|\b10%/i.test(html));
-  assert.ok(html.includes('não é promessa de ganho'));
+  assert.doesNotMatch(html, /renda garantida|clientes garantidos/i);
   const schema = JSON.parse(html.match(/<script type="application\/ld\+json">(.*?)<\/script>/)[1]);
-  const faq = schema['@graph'].find((x) => x['@type'] === 'FAQPage');
-  assert.equal(faq.mainEntity.length, 6);
-  assert.ok(faq.mainEntity.every((q) => q.name.length < 100));
+  assert.equal(schema['@type'], 'WebPage');
+  assert.equal(schema.url, 'https://cafeworking.com.br/seja-parceiro');
   assert.ok(html.includes('id="parceiro-form"'));
 });

@@ -3276,3 +3276,67 @@ html.galeria-aberta{overflow:hidden}
   .footer-v2 .footer-grid.footer-nav-grid{grid-template-columns:1fr!important}
   .footer-v2 .footer-nav-grid h4{margin-bottom:14px!important}
 }
+
+/* V54 - abertura do coworking: o paragrafo que responde a busca estava com 860px
+   de medida e o link contextual virava uma linha cinza solta no fim do bloco,
+   com a metade direita vazia. Agora o texto tem medida de leitura e o link
+   virou proximo passo, ao lado, no mesmo desenho dos cartoes do site. */
+.abertura-lead{padding:76px 0 68px}
+.abertura-lead-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(300px,.6fr);
+  gap:34px 68px;
+  align-items:center;
+}
+.abertura-lead .eyebrow{margin-bottom:16px}
+.abertura-lead .abertura-texto{
+  font-size:clamp(18px,1.4vw,21px);
+  line-height:1.66;
+  max-width:34em;          /* ~66 caracteres: serifa longa demais cansa */
+}
+.abertura-proximo{
+  display:grid;
+  gap:7px;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:var(--radius,22px);
+  padding:26px 28px 24px;
+  transition:border-color .2s,transform .2s,box-shadow .2s;
+}
+.abertura-proximo-rotulo{
+  font-size:12px;text-transform:uppercase;letter-spacing:.16em;
+  font-weight:800;color:var(--coffee);
+}
+.abertura-proximo strong{
+  font-family:var(--serif);
+  font-size:clamp(21px,1.65vw,26px);
+  line-height:1.16;font-weight:500;color:var(--green);
+}
+.abertura-proximo-nota{color:var(--muted);font-size:14.5px;line-height:1.5}
+.abertura-proximo-seta{
+  margin-top:6px;color:var(--green);font-size:19px;line-height:1;
+  transition:transform .2s;
+}
+/* O cartao inteiro e o link: o sublinhado do paragrafo nao vale aqui. */
+.abertura a.abertura-proximo{text-decoration:none;font-weight:400;color:inherit}
+.abertura-proximo:hover{
+  border-color:var(--green);
+  transform:translateY(-2px);
+  box-shadow:0 14px 36px rgba(31,31,28,.07);
+}
+.abertura-proximo:hover .abertura-proximo-seta{transform:translateX(5px)}
+.abertura-proximo:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){
+  .abertura-proximo,.abertura-proximo-seta{transition:none}
+  .abertura-proximo:hover{transform:none}
+  .abertura-proximo:hover .abertura-proximo-seta{transform:none}
+}
+@media(max-width:980px){
+  .abertura-lead-grid{grid-template-columns:1fr;gap:30px}
+  .abertura-lead{padding:56px 0 48px}
+}
+@media(max-width:760px){
+  .abertura-lead{padding:40px 0 36px}
+  .abertura-lead .abertura-texto{font-size:18px}
+  .abertura-proximo{padding:22px 22px 20px}
+}

@@ -3340,3 +3340,37 @@ html.galeria-aberta{overflow:hidden}
   .abertura-lead .abertura-texto{font-size:18px}
   .abertura-proximo{padding:22px 22px 20px}
 }
+
+/* Coworking: leitura mais curta e benefícios com a mesma altura visual. */
+.abertura-lead{padding:88px 0 80px;background:#f7f4ee}
+.abertura-lead-grid{grid-template-columns:minmax(0,1.1fr) minmax(340px,.8fr);gap:clamp(36px,6vw,96px);align-items:center}
+.abertura-lead-copy h2{font-family:var(--serif);font-size:clamp(38px,4.2vw,64px);line-height:1.05;letter-spacing:-.045em;font-weight:500;max-width:670px;margin:0 0 22px}
+.abertura-lead-copy p{max-width:590px;font-size:clamp(17px,1.45vw,20px);line-height:1.7;color:var(--muted);margin:0}
+.abertura-destaques{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.abertura-destaques span{display:inline-flex;align-items:center;gap:9px;border:1px solid #d9d0c4;border-radius:999px;background:#fff;padding:9px 14px;color:var(--green);font-size:13px;font-weight:700}
+.abertura-destaques span:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green)}
+.abertura a.abertura-proximo{display:block;position:relative;overflow:hidden;min-height:420px;padding:0;border:0;border-radius:30px;background:#153e3c;box-shadow:0 26px 60px rgba(31,31,28,.14)}
+.abertura-proximo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .35s ease}
+.abertura-proximo:after{content:"";position:absolute;inset:25% 0 0;background:linear-gradient(180deg,transparent,rgba(5,29,29,.9));pointer-events:none}
+.abertura-proximo-conteudo{position:absolute;z-index:1;left:30px;right:30px;bottom:30px;display:grid;gap:8px;color:#fff}
+.abertura-proximo .abertura-proximo-rotulo{color:#efe1cf}
+.abertura-proximo strong{color:#fff;font-size:clamp(28px,2.5vw,38px);max-width:340px}
+.abertura-proximo .abertura-proximo-nota{color:rgba(255,255,255,.86);font-size:15px}
+.abertura-proximo .abertura-proximo-seta{display:inline-flex;align-items:center;gap:10px;width:max-content;margin-top:12px;color:#fff;font-size:14px;font-weight:800;border-bottom:1px solid rgba(255,255,255,.7);padding-bottom:4px}
+.abertura-proximo:hover img{transform:scale(1.035)}
+.coworking-estrutura{padding:88px 0;background:#fff}
+.coworking-estrutura .two-col{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(36px,5vw,82px);align-items:center}
+.coworking-estrutura .h2{font-size:clamp(40px,4.6vw,66px)!important;max-width:500px!important}
+.coworking-estrutura .lead{max-width:440px;font-size:clamp(18px,1.4vw,21px);line-height:1.65;margin:0 0 24px}
+.coworking-estrutura-link{display:inline-flex;gap:16px;align-items:center;color:var(--green);font-size:15px;font-weight:800;border-bottom:1px solid var(--green);padding-bottom:5px}
+.coworking-estrutura-link:focus-visible{outline:2px solid var(--green);outline-offset:5px}
+.coworking-estrutura .premium-list{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important}
+.coworking-estrutura .feature{display:block;min-height:0;padding:25px!important;border-radius:22px!important;background:#f7f4ee!important;box-shadow:none!important;border:1px solid #e6dfd4!important;transform:none!important}
+.coworking-estrutura .feature:after{display:none}
+.coworking-estrutura .feature:hover{border-color:var(--green)!important;box-shadow:0 12px 28px rgba(14,75,79,.07)!important}
+.coworking-estrutura .feature-num{display:block;font-size:12px;letter-spacing:.16em;font-weight:800;color:var(--coffee);margin-bottom:22px}
+.coworking-estrutura .feature b{font-family:var(--serif);font-size:23px!important;font-weight:500;line-height:1.18;max-width:190px;color:var(--ink)!important}
+.coworking-estrutura .feature p{margin:8px 0 0;color:var(--muted);font-size:15px;line-height:1.5}
+@media(max-width:980px){.abertura-lead-grid,.coworking-estrutura .two-col{grid-template-columns:1fr!important}.abertura a.abertura-proximo{min-height:380px}.coworking-estrutura .premium-list{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:600px){.abertura-lead{padding:52px 0 60px!important}.abertura a.abertura-proximo{min-height:340px}.abertura-proximo-conteudo{left:22px;right:22px;bottom:23px}.abertura-destaques{gap:8px}.abertura-destaques span{font-size:12px;padding:8px 10px}.coworking-estrutura{padding:60px 0!important}.coworking-estrutura .premium-list{grid-template-columns:1fr!important}.coworking-estrutura .feature{padding:20px!important}.coworking-estrutura .feature-num{margin-bottom:12px}}
+@media(prefers-reduced-motion:reduce){.abertura-proximo img{transition:none}.abertura-proximo:hover img{transform:none}}
